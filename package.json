@@ -1,0 +1,39 @@
+{
+  "name": "labyrinth",
+  "version": "1.0.0",
+  "description": "A minimal Electron application written with Typescript",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "start": "electron ./dist/main.js",
+    "app-watch": "cross-env NODE_ENV=development webpack --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "app-build": "cross-env NODE_ENV=production webpack --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+  },
+  "repository": "https://github.com/electron/electron-quick-start-typescript",
+  "keywords": [
+    "Electron"
+  ],
+  "author": "GitHub",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@types/node": "^12.0.10",
+    "@types/react": "^16.8.22",
+    "@types/react-dom": "^16.8.4",
+    "case-sensitive-paths-webpack-plugin": "^2.2.0",
+    "cross-env": "^5.2.0",
+    "electron": "^5.0.6",
+    "laravel-mix": "^4.0.16",
+    "ts-loader": "^6.0.4",
+    "tsconfig-paths-webpack-plugin": "^3.2.0",
+    "tslint": "^5.18.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "tslint-loader": "^3.5.4",
+    "tslint-react": "^4.0.0",
+    "typescript": "^3.5.2"
+  },
+  "dependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }
+}
