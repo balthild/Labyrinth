@@ -4,7 +4,9 @@ import * as path from 'path';
 let mainWindow: Electron.BrowserWindow | null;
 
 function createWindow() {
-    app.dock.show();
+    if (app.dock) {
+        app.dock.show();
+    }
 
     mainWindow = new BrowserWindow({
         frame: false,
@@ -27,26 +29,47 @@ function createWindow() {
     });
 }
 
-app.on('ready', createWindow);
+function runApp() {
+    app.on('ready', createWindow);
 
-app.on('window-all-closed', () => {
-    app.dock.hide();
-});
+    app.on('second-instance', () => {
+        if (mainWindow) {
+            if (mainWindow.isMinimized()) {
+                mainWindow.restore();
+            }
+            mainWindow.focus();
+        } else {
+            createWindow();
+        }
+    });
 
-app.on('activate', () => {
-    if (mainWindow === null) {
-        createWindow();
-    }
-});
+    app.on('window-all-closed', () => {
+        if (app.dock) {
+            app.dock.hide();
+        }
+    });
 
-ipcMain.on('close', () => {
-    if (mainWindow !== null) {
-        mainWindow.close();
-    }
-});
+    app.on('activate', () => {
+        if (mainWindow === null) {
+            createWindow();
+        }
+    });
 
-ipcMain.on('minimize', () => {
-    if (mainWindow !== null) {
-        mainWindow.minimize();
-    }
-});
+    ipcMain.on('close', () => {
+        if (mainWindow !== null) {
+            mainWindow.close();
+        }
+    });
+
+    ipcMain.on('minimize', () => {
+        if (mainWindow !== null) {
+            mainWindow.minimize();
+        }
+    });
+}
+
+if (app.requestSingleInstanceLock()) {
+    runApp();
+} else {
+    app.quit();
+}
