@@ -3,6 +3,7 @@ const TSConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 require('laravel-mix')
   .webpackConfig({
+    target: 'electron-renderer',
     module: {
       rules: [
         {
@@ -23,5 +24,6 @@ require('laravel-mix')
     },
   })
   .setPublicPath('dist')
-  .setResourceRoot('dist')
-  .ts('src/app.tsx', 'dist');
+  .setResourceRoot('.')
+  .sass('src/vendor.scss', 'dist')
+  .ts('src/renderer.tsx', 'dist');

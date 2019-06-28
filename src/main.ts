@@ -1,31 +1,46 @@
-import { app, BrowserWindow } from "electron";
-import * as path from "path";
+import { app, BrowserWindow, ipcMain } from 'electron';
+import * as path from 'path';
 
 let mainWindow: Electron.BrowserWindow | null;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
         frame: false,
-        height: 600,
-        width: 800,
+        height: 625,
+        width: 1000,
+        resizable: false,
         webPreferences: {
             nodeIntegration: true,
         },
     });
 
-    mainWindow.loadFile(path.join(__dirname, "../index.html"));
+    mainWindow.loadFile(path.join(__dirname, '../index.html'));
 
-    mainWindow.webContents.openDevTools({ mode: "detach" });
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
 
-    mainWindow.on("closed", () => {
+    mainWindow.on('closed', () => {
         mainWindow = null;
     });
 }
 
-app.on("ready", createWindow);
+app.on('ready', createWindow);
 
-app.on("activate", () => {
+app.on('window-all-closed', () => false);
+
+app.on('activate', () => {
     if (mainWindow === null) {
         createWindow();
+    }
+});
+
+ipcMain.on('close', () => {
+    if (mainWindow !== null) {
+        mainWindow.close();
+    }
+});
+
+ipcMain.on('minimize', () => {
+    if (mainWindow !== null) {
+        mainWindow.minimize();
     }
 });

@@ -1,0 +1,46 @@
+.window-buttons {
+    margin: 12px;
+    align-self: flex-start;
+    display: flex;
+
+    button {
+        display: block;
+        text-align: center;
+        width: 24px;
+        height: 24px;
+        margin: 0 -12px -12px 0;
+        padding: 0;
+        outline: none;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        transform: scale(0.5);
+        transform-origin: 0 0;
+
+        .sign {
+            display: none;
+            font-size: 23px;
+            color: rgba(0, 0, 0, 0.6);
+        }
+    }
+
+    &:hover .sign {
+        display: block;
+    }
+
+    #window-close {
+        background: #fc625d;
+
+        &:active {
+            background: #bd4a46;
+        }
+    }
+
+    #window-minimize {
+        background: #fdbc40;
+        margin-left: 8px;
+
+        &:active {
+            background: #be8e30;
+        }
+    }
+}
