@@ -11,10 +11,12 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         frame: false,
         titleBarStyle: 'hiddenInset',
-        height: 625,
-        width: 1000,
+        height: 550,
+        width: 900,
         resizable: false,
         maximizable: false,
+        vibrancy: 'menu',
+        backgroundColor: '#00FFFFFF',
         webPreferences: {
             nodeIntegration: true,
         },

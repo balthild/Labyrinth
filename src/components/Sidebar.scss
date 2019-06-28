@@ -1,13 +1,13 @@
 .sidebar {
-    width: 240px;
+    width: 220px;
     background: #ececee;
-    border-right: 1px solid #d1d0d3;
-    padding-top: 48px;
+    border-right: 1px solid rgba(0, 0, 8, 0.1);
+    padding: 48px 0 12px;
     display: flex;
     flex-direction: column;
     -webkit-app-region: drag;
 
-    > * {
-        -webkit-app-region: no-drag;
+    &.vibrancy {
+        background: transparent;
     }
 }

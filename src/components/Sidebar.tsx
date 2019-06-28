@@ -5,9 +5,13 @@ import './Sidebar.scss';
 import WindowButtons from './WindowButtons';
 import Navigation from './Navigation';
 
+const platform = os.platform();
+
+const vibrancy = (platform === 'darwin') ? ' vibrancy' : '';
+
 const Sidebar = () => (
-    <aside className="sidebar">
-        {os.platform() !== 'darwin' && <WindowButtons />}
+    <aside className={'sidebar' + vibrancy}>
+        {platform !== 'darwin' && <WindowButtons />}
         <Navigation />
     </aside>
 );

@@ -12,3 +12,10 @@ body {
     display: flex;
     align-items: stretch;
 }
+
+.content {
+    flex-grow: 1;
+    height: 100vh;
+    overflow: hidden auto;
+    background: #ffffff;
+}
