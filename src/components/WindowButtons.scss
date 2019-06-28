@@ -2,23 +2,34 @@
     margin: 12px;
     align-self: flex-start;
     display: flex;
+    position: fixed;
+    left: 0;
+    top: 0;
 
     button {
         display: block;
-        text-align: center;
         width: 24px;
         height: 24px;
-        margin: 0 -12px -12px 0;
+        margin: 0 -12px -12px 8px;
         padding: 0;
         outline: none;
+        background: #d0d0d0;
         border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 12px;
         transform: scale(0.5);
         transform-origin: 0 0;
 
+        &:first-child {
+            margin-left: 0;
+        }
+
         .sign {
             display: none;
-            font-size: 23px;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            font-size: 24px;
+            margin: -1px 0 0 -1px;
             color: rgba(0, 0, 0, 0.6);
         }
     }
@@ -37,7 +48,6 @@
 
     #window-minimize {
         background: #fdbc40;
-        margin-left: 8px;
 
         &:active {
             background: #be8e30;

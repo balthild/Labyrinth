@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { ipcRenderer } from 'electron';
 
 import './WindowButtons.scss';
@@ -19,6 +19,7 @@ const WindowButtons = () => (
         <button id="window-minimize">
             <i className="sign ion ion-md-remove" onClick={minimizeWindow} />
         </button>
+        <button />
     </div>
 );
 

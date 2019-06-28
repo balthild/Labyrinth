@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "A minimal Electron application written with Typescript",
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "tsc --module commonjs",
+    "watch": "tsc --module commonjs -w",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "start": "electron ./dist/main.js",
     "app-watch": "cross-env NODE_ENV=development webpack --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
@@ -20,6 +20,7 @@
     "@types/node": "^12.0.10",
     "@types/react": "^16.8.22",
     "@types/react-dom": "^16.8.4",
+    "@types/react-redux": "^7.1.1",
     "case-sensitive-paths-webpack-plugin": "^2.2.0",
     "cross-env": "^5.2.0",
     "electron": "^5.0.6",
@@ -38,6 +39,8 @@
   "dependencies": {
     "ionicons": "^4.5.8",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0",
+    "redux": "^4.0.1"
   }
 }

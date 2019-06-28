@@ -1,0 +1,27 @@
+.app-navigation {
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+        display: flex;
+        padding: 8px 16px;
+        align-items: center;
+        font-size: 18px;
+        color: rgba(0, 0, 0, 0.8);
+        user-select: none;
+
+        i {
+            width: 28px;
+            color: rgba(0, 0, 0, 0.5);
+            font-size: 28px;
+            text-align: center;
+            margin-right: 12px;
+        }
+    }
+
+    li.current {
+        background: rgba(0, 0, 8, 0.08);
+    }
+}

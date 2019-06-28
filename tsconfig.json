@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    "module": "commonjs",
+    "module": "esnext",
     "target": "es5",
     "lib": ["es6", "dom", "esnext.asynciterable"],
     "sourceMap": true,
@@ -18,10 +18,9 @@
     "noUnusedLocals": false,
     "allowUnreachableCode": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
+    "baseUrl": "src",
     "paths": {
-      "@/*": ["./*"],
-      "*": ["node_modules/*"]
+      "@/*": ["./*"]
     }
   },
   "include": [
