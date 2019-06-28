@@ -12,6 +12,12 @@ const vibrancy = (platform === 'darwin') ? ' vibrancy' : '';
 const Sidebar = () => (
     <aside className={'sidebar' + vibrancy}>
         {platform !== 'darwin' && <WindowButtons />}
+
+        <div className="service-status">
+            <div className="status-bulb running" />
+            <span className="status-text">Service Running</span>
+        </div>
+
         <Navigation />
     </aside>
 );

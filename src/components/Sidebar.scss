@@ -1,3 +1,5 @@
+@import "../color";
+
 .sidebar {
     width: 220px;
     background: #ececee;
@@ -9,5 +11,54 @@
 
     &.vibrancy {
         background: transparent;
+    }
+}
+
+.service-status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 20px 20px;
+    padding: 5px 0;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 3px;
+
+    .status-bulb {
+        width: 12px;
+        height: 12px;
+        margin-right: 8px;
+        border-radius: 6px;
+
+        &.running {
+            background: rgba($bulb-green, 0.4);
+        }
+
+        &.error {
+            background: rgba($bulb-red, 0.4);
+        }
+
+        &::after {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 6px;
+            margin: 3px;
+            border-radius: 3px;
+            background: inherit;
+        }
+
+        &.running::after {
+            background: $bulb-green;
+        }
+
+        &.error::after {
+            background: $bulb-red;
+        }
+    }
+
+    .status-text {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+        user-select: none;
     }
 }

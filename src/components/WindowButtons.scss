@@ -1,3 +1,5 @@
+@import "../color";
+
 .window-buttons {
     margin: 12px;
     align-self: flex-start;
@@ -39,18 +41,18 @@
     }
 
     #window-close {
-        background: #fc625d;
+        background: $bulb-red;
 
         &:active {
-            background: #bd4a46;
+            background: $bulb-red-dark;
         }
     }
 
     #window-minimize {
-        background: #fdbc40;
+        background: $bulb-yellow;
 
         &:active {
-            background: #be8e30;
+            background: $bulb-yellow-dark;
         }
     }
 }
