@@ -1,27 +1,54 @@
 import React from 'react';
 import http from 'http';
 import readline from 'readline';
-import { Area, AreaChart, CartesianGrid, Legend, Line, LineChart, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, Legend, YAxis } from 'recharts';
 import fileSize from 'filesize';
 
 import './Overview.scss';
 import { apiUrl } from '@/util';
+
+type AxisTickTextProps = {
+    payload: {
+        value: number;
+    };
+    y: number;
+};
+
+function AxisTickText(props: AxisTickTextProps) {
+    const size = fileSize(props.payload.value, {
+        standard: 'iec',
+        round: 1,
+    });
+
+    const textProps = {
+        ...props,
+        dx: 8,
+        // Magic numbers, don't touch
+        dy: props.y < 12 ? 7 : 12,
+        fill: 'rgba(255, 255, 255, 0.3)',
+        fontSize: 10,
+        textAnchor: 'start',
+    };
+
+    return <text {...textProps}>{size}/s</text>;
+}
 
 type TrafficEntry = {
     up: number;
     down: number;
 };
 
-type OverviewProps = {
-};
+type OverviewProps = {};
 
 type OverviewState = {
     traffics: TrafficEntry[];
+    currentTraffic: number;
 };
 
 class Overview extends React.Component<OverviewProps, OverviewState> {
     state = {
         traffics: new Array(60).fill({ up: 0, down: 0 }),
+        currentTraffic: 0,
     };
 
     dead = false;
@@ -41,13 +68,16 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
                         return;
                     }
 
-                    const entry = JSON.parse(chunk.toString());
+                    const entry: TrafficEntry = JSON.parse(chunk.toString());
 
                     this.setState((prevState) => {
                         const traffics = prevState.traffics.slice(1);
                         traffics.push(entry);
 
-                        return { traffics };
+                        return {
+                            traffics,
+                            currentTraffic: entry.up + entry.down,
+                        };
                     });
                 });
             });
@@ -60,6 +90,10 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
         }
 
         await new Promise(resolve => setTimeout(resolve, 1000));
+
+        this.setState({
+            currentTraffic: 0,
+        });
 
         this.updateTrafficCharts();
     }
@@ -74,33 +108,39 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
     }
 
     render() {
+        const traffic = fileSize(this.state.currentTraffic, {
+            standard: 'iec',
+            round: 1,
+        });
+
         return (
             <div className="overview">
                 <div className="banner">
                     <div className="info">
-                        <p>asdasd</p>
+                        <div className="label">TRAFFIC</div>
+                        <div className="traffic">{traffic}/s</div>
                     </div>
 
                     <AreaChart width={450} height={240} data={this.state.traffics}>
-                        <CartesianGrid stroke="#eee" strokeDasharray="5 5" vertical={false} />
+                        <CartesianGrid stroke="rgba(255, 255, 255, 0.08)" strokeDasharray="5 5" vertical={false} />
                         <Legend layout="vertical" width={1} align="right" verticalAlign="top" />
 
                         <Area
-                            type="monotoneX"
+                            type="monotone"
                             dataKey="up"
                             stackId={1}
-                            fill="#8884d8"
-                            stroke="#8884d8"
+                            fill="#80d134"
+                            stroke="#80d134"
                             strokeWidth={0}
                             dot={false}
                             isAnimationActive={false}
                         />
                         <Area
-                            type="monotoneX"
+                            type="monotone"
                             dataKey="down"
                             stackId={1}
-                            fill="#82ca9d"
-                            stroke="#82ca9d"
+                            fill="#1da2d8"
+                            stroke="#1da2d8"
                             strokeWidth={0}
                             dot={false}
                             isAnimationActive={false}
@@ -110,19 +150,13 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
                             width={1}
                             axisLine={false}
                             tickLine={false}
-                            tick={{ dx: 8, dy: 8, fill: 'rgba(0, 0, 0, 0.4)', fontSize: 10, textAnchor: 'start' }}
-                            tickFormatter={formatTraffic}
+                            tick={AxisTickText}
                         />
                     </AreaChart>
                 </div>
             </div>
         );
     }
-}
-
-function formatTraffic(byte: number) {
-    const size = fileSize(byte, { spacer: '', standard: 'iec', round: 0 });
-    return size + '/s';
 }
 
 export default Overview;

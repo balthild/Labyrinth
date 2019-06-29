@@ -1,20 +1,31 @@
 .banner {
     display: flex;
     height: 240px;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
     overflow: hidden;
     background: #f7f7f8;
     
     .info {
-        padding: 16px 12px;
-        background: #000;
+        padding: 24px 20px 0;
+        background: linear-gradient(to top, #141e30, #243b55);
         color: #fff;
         flex-grow: 1;
+
+        .label {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .traffic {
+            margin-top: 8px;
+            font-size: 20px;
+        }
     }
 
     .recharts-wrapper {
         font-size: 12px;
+        background: linear-gradient(to top, #141e30, #243b55);
     }
 
     ul.recharts-default-legend {
@@ -30,7 +41,7 @@
 
             .recharts-legend-item-text {
                 margin: 0 4px;
-                color: rgba(0, 0, 0, 0.6);
+                color: rgba(255, 255, 255, 0.4);
             }
         }
     }
