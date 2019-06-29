@@ -3,5 +3,35 @@
     height: 240px;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
+    overflow: hidden;
     background: #f7f7f8;
+    
+    .info {
+        padding: 16px 12px;
+        background: #000;
+        color: #fff;
+        flex-grow: 1;
+    }
+
+    .recharts-wrapper {
+        font-size: 12px;
+    }
+
+    ul.recharts-default-legend {
+        width: 100px;
+        position: absolute;
+        right: 0;
+
+        li.recharts-legend-item {
+            margin-right: 0 !important;
+            display: flex !important;
+            align-items: flex-end;
+            flex-direction: row-reverse;
+
+            .recharts-legend-item-text {
+                margin: 0 4px;
+                color: rgba(0, 0, 0, 0.6);
+            }
+        }
+    }
 }

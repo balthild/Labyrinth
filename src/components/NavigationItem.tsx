@@ -2,7 +2,7 @@ import React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
-import { Action, ActionTypes, GlobalState } from '@/state';
+import { Action, ActionTypes, GlobalState } from '@/store';
 
 type Props = {
     current: string;

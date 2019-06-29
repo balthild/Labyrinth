@@ -1,4 +1,4 @@
-import { Action as ReduxAction } from 'redux';
+import { Action as ReduxAction, createStore } from 'redux';
 
 export enum ActionTypes {
     NAVIGATE = 'NAVIGATE',
@@ -6,6 +6,7 @@ export enum ActionTypes {
 
 export type GlobalState = {
     currentNavItem?: string;
+    apiListen: string;
 };
 
 export interface Action extends ReduxAction<ActionTypes> {
@@ -14,6 +15,7 @@ export interface Action extends ReduxAction<ActionTypes> {
 
 const initState: GlobalState = {
     currentNavItem: 'overview',
+    apiListen: '127.0.0.1:9090',
 };
 
 export function reducer(state: GlobalState = initState, action: Action): GlobalState {
@@ -25,3 +27,5 @@ export function reducer(state: GlobalState = initState, action: Action): GlobalS
             return state;
     }
 }
+
+export default createStore(reducer);

@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import './Content.scss';
-import { Action, ActionTypes, GlobalState } from '@/state';
+import { Action, ActionTypes, GlobalState } from '@/store';
 import Overview from './Overview';
 
 function renderCurrentContent(current: string) {
