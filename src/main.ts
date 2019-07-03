@@ -15,7 +15,7 @@ function createWindow() {
         width: 900,
         resizable: false,
         maximizable: false,
-        vibrancy: 'menu',
+        vibrancy: 'sidebar',
         backgroundColor: '#00FFFFFF',
         webPreferences: {
             nodeIntegration: true,

@@ -1,0 +1,21 @@
+@keyframes spin {
+    from {
+        transform: rotate(360deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+.loading {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .ion {
+        color: rgba(0, 0, 0, 0.4);
+        font-size: 64px;
+        animation: 3s infinite linear spin;;
+    }
+}

@@ -2,7 +2,7 @@ import React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
-import { Action, ActionTypes, GlobalState } from '@/store';
+import { Action, ActionTypes, GlobalState } from '../store';
 
 type Props = {
     current: string;
@@ -37,7 +37,7 @@ class NavigationItem extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: GlobalState) => ({
-    current: state.currentNavItem,
+    current: state.location,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({

@@ -1,0 +1,73 @@
+.banner {
+    position: relative;
+    height: 240px;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    overflow: hidden;
+    background: linear-gradient(to top, #141e30, #243b55);
+
+    .info {
+        position: absolute;
+        z-index: 1;
+        padding: 24px 20px 0;
+        color: #fff;
+
+        .label {
+            font-size: 12px;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .traffic {
+            margin-top: 8px;
+            font-size: 20px;
+        }
+    }
+
+    .recharts-wrapper {
+        font-size: 12px;
+        // https://github.com/larsenwork/postcss-easing-gradients/issues/6
+        // mask-image: linear-gradient(to right, transparent 100px, ease-in-out, black 200px);
+        mask-image: linear-gradient(
+                to right,
+                transparent 100px,
+                rgba(0, 0, 0, 0.013) 18.1px,
+                rgba(0, 0, 0, 0.049) 115.5px,
+                rgba(0, 0, 0, 0.104) 122.5px,
+                rgba(0, 0, 0, 0.175) 129px,
+                rgba(0, 0, 0, 0.259) 135.3px,
+                rgba(0, 0, 0, 0.352) 141.2px,
+                rgba(0, 0, 0, 0.45) 147.1px,
+                rgba(0, 0, 0, 0.55) 152.9px,
+                rgba(0, 0, 0, 0.648) 158.8px,
+                rgba(0, 0, 0, 0.741) 164.7px,
+                rgba(0, 0, 0, 0.825) 171px,
+                rgba(0, 0, 0, 0.896) 177.5px,
+                rgba(0, 0, 0, 0.951) 184.5px,
+                rgba(0, 0, 0, 0.987) 191.9px,
+                black 200px
+        );
+    }
+
+    .recharts-legend-wrapper {
+        top: 0 !important;
+    }
+
+    ul.recharts-default-legend {
+        display: flex;
+        justify-content: flex-end;
+        padding: 4px !important;
+
+        li.recharts-legend-item {
+            margin-right: 0 !important;
+            display: flex !important;
+            align-items: flex-end;
+            flex-direction: row-reverse;
+
+            .recharts-legend-item-text {
+                margin: 0 4px;
+                color: rgba(255, 255, 255, 0.4);
+            }
+        }
+    }
+}

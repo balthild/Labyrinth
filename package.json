@@ -17,15 +17,18 @@
   "author": "GitHub",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
+    "@types/filesize": "^4.1.0",
     "@types/node": "^12.0.10",
     "@types/react": "^16.8.22",
     "@types/react-dom": "^16.8.4",
     "@types/react-redux": "^7.1.1",
+    "@types/recharts": "^1.1.17",
     "case-sensitive-paths-webpack-plugin": "^2.2.0",
     "cross-env": "^5.2.0",
     "electron": "^5.0.6",
     "laravel-mix": "^4.0.16",
     "node-sass": "^4.12.0",
+    "postcss-easing-gradients": "^3.0.1",
     "resolve-url-loader": "2.3.1",
     "sass-loader": "^7.1.0",
     "ts-loader": "^6.0.4",
@@ -37,8 +40,6 @@
     "typescript": "^3.5.2"
   },
   "dependencies": {
-    "@types/filesize": "^4.1.0",
-    "@types/recharts": "^1.1.17",
     "filesize": "^4.1.2",
     "ionicons": "^4.5.8",
     "react": "^16.8.6",

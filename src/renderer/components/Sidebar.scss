@@ -27,35 +27,32 @@
     border-radius: 3px;
 
     .status-bulb {
-        width: 12px;
-        height: 12px;
-        margin-right: 8px;
-        border-radius: 6px;
+        width: 6px;
+        height: 6px;
+        margin-right: 12px;
+        border-radius: 3px;
 
-        &.running {
-            background: rgba($bulb-green, 0.4);
+        &.starting {
+            background: #ff9800
         }
 
-        &.error {
-            background: rgba($bulb-red, 0.4);
+        &.running {
+            background: #33c733
+        }
+
+        &.stopped {
+            background: #ff5722
         }
 
         &::after {
             content: '';
             display: block;
-            width: 6px;
-            height: 6px;
-            margin: 3px;
-            border-radius: 3px;
+            width: 12px;
+            height: 12px;
+            margin: -3px;
+            border-radius: 6px;
             background: inherit;
-        }
-
-        &.running::after {
-            background: $bulb-green;
-        }
-
-        &.error::after {
-            background: $bulb-red;
+            opacity: 0.5;
         }
     }
 

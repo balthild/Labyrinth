@@ -20,6 +20,7 @@
         border-radius: 12px;
         transform: scale(0.5);
         transform-origin: 0 0;
+        -webkit-app-region: no-drag;
 
         &:first-child {
             margin-left: 0;

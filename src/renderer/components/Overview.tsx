@@ -1,11 +1,11 @@
 import React from 'react';
 import http from 'http';
 import readline from 'readline';
-import { Area, AreaChart, CartesianGrid, Legend, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, YAxis } from 'recharts';
 import fileSize from 'filesize';
 
 import './Overview.scss';
-import { apiUrl } from '@/util';
+import { apiUrl } from '../util';
 
 type AxisTickTextProps = {
     payload: {
@@ -22,12 +22,12 @@ function AxisTickText(props: AxisTickTextProps) {
 
     const textProps = {
         ...props,
-        dx: 8,
+        dx: -16,
         // Magic numbers, don't touch
         dy: props.y < 12 ? 7 : 12,
         fill: 'rgba(255, 255, 255, 0.3)',
         fontSize: 10,
-        textAnchor: 'start',
+        textAnchor: 'end',
     };
 
     return <text {...textProps}>{size}/s</text>;
@@ -38,7 +38,9 @@ type TrafficEntry = {
     down: number;
 };
 
-type OverviewProps = {};
+type OverviewProps = {
+    isVisible: boolean;
+};
 
 type OverviewState = {
     traffics: TrafficEntry[];
@@ -47,7 +49,7 @@ type OverviewState = {
 
 class Overview extends React.Component<OverviewProps, OverviewState> {
     state = {
-        traffics: new Array(60).fill({ up: 0, down: 0 }),
+        traffics: new Array(120).fill({ up: 0, down: 0 }),
         currentTraffic: 0,
     };
 
@@ -103,6 +105,10 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
         this.updateTrafficCharts();
     }
 
+    shouldComponentUpdate(nextProps: Readonly<OverviewProps>, nextState: Readonly<OverviewState>) {
+        return !this.dead && this.props.isVisible || nextProps.isVisible;
+    }
+
     componentWillUnmount() {
         this.dead = true;
     }
@@ -114,45 +120,48 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
         });
 
         return (
-            <div className="overview">
+            <div className="overview" style={this.props.isVisible ? undefined : { display: 'none' }}>
                 <div className="banner">
                     <div className="info">
                         <div className="label">TRAFFIC</div>
                         <div className="traffic">{traffic}/s</div>
                     </div>
 
-                    <AreaChart width={450} height={240} data={this.state.traffics}>
-                        <CartesianGrid stroke="rgba(255, 255, 255, 0.08)" strokeDasharray="5 5" vertical={false} />
-                        <Legend layout="vertical" width={1} align="right" verticalAlign="top" />
+                    <ResponsiveContainer>
+                        <AreaChart height={240} margin={{ bottom: 0 }} data={this.state.traffics}>
+                            <CartesianGrid stroke="rgba(255, 255, 255, 0.08)" strokeDasharray="5 5" vertical={false} />
+                            <Legend layout="horizontal" align="center" verticalAlign="top" />
 
-                        <Area
-                            type="monotone"
-                            dataKey="up"
-                            stackId={1}
-                            fill="#80d134"
-                            stroke="#80d134"
-                            strokeWidth={0}
-                            dot={false}
-                            isAnimationActive={false}
-                        />
-                        <Area
-                            type="monotone"
-                            dataKey="down"
-                            stackId={1}
-                            fill="#1da2d8"
-                            stroke="#1da2d8"
-                            strokeWidth={0}
-                            dot={false}
-                            isAnimationActive={false}
-                        />
+                            <Area
+                                type="monotone"
+                                dataKey="up"
+                                stackId={1}
+                                fill="#80d134"
+                                stroke="#80d134"
+                                strokeWidth={0}
+                                dot={false}
+                                isAnimationActive={false}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="down"
+                                stackId={1}
+                                fill="#1da2d8"
+                                stroke="#1da2d8"
+                                strokeWidth={0}
+                                dot={false}
+                                isAnimationActive={false}
+                            />
 
-                        <YAxis
-                            width={1}
-                            axisLine={false}
-                            tickLine={false}
-                            tick={AxisTickText}
-                        />
-                    </AreaChart>
+                            <YAxis
+                                width={0.0001}
+                                orientation="right"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={AxisTickText}
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
         );
