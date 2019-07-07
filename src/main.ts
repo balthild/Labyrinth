@@ -24,6 +24,10 @@ function createWindow() {
 
     mainWindow.loadFile(path.join(__dirname, '../index.html'));
 
+    if (process.env.NODE_ENV === 'development') {
+        mainWindow.webContents.openDevTools({ mode: 'detach' });
+    }
+
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
