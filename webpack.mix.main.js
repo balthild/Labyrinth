@@ -4,6 +4,9 @@ const TSConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 require('laravel-mix')
   .webpackConfig({
     target: 'electron-main',
+    node: {
+      __dirname: false,
+    },
     module: {
       rules: [
         {
