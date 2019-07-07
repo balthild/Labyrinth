@@ -1,34 +1,8 @@
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const TSConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const target = process.env.MIX_TARGET;
 
-require('laravel-mix')
-  .options({
-    postCss: [
-      // require('postcss-easing-gradients')(),
-    ],
-  })
-  .webpackConfig({
-    target: 'electron-renderer',
-    module: {
-      rules: [
-        {
-          test: /\.(ts|tsx)$/,
-          loader: require.resolve('tslint-loader'),
-          enforce: 'pre',
-          include: require('path').resolve('src'),
-        },
-      ],
-    },
-    plugins: [
-      new CaseSensitivePathsPlugin(),
-    ],
-    resolve: {
-      plugins: [
-        new TSConfigPathsPlugin(),
-      ],
-    },
-  })
-  .setPublicPath('dist')
-  .setResourceRoot('.')
-  .sass('src/vendor.scss', 'dist')
-  .ts('src/renderer', 'dist');
+if (target !== 'renderer' && target !== 'main') {
+  console.error('MIX_TARGET must be renderer or main');
+  process.exit(-1);
+}
+
+require(`./webpack.mix.${target}`);

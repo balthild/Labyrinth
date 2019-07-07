@@ -10,7 +10,7 @@ trim_trailing_whitespace = true
 [src/{**.js,**.ts,**.tsx,**.css,**.scss}]
 indent_size = 4
 
-[webpack.mix.js]
+[webpack.*.js]
 indent_size = 2
 
 [{*.json,*.yml}]

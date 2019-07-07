@@ -9,7 +9,6 @@ git clone https://github.com/balthild/Labyrinth
 cd Labyrinth
 yarn
 yarn build
-yarn app-build
 yarn start
 ```
 

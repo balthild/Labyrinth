@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "description": "A minimal Electron application written with Typescript",
   "scripts": {
-    "build": "tsc --module commonjs",
-    "watch": "tsc --module commonjs -w",
-    "lint": "tslint -c tslint.json -p tsconfig.json",
-    "start": "electron ./dist/main.js",
-    "app-watch": "cross-env NODE_ENV=development webpack --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "app-build": "cross-env NODE_ENV=production webpack --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+    "mix-build": "cross-env NODE_ENV=production webpack --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "mix-watch": "cross-env NODE_ENV=development webpack --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "build-renderer": "cross-env MIX_TARGET=renderer yarn mix-build",
+    "watch-renderer": "cross-env MIX_TARGET=renderer yarn mix-watch",
+    "build-main": "cross-env MIX_TARGET=main yarn mix-build",
+    "watch-main": "cross-env MIX_TARGET=main yarn mix-watch",
+    "build": "yarn build-renderer && yarn build-main",
+    "start": "electron ./dist/main.js"
   },
   "repository": "https://github.com/electron/electron-quick-start-typescript",
   "keywords": [
