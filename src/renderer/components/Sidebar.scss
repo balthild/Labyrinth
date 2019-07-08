@@ -6,15 +6,16 @@
     border-right: 1px solid rgba(0, 0, 8, 0.1);
     padding: 48px 0 12px;
     display: flex;
+    flex-direction: column;
     -webkit-app-region: drag;
 
-    &.vibrancy {
+    .is-mac & {
         background: transparent;
     }
-}
 
-.sidebar {
-    flex-direction: column;
+    .no-drag {
+        -webkit-app-region: no-drag;
+    }
 }
 
 .service-status {
@@ -24,7 +25,10 @@
     margin: 0 20px 20px;
     padding: 5px 0;
     background: rgba(0, 0, 0, 0.06);
-    border-radius: 3px;
+
+    .is-mac & {
+        border-radius: 3px;
+    }
 
     .status-bulb {
         width: 6px;

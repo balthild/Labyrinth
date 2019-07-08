@@ -1,4 +1,5 @@
 import React from 'react';
+import is from 'electron-is';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
@@ -33,8 +34,14 @@ class App extends React.Component<AppProps> {
     }
 
     render() {
+        const platformClasses = [
+            is.macOS() ? 'is-mac' : 'is-not-mac',
+            is.linux() ? 'is-linux' : 'is-not-linux',
+            is.windows() ? 'is-windows' : 'is-not-windows',
+        ].join(' ');
+
         return (
-            <div className="wrapper">
+            <div className={'wrapper ' + platformClasses}>
                 <Sidebar />
                 {this.props.ready ? <Content /> : <Loading />}
             </div>

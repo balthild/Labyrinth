@@ -1,16 +1,12 @@
 import React from 'react';
+import is from 'electron-is';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import os from 'os';
 
 import './Sidebar.scss';
 import { Action, GlobalState, ServiceStatus } from '../store';
 import WindowButtons from './WindowButtons';
 import Navigation from './Navigation';
-
-const platform = os.platform();
-
-const vibrancy = (platform === 'darwin') ? ' vibrancy' : '';
 
 type SidebarProps = {
     status: ServiceStatus,
@@ -38,8 +34,8 @@ const Sidebar: React.FunctionComponent<SidebarProps> = (props) => {
     }
 
     return (
-        <aside className={'sidebar' + vibrancy}>
-            {platform !== 'darwin' && <WindowButtons />}
+        <aside className="sidebar">
+            {!is.macOS() && <WindowButtons />}
 
             <div className="service-status">
                 <div className={'status-bulb ' + statusClassName} />

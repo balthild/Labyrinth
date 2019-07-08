@@ -1,7 +1,4 @@
-@import "../color";
-
 .window-buttons {
-    margin: 12px;
     align-self: flex-start;
     display: flex;
     position: fixed;
@@ -9,51 +6,46 @@
     top: 0;
 
     button {
-        display: block;
-        width: 24px;
-        height: 24px;
-        margin: 0 -12px -12px 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 48px;
+        height: 32px;
         padding: 0;
         outline: none;
-        background: #d0d0d0;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 12px;
-        transform: scale(0.5);
-        transform-origin: 0 0;
+        border: none;
+        background: transparent;
+        transition: 0.05s background-color ease-in;
         -webkit-app-region: no-drag;
 
-        &:first-child {
-            margin-left: 0;
+        &:hover {
+            background: rgba(0, 0, 0, 0.1);
+
+            &:active {
+                background: rgba(0, 0, 0, 0.2);
+            }
         }
 
-        .sign {
-            display: none;
-            width: 24px;
-            height: 24px;
-            text-align: center;
-            font-size: 24px;
-            margin: -1px 0 0 -1px;
-            color: rgba(0, 0, 0, 0.6);
+        svg {
+            width: 10px;
+            height: 10px;
+
+            line {
+                stroke: #000000;
+                transition: 0.05s stroke ease-in;
+            }
         }
     }
 
-    &:hover .sign {
-        display: block;
-    }
-
-    #window-close {
-        background: $bulb-red;
+    #window-close:hover {
+        background: #e81123;
 
         &:active {
-            background: $bulb-red-dark;
+            background: #f1707a;
         }
-    }
 
-    #window-minimize {
-        background: $bulb-yellow;
-
-        &:active {
-            background: $bulb-yellow-dark;
+        svg line {
+            stroke: #ffffff;
         }
     }
 }
