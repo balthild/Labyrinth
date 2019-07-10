@@ -4,11 +4,11 @@ import { ipcRenderer } from 'electron';
 import './WindowButtons.scss';
 
 function closeWindow() {
-    ipcRenderer.send('close');
+    ipcRenderer.send('window-close');
 }
 
 function minimizeWindow() {
-    ipcRenderer.send('minimize');
+    ipcRenderer.send('window-minimize');
 }
 
 const WindowButtons = () => (

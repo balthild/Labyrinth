@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
+import { serviceReady } from '@/service';
 
 let mainWindow: Electron.BrowserWindow | null;
 
@@ -33,19 +34,21 @@ function createWindow() {
     });
 }
 
+function presentWindow() {
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) {
+            mainWindow.restore();
+        }
+        mainWindow.focus();
+    } else {
+        createWindow();
+    }
+}
+
 function runApp() {
     app.on('ready', createWindow);
-
-    app.on('second-instance', () => {
-        if (mainWindow) {
-            if (mainWindow.isMinimized()) {
-                mainWindow.restore();
-            }
-            mainWindow.focus();
-        } else {
-            createWindow();
-        }
-    });
+    app.on('second-instance', presentWindow);
+    app.on('activate', presentWindow);
 
     app.on('window-all-closed', () => {
         if (app.dock) {
@@ -53,23 +56,19 @@ function runApp() {
         }
     });
 
-    app.on('activate', () => {
-        if (mainWindow === null) {
-            createWindow();
-        }
-    });
-
-    ipcMain.on('close', () => {
+    ipcMain.on('window-close', () => {
         if (mainWindow !== null) {
             mainWindow.close();
         }
     });
 
-    ipcMain.on('minimize', () => {
+    ipcMain.on('window-minimize', () => {
         if (mainWindow !== null) {
             mainWindow.minimize();
         }
     });
+
+    serviceReady();
 }
 
 if (app.requestSingleInstanceLock()) {

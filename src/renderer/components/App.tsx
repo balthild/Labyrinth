@@ -10,8 +10,11 @@ import { connect } from 'react-redux';
 
 import './App.scss';
 import { configDirPath, getConfigFilePath } from '@/util';
-import { Config } from '@/types/Config';
-import { Action, ActionTypes, GlobalState, ServiceStatus } from '../store';
+import { ClashConfig } from '@/types/ClashConfig';
+import { ClashController } from '@/types/ClashController';
+import { getControllerUrl, startClash } from '@/renderer/util';
+import { getAppConfig, getClashConfig, getClashController } from '@/renderer/config';
+import { Action, ActionTypes, GlobalState, ServiceStatus } from '@/renderer/store';
 import Sidebar from './Sidebar';
 import Loading from './Loading';
 import Content from './Content';
@@ -20,7 +23,8 @@ import Progress from './Progress';
 
 type AppProps = {
     ready: boolean;
-    initialize(status: ServiceStatus, config: Config): void;
+    updateConfig(status: ServiceStatus, config: ClashConfig): void;
+    initialize(controller: ClashController): void;
 };
 
 type AppState = {
@@ -73,7 +77,7 @@ class App extends React.Component<AppProps, AppState> {
                 stream.on('end', next);
                 stream.resume();
             })
-            .on('finish', function() {
+            .on('finish', function () {
                 file.end();
             });
 
@@ -103,24 +107,28 @@ class App extends React.Component<AppProps, AppState> {
         });
     }
 
-    async ensureDefaultConfig() {
-        const path = getConfigFilePath('config.yaml');
-    }
-
     async initialize() {
         await fs.mkdirp(configDirPath);
         await this.ensureGeoLite();
 
-        // TODO
-        this.props.initialize(ServiceStatus.Running, {
-            'port': 0,
-            'socket-port': 0,
-            'redir-port': 0,
-            'allow-lan': false,
-            'mode': 'Rule',
-            'log-level': 'info',
-            'external-controller': 'localhost:9090',
+        const config = await getAppConfig();
+        const controller = await getClashController();
+
+        await startClash();
+
+        this.props.initialize(controller);
+
+        const configUrl = getControllerUrl('/configs');
+
+        await fetch(configUrl, {
+            method: 'PUT',
+            body: JSON.stringify({
+                path: getConfigFilePath(config.configName),
+            }),
         });
+
+        const clashConfig = await fetch(configUrl).then(r => r.json());
+        this.props.updateConfig(ServiceStatus.Running, clashConfig);
     }
 
     componentDidMount(): void {
@@ -162,14 +170,16 @@ const mapStateToProps = (state: GlobalState) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
-    initialize(status: ServiceStatus, config: Config) {
+    updateConfig(status: ServiceStatus, config: ClashConfig) {
         dispatch({
-            type: ActionTypes.UPDATE_SERVICE,
+            type: ActionTypes.UPDATE_CONFIG,
             status, config,
         });
-
+    },
+    initialize(controller: ClashController) {
         dispatch({
-            type: ActionTypes.APP_READY,
+            type: ActionTypes.INITIALIZE,
+            controller,
         });
     },
 });

@@ -18,6 +18,10 @@ require('laravel-mix')
           enforce: 'pre',
           include: require('path').resolve('src'),
         },
+        {
+          test: /\.(yml|yaml)$/i,
+          use: 'raw-loader',
+        },
       ],
     },
     plugins: [

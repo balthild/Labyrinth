@@ -4,7 +4,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import './Sidebar.scss';
-import { Action, GlobalState, ServiceStatus } from '../store';
+import { Action, GlobalState, ServiceStatus } from '@/renderer/store';
 import WindowButtons from './WindowButtons';
 import Navigation from './Navigation';
 

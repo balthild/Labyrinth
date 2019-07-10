@@ -6,7 +6,7 @@ import fileSize from 'filesize';
 import isPropValid from '@emotion/is-prop-valid';
 
 import './Overview.scss';
-import { apiUrl } from '../util';
+import { getControllerUrl } from '@/renderer/util';
 
 type AxisTickTextProps = {
     payload: {
@@ -63,7 +63,7 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
 
     async updateTrafficCharts() {
         await new Promise((resolve) => {
-            const client = http.get(apiUrl('/traffic'), (response) => {
+            const client = http.get(getControllerUrl('/traffic'), (response) => {
                 response.on('end', resolve);
 
                 const reader = readline.createInterface({

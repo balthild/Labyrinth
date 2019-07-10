@@ -1,10 +1,11 @@
 import { Action as ReduxAction, createStore } from 'redux';
-import { Config } from '@/types/Config';
+import { ClashConfig } from '@/types/ClashConfig';
+import { ClashController } from '@/types/ClashController';
 
 export enum ActionTypes {
-    APP_READY = 'APP_READY',
+    INITIALIZE = 'APP_READY',
+    UPDATE_CONFIG = 'UPDATE_CONFIG',
     NAVIGATE = 'NAVIGATE',
-    UPDATE_SERVICE = 'UPDATE_SERVICE',
 }
 
 export enum ServiceStatus {
@@ -17,51 +18,57 @@ export type GlobalState = {
     ready: boolean;
     location: string;
     status: ServiceStatus;
-    config: Config;
+    config: ClashConfig;
+    controller: ClashController;
 };
 
-type AppReadyAction = ReduxAction<ActionTypes.APP_READY>;
+interface InitializeAction extends ReduxAction<ActionTypes.INITIALIZE> {
+    controller: ClashController;
+}
+
+interface UpdateConfigAction extends ReduxAction<ActionTypes.UPDATE_CONFIG> {
+    status: ServiceStatus;
+    config: ClashConfig;
+}
 
 interface NavigateAction extends ReduxAction<ActionTypes.NAVIGATE> {
     navigateTo: string;
 }
 
-interface UpdateConfigAction extends ReduxAction<ActionTypes.UPDATE_SERVICE> {
-    status: ServiceStatus;
-    config: Config;
-}
-
 export type Action =
-    | AppReadyAction
     | NavigateAction
+    | InitializeAction
     | UpdateConfigAction
     ;
 
 const initState: GlobalState = {
     ready: false,
-    location: 'overview',
     status: ServiceStatus.Starting,
     config: {
         'port': 0,
-        'socket-port': 0,
+        'socks-port': 0,
         'redir-port': 0,
         'allow-lan': false,
         'mode': 'Rule',
         'log-level': 'info',
-        'external-controller': 'localhost:9090',
     },
+    controller: {
+        'external-controller': '',
+        'secret': '',
+    },
+    location: 'overview',
 };
 
 function reducer(state: GlobalState = initState, action: Action): GlobalState {
     switch (action.type) {
-        case ActionTypes.APP_READY:
-            return { ...state, ready: true };
+        case ActionTypes.INITIALIZE:
+            return { ...state, ready: true, controller: action.controller };
+
+        case ActionTypes.UPDATE_CONFIG:
+            return { ...state, status: action.status, config: action.config };
 
         case ActionTypes.NAVIGATE:
             return { ...state, location: action.navigateTo };
-
-        case ActionTypes.UPDATE_SERVICE:
-            return { ...state, status: action.status, config: action.config };
 
         default:
             return state;
