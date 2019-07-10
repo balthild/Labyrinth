@@ -72,7 +72,8 @@ export async function getClashController(): Promise<ClashController> {
         }
     }
 
-    await fs.writeFile(path, require('@/data/config.yaml'));
+    const defaultConfig = require('@/data/config.yaml').default;
+    await fs.writeFile(path, defaultConfig);
 
     return {
         'external-controller': '127.0.0.1:9090',

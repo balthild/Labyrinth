@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-import * as path from 'path';
+import path from 'path';
+import is from 'electron-is';
 import { serviceReady } from '@/service';
 
 let mainWindow: Electron.BrowserWindow | null;
@@ -17,7 +18,8 @@ function createWindow() {
         resizable: false,
         maximizable: false,
         vibrancy: 'sidebar',
-        backgroundColor: '#00FFFFFF',
+        // Remain white background on windows as acrylic material is not available now
+        backgroundColor: is.macOS() ? '#00FFFFFF' : '#FFF',
         webPreferences: {
             nodeIntegration: true,
         },
@@ -67,12 +69,11 @@ function runApp() {
             mainWindow.minimize();
         }
     });
-
-    serviceReady();
 }
 
 if (app.requestSingleInstanceLock()) {
     runApp();
+    serviceReady();
 } else {
     app.quit();
 }

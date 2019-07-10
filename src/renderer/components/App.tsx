@@ -116,6 +116,10 @@ class App extends React.Component<AppProps, AppState> {
 
         await startClash();
 
+        // Recharts 渲染会导致 CSS 动画卡顿, 因此要先等待动画完成再触发渲染
+        // TODO: 找一个用 canvas 而不是 d3/svg 来渲染的图表库. 待选: chartjs
+        await new Promise(resolve => setTimeout(resolve, 200));
+
         this.props.initialize(controller);
 
         const configUrl = getControllerUrl('/configs');
