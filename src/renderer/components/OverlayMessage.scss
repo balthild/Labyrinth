@@ -1,0 +1,54 @@
+.overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s, visibility 0.2s ease;
+
+    .shade {
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        z-index: -1;
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .message-box {
+        width: 540px;
+        margin: 24px auto;
+        padding: 24px 32px;
+        background: #f7f7f8;
+        border-radius: 6px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+        transform: scale(0.95);
+        transition: transform 0.2s ease;
+
+        .is-not-mac & {
+            border-radius: 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+        }
+    }
+
+    .message-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0 0 16px;
+    }
+
+    &.show {
+        opacity: 1;
+        visibility: visible;
+
+        .message-box {
+            transform: scale(1);
+        }
+    }
+}

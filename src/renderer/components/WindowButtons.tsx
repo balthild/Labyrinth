@@ -20,12 +20,9 @@ const WindowButtons = () => (
             </svg>
         </button>
 
-        <button id="window-maximize">
+        <button id="window-maximize" disabled>
             <svg viewBox="0 0 10 10">
-                <line x1="0" y1="0.5" x2="10" y2="0.5" />
-                <line x1="0" y1="9.5" x2="10" y2="9.5" />
-                <line x1="0.5" y1="0" x2="0.5" y2="10" />
-                <line x1="9.5" y1="0" x2="9.5" y2="10" />
+                <rect width={9} height={9} x={0.5} y={0.5} fill="none" />
             </svg>
         </button>
 
@@ -34,7 +31,6 @@ const WindowButtons = () => (
                 <line x1="0" y1="5" x2="10" y2="5" />
             </svg>
         </button>
-
     </div>
 );
 

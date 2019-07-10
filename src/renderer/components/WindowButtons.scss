@@ -15,24 +15,37 @@
         outline: none;
         border: none;
         background: transparent;
-        transition: 0.05s background-color ease-in;
+        transition: 0.1s background-color ease;
         -webkit-app-region: no-drag;
 
-        &:hover {
+        svg {
+            width: 10px;
+            height: 10px;
+            stroke: #000000;
+            transition: 0.1s stroke ease;
+
+            .window-blur & {
+                stroke: rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        &:disabled svg {
+            stroke: rgba(0, 0, 0, 0.3);
+
+            .window-blur & {
+                stroke: rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        &:not(:disabled):hover {
             background: rgba(0, 0, 0, 0.1);
 
             &:active {
                 background: rgba(0, 0, 0, 0.2);
             }
-        }
 
-        svg {
-            width: 10px;
-            height: 10px;
-
-            line {
+            svg {
                 stroke: #000000;
-                transition: 0.05s stroke ease-in;
             }
         }
     }
@@ -44,7 +57,7 @@
             background: #f1707a;
         }
 
-        svg line {
+        svg {
             stroke: #ffffff;
         }
     }

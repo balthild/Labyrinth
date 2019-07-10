@@ -9,6 +9,7 @@ require('laravel-mix')
   })
   .webpackConfig({
     target: 'electron-renderer',
+    devtool: 'source-map',
     module: {
       rules: [
         {

@@ -3,6 +3,7 @@ import http from 'http';
 import readline from 'readline';
 import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, YAxis } from 'recharts';
 import fileSize from 'filesize';
+import isPropValid from '@emotion/is-prop-valid';
 
 import './Overview.scss';
 import { apiUrl } from '../util';
@@ -15,13 +16,13 @@ type AxisTickTextProps = {
 };
 
 function AxisTickText(props: AxisTickTextProps) {
-    const size = fileSize(props.payload.value, {
-        standard: 'iec',
-        round: 1,
-    });
+    const passingValidProps = {};
+    Object.keys(props)
+        .filter(isPropValid)
+        .forEach(key => passingValidProps[key] = props[key]);
 
     const textProps = {
-        ...props,
+        ...passingValidProps,
         dx: -16,
         // Magic numbers, don't touch
         dy: props.y < 12 ? 7 : 12,
@@ -29,6 +30,11 @@ function AxisTickText(props: AxisTickTextProps) {
         fontSize: 10,
         textAnchor: 'end',
     };
+
+    const size = fileSize(props.payload.value, {
+        standard: 'iec',
+        round: 1,
+    });
 
     return <text {...textProps}>{size}/s</text>;
 }
@@ -56,7 +62,7 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
     dead = false;
 
     async updateTrafficCharts() {
-        await new Promise(resolve => {
+        await new Promise((resolve) => {
             const client = http.get(apiUrl('/traffic'), (response) => {
                 response.on('end', resolve);
 
