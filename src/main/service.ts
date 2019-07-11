@@ -16,6 +16,12 @@ function getClashExecutablePath() {
 
 let clashProcess: ChildProcess | null = null;
 
+process.on('exit', () => {
+    if (clashProcess) {
+        clashProcess.kill();
+    }
+});
+
 export function serviceReady() {
     ipcMain.on('check-clash-started', (event) => {
         const started = clashProcess && !clashProcess.killed;
@@ -33,6 +39,7 @@ export function serviceReady() {
     ipcMain.on('kill-clash', () => {
         if (clashProcess) {
             clashProcess.kill();
+            clashProcess = null;
         }
     });
 }
