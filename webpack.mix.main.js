@@ -5,6 +5,7 @@ require('laravel-mix')
   .webpackConfig({
     target: 'electron-main',
     node: {
+      __filename: false,
       __dirname: false,
     },
     module: {
