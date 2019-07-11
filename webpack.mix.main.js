@@ -26,6 +26,5 @@ require('laravel-mix')
       ],
     },
   })
-  .setPublicPath('dist')
-  .setResourceRoot('.')
-  .ts('src/main', 'dist');
+  .setPublicPath('build')
+  .ts('src/main', 'build');

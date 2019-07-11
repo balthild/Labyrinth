@@ -3,15 +3,19 @@
   "version": "1.0.0",
   "description": "A minimal Electron application written with Typescript",
   "scripts": {
-    "mix-build": "cross-env NODE_ENV=production webpack --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "mix-watch": "cross-env NODE_ENV=development webpack --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "build-renderer": "cross-env MIX_TARGET=renderer yarn mix-build",
-    "watch-renderer": "cross-env MIX_TARGET=renderer yarn mix-watch",
-    "build-main": "cross-env MIX_TARGET=main yarn mix-build",
-    "watch-main": "cross-env MIX_TARGET=main yarn mix-watch",
-    "build": "yarn build-renderer && yarn build-main",
-    "start": "electron ./dist/main.js"
+    "mix:build": "cross-env NODE_ENV=production webpack --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "mix:watch": "cross-env NODE_ENV=development webpack --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "build:renderer": "cross-env MIX_TARGET=renderer yarn mix:build",
+    "watch:renderer": "cross-env MIX_TARGET=renderer yarn mix:watch",
+    "build:main": "cross-env MIX_TARGET=main yarn mix:build",
+    "watch:main": "cross-env MIX_TARGET=main yarn mix:watch",
+    "build": "yarn build:renderer && yarn build:main",
+    "start": "electron ./build/main.js",
+    "dist:dir": "electron-builder --dir",
+    "dist:pkg": "electron-builder"
   },
+  "main": "build/main.js",
+  "postinstall": "electron-builder install-app-deps",
   "repository": "https://github.com/electron/electron-quick-start-typescript",
   "keywords": [
     "Electron"
@@ -30,6 +34,8 @@
     "@types/tar-stream": "^1.6.1",
     "case-sensitive-paths-webpack-plugin": "^2.2.0",
     "cross-env": "^5.2.0",
+    "electron": "^6.0.0-beta.12",
+    "electron-builder": "^20.44.4",
     "laravel-mix": "^4.0.16",
     "node-sass": "^4.12.0",
     "postcss-easing-gradients": "^3.0.1",
@@ -47,7 +53,6 @@
   "dependencies": {
     "@emotion/is-prop-valid": "^0.8.2",
     "@maxmind/geoip2-node": "^0.6.0",
-    "electron": "^6.0.0-beta.12",
     "electron-is": "^3.0.0",
     "filesize": "^4.1.2",
     "fs-extra": "^8.1.0",
@@ -59,5 +64,30 @@
     "recharts": "^1.6.2",
     "redux": "^4.0.1",
     "tar-stream": "^2.1.0"
+  },
+  "build": {
+    "appId": "com.electron.labyrinth",
+    "productName": "Labyrinth",
+    "files": [
+      "./index.html",
+      "./build/main.js",
+      "./build/renderer.js",
+      "./build/vendor.css",
+      "./build/fonts/**/*.woff2"
+    ],
+    "extraResources": [
+      {
+        "from": "./build/bin/clash-${platform}-${arch}",
+        "to": "./bin/clash-${platform}-${arch}"
+      }
+    ],
+    "win": {
+      "extraResources": [
+        {
+          "from": "./build/bin/clash-${platform}-${arch}.exe",
+          "to": "./bin/clash-${platform}-${arch}.exe"
+        }
+      ]
+    }
   }
 }

@@ -33,7 +33,7 @@ require('laravel-mix')
       ],
     },
   })
-  .setPublicPath('dist')
+  .setPublicPath('build')
   .setResourceRoot('.')
-  .sass('src/vendor.scss', 'dist')
-  .ts('src/renderer', 'dist');
+  .sass('src/vendor.scss', 'build')
+  .ts('src/renderer', 'build');

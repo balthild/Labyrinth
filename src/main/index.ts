@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import is from 'electron-is';
-import { serviceReady } from '@/service';
+import { serviceReady } from './service';
 
 let mainWindow: Electron.BrowserWindow | null;
 
@@ -25,9 +25,9 @@ function createWindow() {
         },
     });
 
-    mainWindow.loadFile(path.join(__dirname, '../index.html'));
+    mainWindow.loadFile(path.join(__dirname, '..', 'index.html'));
 
-    if (process.env.NODE_ENV === 'development') {
+    if (is.dev()) {
         mainWindow.webContents.openDevTools({ mode: 'detach' });
     }
 

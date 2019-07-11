@@ -8,7 +8,10 @@ function getClashExecutablePath() {
         name += '.exe';
     }
 
-    return path.join(__dirname, 'bin', name);
+    const packed = __filename.split(path.sep).includes('app.asar');
+    const resourceDir = packed ? '../..' : '.';
+
+    return path.join(__dirname, resourceDir, 'bin', name);
 }
 
 let clashProcess: ChildProcess | null = null;
