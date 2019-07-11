@@ -23,6 +23,8 @@
   "author": "GitHub",
   "license": "GPL-3.0-or-later",
   "devDependencies": {
+    "@emotion/is-prop-valid": "^0.8.2",
+    "@maxmind/geoip2-node": "^0.6.0",
     "@types/filesize": "^4.1.0",
     "@types/fs-extra": "^8.0.0",
     "@types/js-yaml": "^3.12.1",
@@ -36,12 +38,23 @@
     "cross-env": "^5.2.0",
     "electron": "^6.0.0-beta.12",
     "electron-builder": "^20.44.4",
+    "electron-is": "^3.0.0",
+    "filesize": "^4.1.2",
+    "fs-extra": "^8.1.0",
+    "ionicons": "^4.5.8",
+    "js-yaml": "^3.13.1",
     "laravel-mix": "^4.0.16",
     "node-sass": "^4.12.0",
     "postcss-easing-gradients": "^3.0.1",
     "raw-loader": "^3.0.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0",
+    "recharts": "^1.6.2",
+    "redux": "^4.0.1",
     "resolve-url-loader": "2.3.1",
     "sass-loader": "^7.1.0",
+    "tar-stream": "^2.1.0",
     "ts-loader": "^6.0.4",
     "tsconfig-paths-webpack-plugin": "^3.2.0",
     "tslint": "^5.18.0",
@@ -50,44 +63,5 @@
     "tslint-react": "^4.0.0",
     "typescript": "^3.5.2"
   },
-  "dependencies": {
-    "@emotion/is-prop-valid": "^0.8.2",
-    "@maxmind/geoip2-node": "^0.6.0",
-    "electron-is": "^3.0.0",
-    "filesize": "^4.1.2",
-    "fs-extra": "^8.1.0",
-    "ionicons": "^4.5.8",
-    "js-yaml": "^3.13.1",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-redux": "^7.1.0",
-    "recharts": "^1.6.2",
-    "redux": "^4.0.1",
-    "tar-stream": "^2.1.0"
-  },
-  "build": {
-    "appId": "com.electron.labyrinth",
-    "productName": "Labyrinth",
-    "files": [
-      "./index.html",
-      "./build/main.js",
-      "./build/renderer.js",
-      "./build/vendor.css",
-      "./build/fonts/**/*.woff2"
-    ],
-    "extraResources": [
-      {
-        "from": "./build/bin/clash-${platform}-${arch}",
-        "to": "./bin/clash-${platform}-${arch}"
-      }
-    ],
-    "win": {
-      "extraResources": [
-        {
-          "from": "./build/bin/clash-${platform}-${arch}.exe",
-          "to": "./bin/clash-${platform}-${arch}.exe"
-        }
-      ]
-    }
-  }
+  "dependencies": {}
 }

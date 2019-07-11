@@ -1,0 +1,24 @@
+appId: com.electron.labyrinth
+productName: Labyrinth
+
+files:
+  - "./index.html"
+  - "./build/main.js"
+  - "./build/renderer.js"
+  - "./build/vendor.css"
+  - "./build/fonts/**/*.woff2"
+
+linux:
+  extraResources:
+    - from: "./build/bin/clash-linux-${arch}"
+      to: "./bin/clash-linux-${arch}"
+
+mac:
+  extraResources:
+    - from: "./build/bin/clash-darwin-${arch}"
+      to: "./bin/clash-darwin-${arch}"
+
+win:
+  extraResources:
+    - from: "./build/bin/clash-win32-${arch}.exe"
+      to: "./bin/clash-win32-${arch}.exe"
