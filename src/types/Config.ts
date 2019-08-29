@@ -1,3 +1,3 @@
 export type Config = {
-    configName: string;
+    configFile: string;
 };

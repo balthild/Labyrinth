@@ -11,21 +11,24 @@ import { connect } from 'react-redux';
 import './App.scss';
 import { configDirPath, getConfigFilePath } from '@/util';
 import { ClashConfig } from '@/types/ClashConfig';
+import { Config } from '@/types/Config';
 import { ClashController } from '@/types/ClashController';
-import { getControllerUrl, startClash } from '@/renderer/util';
-import { getAppConfig, getClashConfig, getClashController } from '@/renderer/config';
-import { Action, ActionTypes, GlobalState, ServiceStatus } from '@/renderer/store';
-import Sidebar from './Sidebar';
-import Loading from './Loading';
-import Content from './Content';
-import OverlayMessage from './OverlayMessage';
-import Progress from './Progress';
-import Timeout = NodeJS.Timeout;
+import { getControllerUrl, startClash } from './util';
+import { getAppConfig, getClashController } from './config';
+import { Action, ActionTypes, GlobalState, ServiceStatus } from './store';
+import Sidebar from './components/Sidebar';
+import Loading from './components/Loading';
+import OverlayMessage from './components/OverlayMessage';
+import Progress from './components/Progress';
+import Overview from './pages/Overview';
+import Profile from './pages/Profile';
 
 type AppProps = {
     ready: boolean;
+    location: string;
     updateConfig(status: ServiceStatus, config: ClashConfig): void;
-    initialize(controller: ClashController): void;
+    updateAppConfig(appConfig: Config): void;
+    serviceReady(controller: ClashController): void;
 };
 
 type AppState = {
@@ -42,8 +45,6 @@ class App extends React.Component<AppProps, AppState> {
         downloadingProgress: 0,
     };
 
-    getConfigTimer: number;
-
     windowFocus = () => {
         this.setState({ isWindowFocused: true });
     };
@@ -52,7 +53,7 @@ class App extends React.Component<AppProps, AppState> {
         this.setState({ isWindowFocused: false });
     };
 
-    getCurrentConfig = async () => {
+    getCurrentClashConfig = async () => {
         const configUrl = getControllerUrl('/configs');
 
         const config = await fetch(configUrl).then(r => r.json());
@@ -131,9 +132,10 @@ class App extends React.Component<AppProps, AppState> {
         // TODO: 找一个用 canvas 而不是 d3/svg 来渲染的图表库. 待选: chartjs
         await new Promise(resolve => setTimeout(resolve, 200));
 
-        this.props.initialize(controller);
+        this.props.updateAppConfig(config);
+        this.props.serviceReady(controller);
 
-        await this.getCurrentConfig();
+        await this.getCurrentClashConfig();
     }
 
     componentDidMount(): void {
@@ -141,15 +143,17 @@ class App extends React.Component<AppProps, AppState> {
         window.addEventListener('focus', this.windowFocus);
 
         this.initialize();
+    }
 
-        this.getConfigTimer = window.setInterval(this.getCurrentConfig, 1000);
+    componentDidUpdate(prevProps: Readonly<AppProps>, prevState: Readonly<AppState>) {
+        if (prevProps.location !== this.props.location) {
+            this.getCurrentClashConfig();
+        }
     }
 
     componentWillUnmount() {
         window.removeEventListener('blur', this.windowBlur);
         window.removeEventListener('focus', this.windowFocus);
-
-        window.clearInterval(this.getConfigTimer);
     }
 
     render() {
@@ -161,11 +165,20 @@ class App extends React.Component<AppProps, AppState> {
 
         const windowClass = this.state.isWindowFocused ? 'window-focus' : 'window-blur';
 
+        const { location } = this.props;
+
         return (
             <div className={`wrapper ${platformClasses} ${windowClass}`}>
                 <Sidebar />
 
-                {this.props.ready ? <Content /> : <Loading />}
+                {this.props.ready ? (
+                    <div className="content">
+                        {/* Recharts 初次渲染开销很大，所以让它保持在 DOM 中，仅使用 CSS 隐藏 */}
+                        <Overview isVisible={location === 'overview'} />
+
+                        {location === 'profile' && <Profile />}
+                    </div>
+                ) : <Loading />}
 
                 <OverlayMessage title="Downloading Maxmind IP Database" isVisible={this.state.downloadingGeoLite}>
                     <Progress ratio={this.state.downloadingProgress} />
@@ -177,6 +190,7 @@ class App extends React.Component<AppProps, AppState> {
 
 const mapStateToProps = (state: GlobalState) => ({
     ready: state.ready,
+    location: state.location,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
@@ -186,9 +200,15 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
             status, config,
         });
     },
-    initialize(controller: ClashController) {
+    updateAppConfig(appConfig: Config) {
         dispatch({
-            type: ActionTypes.INITIALIZE,
+            type: ActionTypes.UPDATE_APP_CONFIG,
+            appConfig,
+        });
+    },
+    serviceReady(controller: ClashController) {
+        dispatch({
+            type: ActionTypes.SERVICE_READY,
             controller,
         });
     },

@@ -230,7 +230,7 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
                     </div>
 
                     <div className="settings-panel">
-                        <div className="label">CONNECTION</div>
+                        <div className="label">PROXY</div>
 
                         <div className="toggle-setting">
                             <span>Allow LAN</span>
@@ -238,7 +238,7 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
                         </div>
 
                         <div className="toggle-setting">
-                            <span>Allow LAN</span>
+                            <span>System Proxy</span>
                             <Switch on={this.props.config['allow-lan']} onClick={this.toggleAllowLan} />
                         </div>
                     </div>

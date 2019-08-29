@@ -10,7 +10,7 @@ export async function getAppConfig(): Promise<Config> {
     let path = getConfigFilePath('labyrinth.json');
 
     const defaultConfig: Config = {
-        configName: 'config.yaml',
+        configFile: 'config.yaml',
     };
 
     if (!await fs.pathExists(path)) {
@@ -24,11 +24,11 @@ export async function getAppConfig(): Promise<Config> {
         ...JSON.parse(data.toString()),
     };
 
-    const clashConfigNames = (await fs.readdir(configDirPath))
+    const clashConfigFiles = (await fs.readdir(configDirPath))
         .filter(name => name.endsWith('yml') || name.endsWith('.yaml'));
 
-    if (!clashConfigNames.includes(config.configName)) {
-        config.configName = 'config.yaml';
+    if (!clashConfigFiles.includes(config.configFile)) {
+        config.configFile = 'config.yaml';
         await fs.writeFile(path, config);
     }
 

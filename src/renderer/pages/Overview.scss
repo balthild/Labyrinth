@@ -112,10 +112,10 @@
             color: #157efb;
             padding: 2px 12px;
             margin-right: 12px;
-            background: #f0f0f7;
+            background: #e9e9f3;
             border-radius: 99px;
             cursor: pointer;
-            transition: background-color .2s ease-in-out;
+            transition: background-color .2s ease-in-out, color .2s ease-in-out;
 
             &:active {
                 background: #cdcdd3;

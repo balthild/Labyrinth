@@ -26,6 +26,7 @@ export function serviceReady() {
     ipcMain.on('start-clash', (event, id) => {
         if (clashProcess && !clashProcess.killed) {
             event.reply('start-clash-reply-' + id);
+            return;
         }
 
         clashProcess = spawn(getClashExecutablePath(), {
