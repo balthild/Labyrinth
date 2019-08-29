@@ -1,4 +1,5 @@
 import { ipcRenderer } from 'electron';
+import { randomBytes } from 'crypto';
 
 import store, { GlobalState } from './store';
 
@@ -13,22 +14,15 @@ export function getControllerUrl(path: string): string {
     return `http://${listen}${path}`;
 }
 
-export async function startClash() {
-    const started = await new Promise((resolve) => {
-        ipcRenderer.once('check-clash-started-reply', (event, reply: boolean) => {
-            resolve(reply);
-        });
-        ipcRenderer.send('check-clash-started');
-    });
+export function startClash() {
+    const id = randomBytes(4).toString('hex');
 
-    if (started) {
-        return;
-    }
-
-    await new Promise((resolve) => {
-        ipcRenderer.once('start-clash-reply', (event, reply: string) => {
-            resolve(reply);
-        });
-        ipcRenderer.send('start-clash');
+    return new Promise((resolve) => {
+        ipcRenderer.once('start-clash-reply-' + id, resolve);
+        ipcRenderer.send('start-clash', id);
     });
+}
+
+export function capitalizeFirstChar(s: string) {
+    return s[0].toUpperCase() + s.slice(1);
 }

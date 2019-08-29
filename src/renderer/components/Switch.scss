@@ -1,0 +1,32 @@
+.switch {
+    width: 36px;
+    height: 20px;
+    border-radius: 10px;
+    border: 1px solid #adb5bd;
+    cursor: pointer;
+    transition: background-color .2s ease-in-out, border-color .2s ease-in-out;
+
+    .switch-inner {
+        margin: 2px;
+        width: 14px;
+        height: 14px;
+        border-radius: 7px;
+        background: #adb5bd;
+        transition: background-color .2s ease-in-out, transform .2s ease-in-out;
+    }
+
+    &:active {
+        background: #b3d7ff;
+        border-color: #b3d7ff;
+    }
+
+    &.on:not(:active) {
+        background: #007bff;
+        border-color: #007bff;
+    }
+
+    &.on .switch-inner {
+        background: white;
+        transform: translateX(16px);
+    }
+}

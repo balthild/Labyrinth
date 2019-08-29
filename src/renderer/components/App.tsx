@@ -20,6 +20,7 @@ import Loading from './Loading';
 import Content from './Content';
 import OverlayMessage from './OverlayMessage';
 import Progress from './Progress';
+import Timeout = NodeJS.Timeout;
 
 type AppProps = {
     ready: boolean;
@@ -41,12 +42,22 @@ class App extends React.Component<AppProps, AppState> {
         downloadingProgress: 0,
     };
 
+    getConfigTimer: number;
+
     windowFocus = () => {
         this.setState({ isWindowFocused: true });
     };
 
     windowBlur = () => {
         this.setState({ isWindowFocused: false });
+    };
+
+    getCurrentConfig = async () => {
+        const configUrl = getControllerUrl('/configs');
+
+        const config = await fetch(configUrl).then(r => r.json());
+
+        this.props.updateConfig(ServiceStatus.Running, config);
     };
 
     async ensureGeoLite() {
@@ -122,29 +133,23 @@ class App extends React.Component<AppProps, AppState> {
 
         this.props.initialize(controller);
 
-        const configUrl = getControllerUrl('/configs');
-
-        await fetch(configUrl, {
-            method: 'PUT',
-            body: JSON.stringify({
-                path: getConfigFilePath(config.configName),
-            }),
-        });
-
-        const clashConfig = await fetch(configUrl).then(r => r.json());
-        this.props.updateConfig(ServiceStatus.Running, clashConfig);
+        await this.getCurrentConfig();
     }
 
     componentDidMount(): void {
-        this.initialize();
-
         window.addEventListener('blur', this.windowBlur);
         window.addEventListener('focus', this.windowFocus);
+
+        this.initialize();
+
+        this.getConfigTimer = window.setInterval(this.getCurrentConfig, 1000);
     }
 
     componentWillUnmount() {
         window.removeEventListener('blur', this.windowBlur);
         window.removeEventListener('focus', this.windowFocus);
+
+        window.clearInterval(this.getConfigTimer);
     }
 
     render() {
@@ -159,9 +164,10 @@ class App extends React.Component<AppProps, AppState> {
         return (
             <div className={`wrapper ${platformClasses} ${windowClass}`}>
                 <Sidebar />
+
                 {this.props.ready ? <Content /> : <Loading />}
 
-                <OverlayMessage title="Downloading Maxmind IP Database" show={this.state.downloadingGeoLite}>
+                <OverlayMessage title="Downloading Maxmind IP Database" isVisible={this.state.downloadingGeoLite}>
                     <Progress ratio={this.state.downloadingProgress} />
                 </OverlayMessage>
             </div>

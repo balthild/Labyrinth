@@ -4,9 +4,14 @@ import readline from 'readline';
 import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, YAxis } from 'recharts';
 import fileSize from 'filesize';
 import isPropValid from '@emotion/is-prop-valid';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
 import './Overview.scss';
-import { getControllerUrl } from '@/renderer/util';
+import { capitalizeFirstChar, getControllerUrl } from '@/renderer/util';
+import { Action, ActionTypes, GlobalState, ServiceStatus } from '@/renderer/store';
+import { ClashConfig } from '@/types/ClashConfig';
+import Switch from '@/renderer/components/Switch';
 
 type AxisTickTextProps = {
     payload: {
@@ -46,6 +51,8 @@ type TrafficEntry = {
 
 type OverviewProps = {
     isVisible: boolean;
+    config: ClashConfig;
+    updateConfig(status: ServiceStatus, config: ClashConfig): void;
 };
 
 type OverviewState = {
@@ -60,6 +67,42 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
     };
 
     dead = false;
+
+    setMode = async (e: React.MouseEvent<HTMLDivElement>) => {
+        const mode = e.currentTarget.textContent!!;
+
+        if (mode === this.props.config.mode) {
+            return;
+        }
+
+        const configUrl = getControllerUrl('/configs');
+        await fetch(configUrl, {
+            method: 'PATCH',
+            body: JSON.stringify({ mode }),
+        });
+
+        this.props.updateConfig(ServiceStatus.Running, {
+            ...this.props.config,
+            mode,
+        });
+    };
+
+    toggleAllowLan = async () => {
+        const allow = !this.props.config['allow-lan'];
+
+        const configUrl = getControllerUrl('/configs');
+        await fetch(configUrl, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                'allow-lan': allow,
+            }),
+        });
+
+        this.props.updateConfig(ServiceStatus.Running, {
+            ...this.props.config,
+            'allow-lan': allow,
+        });
+    };
 
     async updateTrafficCharts() {
         await new Promise((resolve) => {
@@ -125,6 +168,9 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
             round: 1,
         });
 
+        const currentMode = capitalizeFirstChar(this.props.config.mode);
+        const modeClass = (mode: string) => currentMode === mode ? 'current' : '';
+
         return (
             <div className="overview" style={this.props.isVisible ? undefined : { display: 'none' }}>
                 <div className="banner">
@@ -169,9 +215,53 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
+
+                <div className="settings-row">
+                    <div className="settings-panel">
+                        <div className="label">MODE</div>
+
+                        <div className="current-mode">{currentMode}</div>
+
+                        <div className="mode-switcher">
+                            <div className={`mode ${modeClass('Rule')}`} onClick={this.setMode}>Rule</div>
+                            <div className={`mode ${modeClass('Global')}`} onClick={this.setMode}>Global</div>
+                            <div className={`mode ${modeClass('Direct')}`} onClick={this.setMode}>Direct</div>
+                        </div>
+                    </div>
+
+                    <div className="settings-panel">
+                        <div className="label">CONNECTION</div>
+
+                        <div className="toggle-setting">
+                            <span>Allow LAN</span>
+                            <Switch on={this.props.config['allow-lan']} onClick={this.toggleAllowLan} />
+                        </div>
+
+                        <div className="toggle-setting">
+                            <span>Allow LAN</span>
+                            <Switch on={this.props.config['allow-lan']} onClick={this.toggleAllowLan} />
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
 }
 
-export default Overview;
+const mapStateToProps = (state: GlobalState) => ({
+    config: state.config,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
+    updateConfig(status: ServiceStatus, config: ClashConfig) {
+        dispatch({
+            type: ActionTypes.UPDATE_CONFIG,
+            status, config,
+        });
+    },
+});
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps,
+)(Overview);

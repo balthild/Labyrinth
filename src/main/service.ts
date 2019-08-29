@@ -23,17 +23,16 @@ process.on('exit', () => {
 });
 
 export function serviceReady() {
-    ipcMain.on('check-clash-started', (event) => {
-        const started = clashProcess && !clashProcess.killed;
-        event.reply('check-clash-started-reply', started);
-    });
+    ipcMain.on('start-clash', (event, id) => {
+        if (clashProcess && !clashProcess.killed) {
+            event.reply('start-clash-reply-' + id);
+        }
 
-    ipcMain.on('start-clash', (event) => {
         clashProcess = spawn(getClashExecutablePath(), {
             stdio: [null, process.stdout, process.stderr],
         });
 
-        event.reply('start-clash-reply', getClashExecutablePath());
+        event.reply('start-clash-reply-' + id);
     });
 
     ipcMain.on('kill-clash', () => {

@@ -1,10 +1,13 @@
 .banner {
     position: relative;
     height: 240px;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
     overflow: hidden;
     background: linear-gradient(to top, #141e30, #243b55);
+
+    .is-mac & {
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
 
     .info {
         position: absolute;
@@ -69,5 +72,67 @@
                 color: rgba(255, 255, 255, 0.4);
             }
         }
+    }
+}
+
+.settings-row {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    margin-top: 32px;
+
+    .settings-panel {
+        background: #f7f7f8;
+        flex-basis: calc(50% - 10px);
+        padding: 16px 20px;
+
+        .is-mac & {
+            border-radius: 6px;
+        }
+
+        .label {
+            font-size: 12px;
+            font-weight: bold;
+            color: rgba(0, 0, 0, 0.5);
+        }
+    }
+
+    .current-mode {
+        margin-top: 8px;
+        font-size: 20px;
+    }
+
+    .mode-switcher {
+        margin: 12px 0 0;
+        display: flex;
+
+        .mode {
+            font-size: 12px;
+            font-weight: bold;
+            color: #157efb;
+            padding: 2px 12px;
+            margin-right: 12px;
+            background: #f0f0f7;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: background-color .2s ease-in-out;
+
+            &:active {
+                background: #cdcdd3;
+                color: #106ad7;
+            }
+
+            &.current {
+                background: #34cb4a;
+                color: white;
+            }
+        }
+    }
+
+    .toggle-setting {
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 }

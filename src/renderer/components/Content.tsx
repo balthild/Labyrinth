@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 
 import './Content.scss';
 import { Action, ActionTypes, GlobalState } from '@/renderer/store';
-import Overview from './Overview';
+import Overview from './content/Overview';
 
 type ContentProps = {
     location: string;
 };
 
-const Content: React.FunctionComponent<ContentProps> = (props) => (
+const Content: React.FC<ContentProps> = (props) => (
     <div className="content">
         <Overview isVisible={props.location === 'overview'} />
     </div>

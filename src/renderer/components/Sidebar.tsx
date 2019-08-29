@@ -12,26 +12,14 @@ type SidebarProps = {
     status: ServiceStatus,
 };
 
-const Sidebar: React.FunctionComponent<SidebarProps> = (props) => {
-    let statusClassName, statusText;
-    switch (props.status) {
-        case ServiceStatus.Starting:
-            statusClassName = 'starting';
-            statusText = 'Service Starting';
-            break;
+const statusHints = {
+    [ServiceStatus.Starting]: ['starting', 'Service Starting'],
+    [ServiceStatus.Running]: ['running', 'Service Running'],
+    [ServiceStatus.Stopped]: ['stopped', 'Service Stopped'],
+};
 
-        case ServiceStatus.Running:
-            statusClassName = 'running';
-            statusText = 'Service Running';
-            break;
-
-        case ServiceStatus.Stopped:
-            statusClassName = 'stopped';
-            statusText = 'Service Stopped';
-            break;
-
-        default: // Unreachable
-    }
+const Sidebar: React.FC<SidebarProps> = (props) => {
+    const [statusClassName, statusText] = statusHints[props.status];
 
     return (
         <aside className="sidebar">

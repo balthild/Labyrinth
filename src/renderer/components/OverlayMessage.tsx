@@ -3,13 +3,13 @@ import React, { PropsWithChildren } from 'react';
 import './OverlayMessage.scss';
 
 type OverlayMessageProps = {
-    show: boolean;
+    isVisible: boolean;
     title?: string;
     onDismiss?(): void;
 };
 
-const OverlayMessage: React.FunctionComponent<PropsWithChildren<OverlayMessageProps>> = (props) => (
-    <div className={'overlay' + (props.show ? ' show' : '')}>
+const OverlayMessage: React.FC<PropsWithChildren<OverlayMessageProps>> = (props) => (
+    <div className={'overlay' + (props.isVisible ? ' show' : '')}>
         <div className="shade" onClick={props.onDismiss} />
         <div className="message-box">
             {props.title && (
