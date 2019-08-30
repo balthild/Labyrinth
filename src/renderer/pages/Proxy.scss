@@ -1,8 +1,18 @@
+.proxy {
+    position: relative;
+    left: 0;
+    transition: left 0.3s ease-out;
+
+    &.showing-detail {
+        left: -20%;
+    }
+}
+
 ul.clash-proxies {
     display: block;
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 0 0 32px;
 
     li {
         position: relative;
@@ -26,6 +36,10 @@ ul.clash-proxies {
 
             .ion {
                 margin: 0 4px 0 1px;
+            }
+
+            .delay {
+                margin-right: 4px;
             }
         }
 
@@ -53,5 +67,41 @@ ul.clash-proxies {
         &.current .active-sign {
             opacity: 1 !important;
         }
+    }
+}
+
+.proxy-detail-shade {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: black;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+
+    &.open {
+        visibility: visible;
+        opacity: 0.3;
+    }
+}
+
+.proxy-detail {
+    position: absolute;
+    z-index: 2;
+    left: 100%;
+    top: 0;
+    transform: translateX(0);
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background: #fff;
+    padding: 0 36px;
+    transition: transform 0.3s ease-out;
+
+    &.open {
+        transform: translateX(-100%);
     }
 }
