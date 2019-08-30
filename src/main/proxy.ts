@@ -25,12 +25,14 @@ async function macSystemProxyOn(httpPort: number, socksPort: number) {
 
     services.forEach((srv) => {
         if (srv === 'Wi-Fi' || srv.includes('Ethernet') || srv.includes('Airport')) {
-            exec(`networksetup -setwebproxystate '${srv}' on`);
-            exec(`networksetup -setwebproxy '${srv}' 127.0.0.1 ${httpPort}`);
-            exec(`networksetup -setsecurewebproxystate '${srv}' on`);
-            exec(`networksetup -setsecurewebproxy '${srv}' 127.0.0.1 ${httpPort}`);
-            exec(`networksetup -setsocksfirewallproxystate '${srv}' on`);
-            exec(`networksetup -setsocksfirewallproxy '${srv}' 127.0.0.1 ${socksPort}`);
+            exec([
+                `networksetup -setwebproxystate '${srv}' on`,
+                `networksetup -setwebproxy '${srv}' 127.0.0.1 ${httpPort}`,
+                `networksetup -setsecurewebproxystate '${srv}' on`,
+                `networksetup -setsecurewebproxy '${srv}' 127.0.0.1 ${httpPort}`,
+                `networksetup -setsocksfirewallproxystate '${srv}' on`,
+                `networksetup -setsocksfirewallproxy '${srv}' 127.0.0.1 ${socksPort}`,
+            ].join(' && '));
         }
     });
 }
@@ -40,9 +42,11 @@ async function macSystemProxyOff() {
 
     services.forEach((srv) => {
         if (srv === 'Wi-Fi' || srv.includes('Ethernet') || srv.includes('Airport')) {
-            exec(`networksetup -setwebproxystate '${srv}' off`);
-            exec(`networksetup -setsecurewebproxystate '${srv}' off`);
-            exec(`networksetup -setsocksfirewallproxystate '${srv}' off`);
+            exec([
+                `networksetup -setwebproxystate '${srv}' off`,
+                `networksetup -setsecurewebproxystate '${srv}' off`,
+                `networksetup -setsocksfirewallproxystate '${srv}' off`,
+            ].join(' && '));
         }
     });
 }
