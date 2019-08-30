@@ -9,7 +9,8 @@ import WindowButtons from './WindowButtons';
 import Navigation from './Navigation';
 
 type SidebarProps = {
-    status: ServiceStatus,
+    clashMode: string;
+    status: ServiceStatus;
 };
 
 const statusHints = {
@@ -30,12 +31,13 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
                 <span className="status-text">{statusText}</span>
             </div>
 
-            <Navigation />
+            <Navigation clashMode={props.clashMode} />
         </aside>
     );
 };
 
 const mapStateToProps = (state: GlobalState) => ({
+    clashMode: state.config.mode,
     status: state.status,
 });
 

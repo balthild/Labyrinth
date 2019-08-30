@@ -1,4 +1,4 @@
-ul.clash-configs {
+ul.clash-proxies {
     display: block;
     list-style: none;
     margin: 0;
@@ -14,9 +14,19 @@ ul.clash-configs {
             font-weight: bold;
         }
 
+        .type {
+            margin-left: 8px;
+            font-size: 12px;
+            color: #aaa;
+        }
+
         .description {
             font-size: 12px;
             color: #888;
+
+            .ion {
+                margin: 0 4px 0 1px;
+            }
         }
 
         .active-sign {

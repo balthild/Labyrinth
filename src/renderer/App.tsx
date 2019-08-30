@@ -21,6 +21,7 @@ import Loading from './components/Loading';
 import OverlayMessage from './components/OverlayMessage';
 import Progress from './components/Progress';
 import Overview from './pages/Overview';
+import Proxy from './pages/Proxy';
 import Profile from './pages/Profile';
 
 type AppProps = {
@@ -176,6 +177,7 @@ class App extends React.Component<AppProps, AppState> {
                         {/* Recharts 初次渲染开销很大，所以让它保持在 DOM 中，仅使用 CSS 隐藏 */}
                         <Overview isVisible={location === 'overview'} />
 
+                        {location === 'proxy' && <Proxy />}
                         {location === 'profile' && <Profile />}
                     </div>
                 ) : <Loading />}
