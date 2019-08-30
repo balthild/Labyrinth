@@ -14,12 +14,12 @@ export function getControllerUrl(path: string): string {
     return `http://${listen}${path}`;
 }
 
-export function startClash() {
+export function ipcSendWithId<T>(channel: string, ...args: unknown[]): Promise<T> {
     const id = randomBytes(4).toString('hex');
 
     return new Promise((resolve) => {
-        ipcRenderer.once('start-clash-reply-' + id, resolve);
-        ipcRenderer.send('start-clash', id);
+        ipcRenderer.once(`${channel}-reply-${id}`, (event, reply) => resolve(reply));
+        ipcRenderer.send(channel, id, ...args);
     });
 }
 

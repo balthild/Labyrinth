@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'path';
 import is from 'electron-is';
 import { serviceReady } from './service';
+import { systemProxyHelper } from '@/main/proxy';
 
 let mainWindow: Electron.BrowserWindow | null;
 
@@ -74,6 +75,7 @@ function runApp() {
 if (app.requestSingleInstanceLock()) {
     runApp();
     serviceReady();
+    systemProxyHelper();
 } else {
     app.quit();
 }

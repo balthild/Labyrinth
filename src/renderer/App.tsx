@@ -13,7 +13,7 @@ import { configDirPath, getConfigFilePath } from '@/util';
 import { ClashConfig } from '@/types/ClashConfig';
 import { Config } from '@/types/Config';
 import { ClashController } from '@/types/ClashController';
-import { getControllerUrl, startClash } from './util';
+import { getControllerUrl, ipcSendWithId } from './util';
 import { getAppConfig, getClashController } from './config';
 import { Action, ActionTypes, GlobalState, ServiceStatus } from './store';
 import Sidebar from './components/Sidebar';
@@ -126,7 +126,7 @@ class App extends React.Component<AppProps, AppState> {
         const config = await getAppConfig();
         const controller = await getClashController();
 
-        await startClash();
+        await ipcSendWithId('start-clash');
 
         // Recharts 渲染会导致 CSS 动画卡顿, 因此要先等待动画完成再触发渲染
         // TODO: 找一个用 canvas 而不是 d3/svg 来渲染的图表库. 待选: chartjs

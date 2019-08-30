@@ -19,7 +19,7 @@ ul.clash-configs {
             color: #aaa;
         }
 
-        .current-sign {
+        .active-sign {
             font-size: 24px;
             color: #157efb;
             position: absolute;
@@ -28,6 +28,20 @@ ul.clash-configs {
             bottom: 0;
             display: flex;
             align-items: center;
+            cursor: pointer;
+            opacity: 0;
+        }
+
+        &:hover .active-sign {
+            opacity: 0.4;
+
+            &:hover {
+                opacity: 0.8;
+            }
+        }
+
+        &.current .active-sign {
+            opacity: 1 !important;
         }
     }
 }

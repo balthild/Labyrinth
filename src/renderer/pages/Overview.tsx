@@ -8,7 +8,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import './Overview.scss';
-import { capitalizeFirstChar, getControllerUrl } from '@/renderer/util';
+import { capitalizeFirstChar, getControllerUrl, ipcSendWithId } from '@/renderer/util';
 import { Action, ActionTypes, GlobalState, ServiceStatus } from '@/renderer/store';
 import { ClashConfig } from '@/types/ClashConfig';
 import Switch from '@/renderer/components/Switch';
@@ -58,12 +58,14 @@ type OverviewProps = {
 type OverviewState = {
     traffics: TrafficEntry[];
     currentTraffic: number;
+    isSystemProxySet: boolean;
 };
 
 class Overview extends React.Component<OverviewProps, OverviewState> {
     state = {
         traffics: new Array(120).fill({ up: 0, down: 0 }),
         currentTraffic: 0,
+        isSystemProxySet: false,
     };
 
     dead = false;
@@ -103,6 +105,29 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
             'allow-lan': allow,
         });
     };
+
+    toggleSystemProxy = async () => {
+        const currentOn = this.state.isSystemProxySet;
+
+        if (currentOn) {
+            await ipcSendWithId('system-proxy-off');
+        } else {
+            const { 'port': httpPort, 'socks-port': socksPort } = this.props.config;
+            await ipcSendWithId('system-proxy-on', httpPort, socksPort);
+        }
+
+        this.setState({
+            isSystemProxySet: !currentOn,
+        });
+    };
+
+    async getSystemProxyStatus() {
+        const on = await ipcSendWithId<boolean>('system-proxy-status');
+console.log('proxy', on);
+        this.setState({
+            isSystemProxySet: on,
+        });
+    }
 
     async updateTrafficCharts() {
         await new Promise((resolve) => {
@@ -151,6 +176,7 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
 
     componentDidMount() {
         this.dead = false;
+        this.getSystemProxyStatus();
         this.updateTrafficCharts();
     }
 
@@ -239,7 +265,7 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
 
                         <div className="toggle-setting">
                             <span>System Proxy</span>
-                            <Switch on={this.props.config['allow-lan']} onClick={this.toggleAllowLan} />
+                            <Switch on={this.state.isSystemProxySet} onClick={this.toggleSystemProxy} />
                         </div>
                     </div>
                 </div>

@@ -3,11 +3,10 @@ import fs from 'fs-extra';
 import { connect } from 'react-redux';
 
 import './Profile.scss';
-import { ClashConfig } from '@/types/ClashConfig';
 import { Config } from '@/types/Config';
 import { configDirPath, getConfigFilePath } from '@/util';
 import PageTitle from '@/renderer/components/PageTitle';
-import { Action, ActionTypes, GlobalState, ServiceStatus } from '@/renderer/store';
+import { Action, ActionTypes, GlobalState } from '@/renderer/store';
 import { Dispatch } from 'redux';
 import { getControllerUrl } from '@/renderer/util';
 
@@ -25,7 +24,7 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
         clashConfigFiles: [],
     };
 
-    setActiveConfig = async (e: React.MouseEvent<HTMLLIElement>) => {
+    setActiveConfig = async (e: React.MouseEvent<HTMLDivElement>) => {
         const filename = e.currentTarget.dataset.filename!!;
         const path = getConfigFilePath(filename);
 
@@ -39,6 +38,8 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
             ...this.props.appConfig,
             configFile: filename,
         });
+
+        await this.loadConfigFiles();
     };
 
     async loadConfigFiles() {
@@ -53,21 +54,21 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
     }
 
     render() {
+        const current = this.props.appConfig.configFile;
+
         return (
             <div className="profile">
                 <PageTitle>Profile</PageTitle>
 
                 <ul className="clash-configs">
                     {this.state.clashConfigFiles.map((name) => (
-                        <li key={name} data-filename={name} onClick={this.setActiveConfig}>
+                        <li key={name} className={name === current ? 'current' : ''}>
                             <div className="name">{name}</div>
                             <div className="description">gasd</div>
 
-                            {this.props.appConfig.configFile === name && (
-                                <div className="current-sign">
-                                    <i className="ion ion-ios-checkmark-circle" />
-                                </div>
-                            )}
+                            <div className="active-sign" data-filename={name} onClick={this.setActiveConfig}>
+                                <i className={`ion ${activeSignIconClass(name, current)}`} />
+                            </div>
                         </li>
                     ))}
                 </ul>
@@ -75,6 +76,11 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
         );
     }
 }
+
+const activeSignIconClass = (config: string, currentConfig: string) =>
+    config === currentConfig ?
+        'ion-ios-checkmark-circle' :
+        'ion-ios-checkmark-circle-outline';
 
 const mapStateToProps = (state: GlobalState) => ({
     config: state.config,
