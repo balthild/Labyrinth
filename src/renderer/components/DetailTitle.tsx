@@ -9,7 +9,7 @@ type DetailTitleProps = {
 const DetailTitle: React.FC<React.PropsWithChildren<DetailTitleProps>> = (props) => (
     <div className="detail-title">
         <div className="back-btn" onClick={props.onBackButtonClick}>
-            <i className="ion ion-ios-arrow-back" />
+            <i className="ion ion-ios-close-circle-outline" />
         </div>
 
         <h2>{props.children}</h2>

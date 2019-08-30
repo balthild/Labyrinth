@@ -1,11 +1,5 @@
 .proxy {
     position: relative;
-    left: 0;
-    transition: left 0.3s ease-out;
-
-    &.showing-detail {
-        left: -20%;
-    }
 }
 
 ul.clash-proxies {
@@ -70,38 +64,42 @@ ul.clash-proxies {
     }
 }
 
-.proxy-detail-shade {
+.detail-overlay {
     position: absolute;
     z-index: 1;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
-    background: black;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s, visibility 0.3s;
+    transition: opacity .2s, visibility 0.2s;
 
-    &.open {
-        visibility: visible;
-        opacity: 0.3;
+    .detail-shade {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: -1;
+        background: rgba(0, 0, 0, 0.3);
     }
-}
 
-.proxy-detail {
-    position: absolute;
-    z-index: 2;
-    left: 100%;
-    top: 0;
-    transform: translateX(0);
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    background: #fff;
-    padding: 0 36px;
-    transition: transform 0.3s ease-out;
+    .detail {
+        position: absolute;
+        transform: scale(0.9);
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        background: #fff;
+        padding: 0 36px;
+        transition: transform 0.3s;
+    }
 
     &.open {
-        transform: translateX(-100%);
+        opacity: 1;
+        visibility: visible;
+
+        .detail {
+            transform: scale(1);
+        }
     }
 }
