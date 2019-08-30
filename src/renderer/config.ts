@@ -7,7 +7,7 @@ import { ClashController } from '@/types/ClashController';
 import { ClashConfig } from '@/types/ClashConfig';
 
 export async function getAppConfig(): Promise<Config> {
-    let path = getConfigFilePath('labyrinth.json');
+    const path = getConfigFilePath('labyrinth.json');
 
     const defaultConfig: Config = {
         configFile: 'config.yaml',
@@ -29,10 +29,15 @@ export async function getAppConfig(): Promise<Config> {
 
     if (!clashConfigFiles.includes(config.configFile)) {
         config.configFile = 'config.yaml';
-        await fs.writeFile(path, config);
+        await fs.writeFile(path, JSON.stringify(config));
     }
 
     return config;
+}
+
+export function writeAppConfig(config: Config): Promise<void> {
+    const path = getConfigFilePath('labyrinth.json');
+    return fs.writeFile(path, JSON.stringify(config));
 }
 
 export async function getClashConfig(name: string): Promise<ClashConfig> {

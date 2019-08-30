@@ -123,7 +123,7 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
 
     async getSystemProxyStatus() {
         const on = await ipcSendWithId<boolean>('system-proxy-status');
-console.log('proxy', on);
+
         this.setState({
             isSystemProxySet: on,
         });

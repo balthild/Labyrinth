@@ -7,7 +7,7 @@ async function macGetNetworkServices() {
         exec('networksetup -listallnetworkservices', (e, stdout, stderr) => resolve(stdout));
     }));
 
-    return output.split('\n').slice(1).filter(srv => srv.trim());
+    return output.split('\n').slice(1).map(srv => srv.trim()).filter(Boolean);
 }
 
 async function macSystemProxyStatus() {
@@ -15,9 +15,7 @@ async function macSystemProxyStatus() {
         exec('networksetup -getwebproxy Wi-Fi', (e, stdout, stderr) => resolve(stdout));
     }));
 
-    const statusText = output.split('\n')[0].trim();
-
-    return statusText === 'Enabled: Yes';
+    return output.split('\n').some(line => line.trim() === 'Enabled: Yes');
 }
 
 async function macSystemProxyOn(httpPort: number, socksPort: number) {

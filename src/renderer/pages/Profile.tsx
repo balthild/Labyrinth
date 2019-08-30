@@ -9,6 +9,7 @@ import PageTitle from '@/renderer/components/PageTitle';
 import { Action, ActionTypes, GlobalState } from '@/renderer/store';
 import { Dispatch } from 'redux';
 import { getControllerUrl } from '@/renderer/util';
+import { writeAppConfig } from '@/renderer/config';
 
 type ProfileProps = {
     appConfig: Config;
@@ -28,18 +29,28 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
         const filename = e.currentTarget.dataset.filename!!;
         const path = getConfigFilePath(filename);
 
+        if (!await fs.pathExists(path)) {
+            await this.loadConfigFiles();
+            return;
+        }
+
         const configUrl = getControllerUrl('/configs');
         await fetch(configUrl, {
             method: 'PUT',
             body: JSON.stringify({ path }),
         });
 
-        this.props.updateAppConfig({
+        const appConfig = {
             ...this.props.appConfig,
             configFile: filename,
-        });
+        };
 
-        await this.loadConfigFiles();
+        this.props.updateAppConfig(appConfig);
+
+        await Promise.all([
+            writeAppConfig(appConfig),
+            this.loadConfigFiles(),
+        ]);
     };
 
     async loadConfigFiles() {
