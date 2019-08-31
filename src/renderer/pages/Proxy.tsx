@@ -27,8 +27,10 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
         detailName: '',
     };
 
-    showDetail = (e: React.MouseEvent<HTMLLIElement>) => {
+    showDetail = async (e: React.MouseEvent<HTMLLIElement>) => {
         const name = e.currentTarget.dataset.name!!;
+
+        await this.loadProxies();
 
         this.setState({
             showDetail: true,
@@ -36,7 +38,9 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
         });
     };
 
-    backToList = (e: React.MouseEvent) => {
+    backToList = async (e: React.MouseEvent) => {
+        await this.loadProxies();
+
         this.setState({
             showDetail: false,
         });
@@ -98,9 +102,32 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
 
         const isSelector = group.type === 'Selector';
 
+        let groupProxies = group.all;
+        if (groupName === 'GLOBAL') {
+            const typeOrders = {
+                'Global': 1,
+                'Direct': 2,
+                'Reject': 3,
+                'URLTest': 10,
+                'Fallback': 10,
+                'LoadBalance': 10,
+                'Selector': 10,
+            };
+
+            groupProxies = group.all.sort((a, b) => {
+                const aType = proxies[a].type;
+                const bType = proxies[b].type;
+
+                const aOrder = typeOrders[aType] || 99;
+                const bOrder = typeOrders[bType] || 99;
+
+                return aOrder - bOrder;
+            });
+        }
+
         return (
             <ul className="clash-proxies">
-                {group.all.map((proxyName) => {
+                {groupProxies.map((proxyName) => {
                     const proxy = proxies[proxyName];
                     const isGroup = groupTypes.includes(proxy.type);
 
