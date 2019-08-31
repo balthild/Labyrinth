@@ -22,8 +22,14 @@ body {
 .content {
     flex-grow: 1;
     height: 100vh;
-    overflow: hidden auto;
+    overflow: hidden;
     background: #ffffff;
-    padding: 0 36px;
     position: relative;
+}
+
+.content-inner {
+    padding: 0 36px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden auto;
 }

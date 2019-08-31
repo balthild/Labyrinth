@@ -198,7 +198,7 @@ class Overview extends React.Component<OverviewProps, OverviewState> {
         const modeClass = (mode: string) => currentMode === mode ? 'current' : '';
 
         return (
-            <div className="overview" style={this.props.isVisible ? undefined : { display: 'none' }}>
+            <div className="overview content-inner" style={this.props.isVisible ? undefined : { display: 'none' }}>
                 <div className="banner">
                     <div className="info">
                         <div className="label">TRAFFIC</div>

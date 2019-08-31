@@ -149,7 +149,7 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
 
         return (
             <>
-                <div className="proxy">
+                <div className="proxy content-inner">
                     <PageTitle>Proxy</PageTitle>
 
                     <ul className="clash-proxies">
@@ -170,7 +170,7 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
 
                 <div className={`detail-overlay ${detailClass}`}>
                     <div className="detail-shade" />
-                    <div className="detail">
+                    <div className="detail content-inner">
                         <DetailTitle onBackButtonClick={this.backToList}>{detailName}</DetailTitle>
 
                         {this.renderGroupDetail(detailName, detailItem)}

@@ -68,7 +68,7 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
         const current = this.props.appConfig.configFile;
 
         return (
-            <div className="profile">
+            <div className="profile content-inner">
                 <PageTitle>Profile</PageTitle>
 
                 <ul className="clash-configs">
