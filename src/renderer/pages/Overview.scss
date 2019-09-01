@@ -125,6 +125,11 @@
             &.current {
                 background: #34cb4a;
                 color: white;
+
+                &:active {
+                    background: #2bad3e;
+                    color: #eee;
+                }
             }
         }
     }

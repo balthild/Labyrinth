@@ -154,11 +154,9 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
                                 ))}
                             </div>
 
-                            {isSelector && (
-                                <div className="active-sign" {...selectorSwitcherProps}>
-                                    <i className={`ion ${activeSignIconClass(proxyName, group.now)}`} />
-                                </div>
-                            )}
+                            <div className="active-sign" {...selectorSwitcherProps}>
+                                <i className={`ion ${activeSignIconClass(proxyName, group.now, isSelector)}`} />
+                            </div>
                         </li>
                     );
                 })}
@@ -202,10 +200,10 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
 
 const groupTypes = ['URLTest', 'Fallback', 'LoadBalance', 'Selector'];
 
-const activeSignIconClass = (config: string, currentConfig: string) =>
+const activeSignIconClass = (config: string, currentConfig: string, isSelector: boolean = true) =>
     config === currentConfig ?
         'ion-ios-checkmark-circle' :
-        'ion-ios-checkmark-circle-outline';
+        isSelector ? 'ion-ios-checkmark-circle-outline' : '';
 
 const mapStateToProps = (state: GlobalState) => ({
     config: state.config,
