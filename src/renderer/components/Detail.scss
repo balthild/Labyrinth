@@ -1,0 +1,69 @@
+.detail-overlay {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s, visibility 0.2s;
+
+    .detail-shade {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: -1;
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .detail {
+        position: absolute;
+        transform: scale(0.9);
+        background: #fff;
+        transition: transform 0.3s;
+
+        .detail-title {
+            padding: 32px 0 8px;
+            border-bottom: 1px solid #e6e6e6;
+            position: relative;
+
+            h2 {
+                font-size: 18px;
+                font-weight: bold;
+                margin: 0;
+                padding: 0;
+                text-align: center;
+            }
+
+            .close-btn {
+                font-size: 24px;
+                color: #157efb;
+                position: absolute;
+                cursor: pointer;
+                transition: color .2s ease-in-out;
+
+                &:active {
+                    color: #106ad7;
+                }
+
+                i {
+                    display: block;
+                    width: 24px;
+                    height: 24px;
+                    line-height: 24px;
+                    text-align: center;
+                }
+            }
+        }
+    }
+
+    &.open {
+        opacity: 1;
+        visibility: visible;
+
+        .detail {
+            transform: scale(1);
+        }
+    }
+}

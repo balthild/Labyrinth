@@ -63,39 +63,3 @@ ul.clash-proxies {
         }
     }
 }
-
-.detail-overlay {
-    position: absolute;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .2s, visibility 0.2s;
-
-    .detail-shade {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        z-index: -1;
-        background: rgba(0, 0, 0, 0.3);
-    }
-
-    .detail {
-        position: absolute;
-        transform: scale(0.9);
-        background: #fff;
-        transition: transform 0.3s;
-    }
-
-    &.open {
-        opacity: 1;
-        visibility: visible;
-
-        .detail {
-            transform: scale(1);
-        }
-    }
-}

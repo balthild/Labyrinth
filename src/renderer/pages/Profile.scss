@@ -45,3 +45,12 @@ ul.clash-configs {
         }
     }
 }
+
+.config-code {
+    width: 100%;
+    overflow-y: auto;
+    word-wrap: break-word;
+    user-select: text;
+    white-space: pre-wrap;
+    margin: 16px 0 32px;
+}

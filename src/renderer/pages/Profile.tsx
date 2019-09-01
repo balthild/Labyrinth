@@ -1,6 +1,8 @@
 import React from 'react';
 import fs from 'fs-extra';
 import { connect } from 'react-redux';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-yaml';
 
 import './Profile.scss';
 import { Config } from '@/types/Config';
@@ -9,7 +11,8 @@ import PageTitle from '@/renderer/components/PageTitle';
 import { Action, ActionTypes, GlobalState } from '@/renderer/store';
 import { Dispatch } from 'redux';
 import { getControllerUrl } from '@/renderer/util';
-import { writeAppConfig } from '@/renderer/config';
+import { getClashConfig, writeAppConfig } from '@/renderer/config';
+import Detail from '@/renderer/components/Detail';
 
 type ProfileProps = {
     appConfig: Config;
@@ -18,11 +21,17 @@ type ProfileProps = {
 
 type ProfileState = {
     clashConfigFiles: string[];
+    showDetail: boolean;
+    detailName: string;
+    detailContent: string;
 };
 
 class Profile extends React.Component<ProfileProps, ProfileState> {
     state = {
         clashConfigFiles: [],
+        showDetail: false,
+        detailName: '',
+        detailContent: '',
     };
 
     setActiveConfig = async (e: React.MouseEvent<HTMLDivElement>) => {
@@ -53,6 +62,25 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
         ]);
     };
 
+    showDetail = async (e: React.MouseEvent<HTMLLIElement>) => {
+        const filename = e.currentTarget.dataset.filename!!;
+        const path = getConfigFilePath(filename);
+        const data = await fs.readFile(path);
+        const content = Prism.highlight(data.toString(), Prism.languages.yaml, 'yaml');
+
+        this.setState({
+            showDetail: true,
+            detailName: filename,
+            detailContent: content,
+        });
+    };
+
+    hideDetail = async (e: React.MouseEvent) => {
+        this.setState({
+            showDetail: false,
+        });
+    };
+
     async loadConfigFiles() {
         const clashConfigFiles = (await fs.readdir(configDirPath))
             .filter(name => name.endsWith('yml') || name.endsWith('.yaml'));
@@ -67,23 +95,36 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
     render() {
         const current = this.props.appConfig.configFile;
 
+        const { showDetail, detailName, detailContent } = this.state;
+
         return (
-            <div className="profile content-inner">
-                <PageTitle>Profile</PageTitle>
+            <>
+                <div className="profile content-inner">
+                    <PageTitle>Profile</PageTitle>
 
-                <ul className="clash-configs">
-                    {this.state.clashConfigFiles.map((name) => (
-                        <li key={name} className={name === current ? 'current' : ''}>
-                            <div className="name">{name}</div>
-                            <div className="description">gasd</div>
+                    <ul className="clash-configs">
+                        {this.state.clashConfigFiles.map((name) => (
+                            <li
+                                key={name}
+                                className={name === current ? 'current' : ''}
+                                data-filename={name}
+                                onClick={this.showDetail}
+                            >
+                                <div className="name">{name}</div>
+                                <div className="description">{/* TODO */}</div>
 
-                            <div className="active-sign" data-filename={name} onClick={this.setActiveConfig}>
-                                <i className={`ion ${activeSignIconClass(name, current)}`} />
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+                                <div className="active-sign" data-filename={name} onClick={this.setActiveConfig}>
+                                    <i className={`ion ${activeSignIconClass(name, current)}`} />
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <Detail isOpened={showDetail} title={detailName} onCloseButtonClick={this.hideDetail}>
+                    <pre className="config-code" dangerouslySetInnerHTML={{ __html: detailContent }} />
+                </Detail>
+            </>
         );
     }
 }

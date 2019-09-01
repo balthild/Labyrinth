@@ -8,7 +8,7 @@ import { ClashConfig } from '@/types/ClashConfig';
 import { Action, GlobalState } from '@/renderer/store';
 import { getControllerUrl } from '@/renderer/util';
 import PageTitle from '@/renderer/components/PageTitle';
-import DetailTitle from '@/renderer/components/DetailTitle';
+import Detail from '@/renderer/components/Detail';
 
 type ProfileProps = {
     config: ClashConfig;
@@ -38,7 +38,7 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
         });
     };
 
-    backToList = async (e: React.MouseEvent) => {
+    hideDetail = async (e: React.MouseEvent) => {
         await this.loadProxies();
 
         this.setState({
@@ -169,9 +169,6 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
     render() {
         const { showDetail, detailName, proxies } = this.state;
 
-        const proxyListClass = showDetail ? 'showing-detail' : '';
-        const detailClass = showDetail ? 'open' : '';
-
         const detailItem = proxies[detailName] as Group;
 
         return (
@@ -195,14 +192,9 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
                     </ul>
                 </div>
 
-                <div className={`detail-overlay ${detailClass}`}>
-                    <div className="detail-shade" />
-                    <div className="detail content-inner">
-                        <DetailTitle onBackButtonClick={this.backToList}>{detailName}</DetailTitle>
-
-                        {this.renderGroupDetail(detailName, detailItem)}
-                    </div>
-                </div>
+                <Detail isOpened={showDetail} title={detailName} onCloseButtonClick={this.hideDetail}>
+                    {this.renderGroupDetail(detailName, detailItem)}
+                </Detail>
             </>
         );
     }
