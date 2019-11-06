@@ -1,0 +1,106 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Labyrinth.ViewModels;assembly=Labyrinth"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+        xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+        mc:Ignorable="d"
+        x:Class="Labyrinth.Views.MainWindow"
+        Name="MainWindow"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Labyrinth" Width="900" Height="600">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <DockPanel>
+        <Panel Name="Title" DockPanel.Dock="Top" Height="100" Background="#111314">
+            <Panel Margin="24">
+                <TextBlock Foreground="White" FontSize="18" Text="Labyrinth" FontWeight="Bold" />
+            </Panel>
+
+            <ItemsControl Name="Tabs" VerticalAlignment="Bottom" Items="{Binding TabItems}" Margin="24,0">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="24" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.Styles>
+                    <Style Selector="Border#Tab">
+                        <Setter Property="Border.Background" Value="Transparent" />
+                        <Setter Property="Border.BorderBrush" Value="Transparent" />
+                        <Setter Property="Border.BorderThickness" Value="0,0,0,3" />
+                        <Setter Property="Border.Padding" Value="0,8,0,5" />
+                        <Setter Property="Border.Cursor" Value="Hand" />
+                    </Style>
+                    <Style Selector="Border#Tab.current">
+                        <Setter Property="Border.BorderBrush" Value="#008eff" />
+                    </Style>
+
+                    <Style Selector="Border#Tab TextBlock">
+                        <Setter Property="TextBlock.HorizontalAlignment" Value="Center" />
+                    </Style>
+
+                    <Style Selector="Border#Tab TextBlock#TabText">
+                        <Setter Property="TextBlock.Foreground" Value="#888888" />
+                    </Style>
+                    <Style Selector="Border#Tab:pointerover TextBlock#TabText">
+                        <Setter Property="TextBlock.Foreground" Value="#cccccc" />
+                    </Style>
+                    <Style Selector="Border#Tab.current TextBlock#TabText">
+                        <Setter Property="TextBlock.Opacity" Value="0" />
+                    </Style>
+
+                    <Style Selector="Border#Tab TextBlock#TabTextCurrent">
+                        <Setter Property="TextBlock.Foreground" Value="#ffffff" />
+                        <Setter Property="TextBlock.FontWeight" Value="Bold" />
+                        <Setter Property="TextBlock.Opacity" Value="0" />
+                    </Style>
+                    <Style Selector="Border#Tab.current TextBlock#TabTextCurrent">
+                        <Setter Property="TextBlock.Opacity" Value="1" />
+                    </Style>
+                </ItemsControl.Styles>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Name="Tab">
+                            <Panel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock Name="TabText" Text="{Binding Name}" />
+                                <TextBlock Name="TabTextCurrent" Text="{Binding Name}" />
+                            </Panel>
+
+                            <i:Interaction.Behaviors>
+                                <!-- Avalonia's built-in event system is broken in XAML -->
+                                <ia:EventTriggerBehavior SourceObject="{Binding #Tab}"
+                                                         EventName="PointerPressed">
+                                    <ia:ChangePropertyAction TargetObject="{Binding #MainWindow.DataContext}"
+                                                             PropertyName="CurrentTabName" Value="{Binding Name}" />
+                                </ia:EventTriggerBehavior>
+
+                                <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                                        Value="{Binding #MainWindow.DataContext.CurrentTabName}">
+                                    <ia:CallMethodAction TargetObject="{Binding #MainWindow.DataContext}"
+                                                         MethodName="AddCurrentTabClass" />
+                                </ia:DataTriggerBehavior>
+                                <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                                        ComparisonCondition="NotEqual"
+                                                        Value="{Binding #MainWindow.DataContext.CurrentTabName}">
+                                    <ia:CallMethodAction TargetObject="{Binding #MainWindow.DataContext}"
+                                                         MethodName="RemoveCurrentTabClass" />
+                                </ia:DataTriggerBehavior>
+                            </i:Interaction.Behaviors>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Panel>
+
+        <StackPanel Margin="24">
+            <TextBlock Name="TB" Text="body" />
+            <Button Name="Btn" Content="asd" />
+        </StackPanel>
+    </DockPanel>
+
+</Window>
