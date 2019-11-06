@@ -16,7 +16,7 @@
     <PackageReference Include="Avalonia" Version="0.9.0-preview5" />
     <PackageReference Include="Avalonia.Desktop" Version="0.9.0-preview5" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.0-preview5" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.9.0-build20191105-01" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.9.0-preview5" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controls" />
