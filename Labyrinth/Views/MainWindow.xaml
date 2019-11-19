@@ -10,16 +10,16 @@
         Name="MainWindow"
         WindowStartupLocation="CenterScreen"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Labyrinth" Width="900" Height="600">
+        Title="Labyrinth" Width="700" Height="500">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
     <DockPanel>
-        <Panel Name="Title" DockPanel.Dock="Top" Height="100" Background="#111314">
-            <Panel Margin="24">
-                <TextBlock Foreground="White" FontSize="18" Text="Labyrinth" FontWeight="Bold" />
+        <Panel Name="Title" Classes="drag" DockPanel.Dock="Top" Height="100" Background="#111314">
+            <Panel Classes="drag" Margin="24">
+                <TextBlock Classes="drag" Foreground="White" FontSize="18" Text="Labyrinth" FontWeight="Bold" />
             </Panel>
 
             <ItemsControl Name="Tabs" VerticalAlignment="Bottom" Items="{Binding TabItems}" Margin="24,0">
@@ -64,30 +64,30 @@
                     </Style>
                 </ItemsControl.Styles>
                 <ItemsControl.ItemTemplate>
+                    <!-- ReSharper disable once Xaml.RedundantResource -->
                     <DataTemplate>
                         <Border Name="Tab">
                             <Panel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                <TextBlock Name="TabText" Text="{Binding Name}" />
-                                <TextBlock Name="TabTextCurrent" Text="{Binding Name}" />
+                                <TextBlock Name="TabText" Text="{Binding}" />
+                                <TextBlock Name="TabTextCurrent" Text="{Binding}" />
                             </Panel>
 
                             <i:Interaction.Behaviors>
-                                <!-- Avalonia's built-in event system is broken in XAML -->
                                 <ia:EventTriggerBehavior SourceObject="{Binding #Tab}"
                                                          EventName="PointerPressed">
                                     <ia:ChangePropertyAction TargetObject="{Binding #MainWindow.DataContext}"
-                                                             PropertyName="CurrentTabName" Value="{Binding Name}" />
+                                                             PropertyName="CurrentTabName" Value="{Binding}" />
                                 </ia:EventTriggerBehavior>
 
-                                <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                <ia:DataTriggerBehavior Binding="{Binding}"
                                                         Value="{Binding #MainWindow.DataContext.CurrentTabName}">
-                                    <ia:CallMethodAction TargetObject="{Binding #MainWindow.DataContext}"
+                                    <ia:CallMethodAction TargetObject="{Binding #MainWindow}"
                                                          MethodName="AddCurrentTabClass" />
                                 </ia:DataTriggerBehavior>
-                                <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                <ia:DataTriggerBehavior Binding="{Binding}"
                                                         ComparisonCondition="NotEqual"
                                                         Value="{Binding #MainWindow.DataContext.CurrentTabName}">
-                                    <ia:CallMethodAction TargetObject="{Binding #MainWindow.DataContext}"
+                                    <ia:CallMethodAction TargetObject="{Binding #MainWindow}"
                                                          MethodName="RemoveCurrentTabClass" />
                                 </ia:DataTriggerBehavior>
                             </i:Interaction.Behaviors>
@@ -97,10 +97,7 @@
             </ItemsControl>
         </Panel>
 
-        <StackPanel Margin="24">
-            <TextBlock Name="TB" Text="body" />
-            <Button Name="Btn" Content="asd" />
-        </StackPanel>
+        <ContentControl Name="TabContent" Content="{Binding CurrentTabContent}" />
     </DockPanel>
 
 </Window>

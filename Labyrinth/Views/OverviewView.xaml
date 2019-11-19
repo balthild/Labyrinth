@@ -1,0 +1,44 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Labyrinth.ViewModels;assembly=Labyrinth"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             mc:Ignorable="d"
+             x:Class="Labyrinth.Views.OverviewView"
+             Name="OverviewView">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <DockPanel Margin="24">
+        <Panel DockPanel.Dock="Bottom" Margin="0,24,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <i:Interaction.Behaviors>
+                    <ia:DataTriggerBehavior Binding="{Binding CurrentMode}" ComparisonCondition="NotEqual" Value="ANY">
+                        <ia:CallMethodAction TargetObject="{Binding #OverviewView}" MethodName="ModeChanged" />
+                    </ia:DataTriggerBehavior>
+                </i:Interaction.Behaviors>
+
+                <RadioButton Name="ModeRule" Classes="linked first" Width="72" GroupName="Mode" Content="Rule"
+                             Command="{Binding ChangeMode}" CommandParameter="Rule" />
+                <RadioButton Name="ModeGlobal" Classes="linked" Width="72" GroupName="Mode" Content="Global"
+                             Command="{Binding ChangeMode}" CommandParameter="Global" />
+                <RadioButton Name="ModeDirect" Classes="linked last" Width="72" GroupName="Mode" Content="Direct"
+                             Command="{Binding ChangeMode}" CommandParameter="Direct" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Width="72" Margin="16,0,0,0" Content="Exit" Click="ExitApp" />
+            </StackPanel>
+        </Panel>
+
+        <Panel Background="#f0f0f0">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Text="TODO: Traffic Graph" FontSize="24" Foreground="#aaaaaa" />
+        </Panel>
+    </DockPanel>
+
+</UserControl>
