@@ -9,6 +9,7 @@
         x:Class="Labyrinth.Views.MainWindow"
         Name="MainWindow"
         WindowStartupLocation="CenterScreen"
+        CanResize="False"
         Icon="/Assets/avalonia-logo.ico"
         Title="Labyrinth" Width="700" Height="500">
 

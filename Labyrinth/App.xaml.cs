@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Labyrinth.Support.Interop;
 using Labyrinth.ViewModels;
 using Labyrinth.Views;
 
@@ -11,8 +12,9 @@ namespace Labyrinth {
         }
 
         public override void OnFrameworkInitializationCompleted() {
-            CreateWindow();
             base.OnFrameworkInitializationCompleted();
+            CreateWindow();
+            RunClash();
         }
 
         private void CreateWindow() {
@@ -20,6 +22,10 @@ namespace Labyrinth {
                 desktop.MainWindow = new MainWindow {
                     DataContext = new MainWindowViewModel()
                 };
+        }
+
+        private void RunClash() {
+            Clash.Start();
         }
     }
 }

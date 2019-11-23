@@ -30,4 +30,22 @@
     <Folder Include="Controls" />
     <Folder Include="Models" />
   </ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsOsPlatform(Linux))">
+    <ContentWithTargetPath Include="Libs\libclashffi.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <TargetPath>libclashffi.so</TargetPath>
+    </ContentWithTargetPath>
+  </ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsOsPlatform(OSX))">
+    <ContentWithTargetPath Include="Libs\libclashffi.dylib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <TargetPath>libclashffi.dylib</TargetPath>
+    </ContentWithTargetPath>
+  </ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsOsPlatform(Windows))">
+    <ContentWithTargetPath Include="Libs\clashffi.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <TargetPath>clashffi.dll</TargetPath>
+    </ContentWithTargetPath>
+  </ItemGroup>
 </Project>

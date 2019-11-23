@@ -10,7 +10,7 @@
              Name="OverviewView">
 
     <Design.DataContext>
-        <vm:MainWindowViewModel />
+        <vm:OverviewViewModel />
     </Design.DataContext>
 
     <DockPanel Margin="24">

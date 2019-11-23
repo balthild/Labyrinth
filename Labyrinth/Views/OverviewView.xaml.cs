@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
@@ -8,6 +9,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Xaml.Interactivity;
 using Labyrinth.Support;
 using Labyrinth.ViewModels;
+using ReactiveUI;
 
 namespace Labyrinth.Views {
     public class OverviewView : UserControl {
