@@ -30,6 +30,9 @@
     <Folder Include="Controls" />
     <Folder Include="Models" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\*" />
+  </ItemGroup>
   <ItemGroup Condition="$([MSBuild]::IsOsPlatform(Linux))">
     <ContentWithTargetPath Include="Libs\libclashffi.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
