@@ -1,9 +1,14 @@
 package main
 
+/*
+#include <stdlib.h>
+*/
+import "C"
+
 import (
-	"C"
 	"fmt"
 	"os"
+	"unsafe"
 
 	"github.com/Dreamacro/clash/config"
 	"github.com/Dreamacro/clash/constant"
@@ -40,6 +45,11 @@ func clash_mmdb_ok() bool {
 
 	_, err = geoip2.Open(constant.Path.MMDB())
 	return err == nil
+}
+
+//export free_cstr
+func free_cstr(str *C.char) {
+	C.free(unsafe.Pointer(str))
 }
 
 func main() {}

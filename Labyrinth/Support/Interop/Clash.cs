@@ -11,11 +11,16 @@ namespace Labyrinth.Support.Interop {
         [DllImport("clashffi", EntryPoint = "clash_mmdb_ok")]
         public static extern bool IsMaxmindDatabaseOk();
 
-        [DllImport("clashffi", EntryPoint = "clash_config_dir", CharSet = CharSet.Ansi)]
+        [DllImport("clashffi", EntryPoint = "clash_config_dir")]
         private static extern IntPtr GetConfigDir();
 
+        [DllImport("clashffi", EntryPoint = "free_cstr")]
+        private static extern void FreeCStr(IntPtr str);
+
         static Clash() {
-            ConfigDir = Marshal.PtrToStringAnsi(GetConfigDir())!;
+            IntPtr configDir = GetConfigDir();
+            ConfigDir = Marshal.PtrToStringAnsi(configDir)!;
+            FreeCStr(configDir);
         }
     }
 }
