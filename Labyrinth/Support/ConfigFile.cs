@@ -1,7 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Labyrinth.Support {
@@ -15,13 +14,13 @@ namespace Labyrinth.Support {
             return resStream.CopyToAsync(fileStream);
         }
 
-        public static async Task ExtractDefaultAppConfig(string path) {
+        public static Task ExtractDefaultAppConfig(string path) {
             const string res = "Labyrinth.Resources.labyrinth.json";
 
             Assembly assembly = Assembly.GetEntryAssembly()!;
-            await using Stream resStream = assembly.GetManifestResourceStream(res)!;
-            await using FileStream fileStream = File.OpenWrite(path);
-            await resStream.CopyToAsync(fileStream);
+            using Stream resStream = assembly.GetManifestResourceStream(res)!;
+            using FileStream fileStream = File.OpenWrite(path);
+            return resStream.CopyToAsync(fileStream);
         }
     }
 }
