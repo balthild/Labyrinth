@@ -1,15 +1,8 @@
-﻿using System;
-using System.Reactive.Linq;
-using System.Runtime.InteropServices;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
-using Avalonia.Xaml.Interactivity;
-using Labyrinth.Support;
-using Labyrinth.ViewModels;
-using ReactiveUI;
 
 namespace Labyrinth.Views {
     public class OverviewView : UserControl {

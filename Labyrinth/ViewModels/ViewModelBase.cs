@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ReactiveUI;
+﻿using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
     public class ViewModelBase : ReactiveObject {
+        public static readonly GlobalState State = new GlobalState();
+
+        public GlobalState GlobalState => State;
     }
 }

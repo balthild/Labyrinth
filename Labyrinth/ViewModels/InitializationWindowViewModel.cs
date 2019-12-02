@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Reactive.Linq;
-using ReactiveUI;
+﻿using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
     public class InitializationWindowViewModel : ViewModelBase {

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Avalonia.Xaml.Interactivity;
-using Labyrinth.Support.Interop;
 
 namespace Labyrinth.Views {
     public class InitializationWindow : BorderlessWindow {

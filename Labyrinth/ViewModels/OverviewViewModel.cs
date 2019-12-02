@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reactive.Linq;
-using ReactiveUI;
+﻿using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
     public class OverviewViewModel : ViewModelBase {

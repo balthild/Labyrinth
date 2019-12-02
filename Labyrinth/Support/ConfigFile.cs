@@ -1,26 +1,24 @@
-﻿using System.IO;
-using System.Net;
-using System.Reflection;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Labyrinth.Support.Interop;
+using Labyrinth.ViewModels;
 
 namespace Labyrinth.Support {
     public static class ConfigFile {
-        public static Task ExtractDefaultClashConfig(string path) {
-            const string res = "Labyrinth.Resources.config.yaml";
+        public static string GetPath(string name) => Path.Combine(Clash.ConfigDir, name);
 
-            Assembly assembly = Assembly.GetEntryAssembly()!;
-            using Stream resStream = assembly.GetManifestResourceStream(res)!;
-            using FileStream fileStream = File.OpenWrite(path);
-            return resStream.CopyToAsync(fileStream);
-        }
+        public static Task ExtractDefaultClashConfig(string path) =>
+            Utils.ExtractResource("Labyrinth.Resources.config.yaml", path);
 
-        public static Task ExtractDefaultAppConfig(string path) {
-            const string res = "Labyrinth.Resources.labyrinth.json";
+        public static IEnumerable<string> GetClashConfigs() =>
+            Directory.EnumerateFiles(Clash.ConfigDir)
+                .Select(x => Path.GetFileName(x)!)
+                .Where(x => x.EndsWith(".yml") || x.EndsWith(".yaml"));
 
-            Assembly assembly = Assembly.GetEntryAssembly()!;
-            using Stream resStream = assembly.GetManifestResourceStream(res)!;
-            using FileStream fileStream = File.OpenWrite(path);
-            return resStream.CopyToAsync(fileStream);
-        }
+        public static Task SaveCurrentAppConfig() =>
+            File.WriteAllTextAsync(GetPath("labyrinth.json"), JsonSerializer.Serialize(ViewModelBase.State.AppConfig));
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.ReactiveUI;
 using Avalonia.Logging.Serilog;
+using Avalonia.ReactiveUI;
 
 namespace Labyrinth {
     class Program {

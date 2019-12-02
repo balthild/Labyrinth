@@ -29,7 +29,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controls" />
-    <Folder Include="Models" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\*" />
