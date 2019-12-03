@@ -1,6 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:Labyrinth.ViewModels;assembly=Labyrinth"
+             xmlns:c="clr-namespace:Labyrinth.Converters;assembly=Labyrinth"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
@@ -12,6 +13,10 @@
     <Design.DataContext>
         <vm:OverviewViewModel />
     </Design.DataContext>
+
+    <UserControl.Resources>
+        <c:ByteSizeConverter x:Key="ByteSizeConverter"/>
+    </UserControl.Resources>
 
     <DockPanel Margin="24">
         <Panel DockPanel.Dock="Bottom" Margin="0,24,0,0">
@@ -36,6 +41,20 @@
         </Panel>
 
         <Panel Background="#f0f0f0">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="8">
+                <StackPanel.Styles>
+                    <Style Selector="TextBlock">
+                        <Setter Property="TextBlock.Foreground" Value="#888888" />
+                    </Style>
+                </StackPanel.Styles>
+
+                <TextBlock Text="▲ " />
+                <TextBlock Text="{Binding CurrentTraffic.Up, Converter={StaticResource ByteSizeConverter}}" />
+                <TextBlock Text="/s    ▼ " />
+                <TextBlock Text="{Binding CurrentTraffic.Down, Converter={StaticResource ByteSizeConverter}}" />
+                <TextBlock Text="/s" />
+            </StackPanel>
+
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
                        Text="TODO: Traffic Graph" FontSize="24" Foreground="#aaaaaa" />
         </Panel>

@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Labyrinth"
              x:Class="Labyrinth.App">
+
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
@@ -50,4 +51,5 @@
             <Setter Property="TextBlock.Foreground" Value="{DynamicResource HighlightForegroundBrush}" />
         </Style>
     </Application.Styles>
+
 </Application>

@@ -10,6 +10,30 @@ namespace Labyrinth.Support {
     public static class Utils {
         private static readonly HttpClient ControllerClient = new HttpClient();
 
+        private static readonly string[] SizeSuffixes = {
+            // long.MaxValue B = 8 EiB
+            "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"
+        };
+
+        public static string BinarySize(long bytes) {
+            if (bytes < 0) {
+                return "Invalid";
+            }
+
+            double num = bytes;
+
+            short i = 0;
+            long breakpoint = 1 << 10;
+            while (i < 6 && breakpoint <= bytes) {
+                i++;
+                breakpoint <<= 10;
+
+                num /= 1024;
+            }
+
+            return $"{num:0.#} {SizeSuffixes[i]}";
+        }
+
         public static async Task ExtractResource(string resource, string path) {
             Assembly assembly = Assembly.GetEntryAssembly()!;
             await using Stream resStream = assembly.GetManifestResourceStream(resource)!;
@@ -33,6 +57,11 @@ namespace Labyrinth.Support {
             }
 
             return ControllerClient.SendAsync(message);
+        }
+
+        public static Task<Stream> RequestStreamController(string path) {
+            var uri = new Uri(path, UriKind.Relative);
+            return ControllerClient.GetStreamAsync(uri);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
@@ -16,29 +17,49 @@ namespace Labyrinth.ViewModels {
             set => this.RaiseAndSetIfChanged(ref currentMode, value);
         }
 
+        private TrafficEntry currentTraffic = new TrafficEntry();
+
+        public TrafficEntry CurrentTraffic {
+            get => currentTraffic;
+            set => this.RaiseAndSetIfChanged(ref currentTraffic, value);
+        }
+
+        private LinkedList<TrafficEntry> trafficsInternal = new LinkedList<TrafficEntry>(new TrafficEntry[60]);
+
+        private ImmutableArray<TrafficEntry> traffics;
+
+        public ImmutableArray<TrafficEntry> Traffics {
+            get => traffics;
+            set => this.RaiseAndSetIfChanged(ref traffics, value);
+        }
+
         public OverviewViewModel() {
-            Task.Run(UpdateTrafficLoop);
+            Task.Factory.StartNew(UpdateTrafficLoop, TaskCreationOptions.LongRunning);
         }
 
         private async Task UpdateTrafficLoop() {
             while (true) {
                 try {
-                    HttpResponseMessage message = await Utils.RequestController(HttpMethod.Get,  "/traffic");
-                    await using Stream stream = await message.Content.ReadAsStreamAsync();
+                    await using Stream stream = await Utils.RequestStreamController("/traffic");
                     using var reader = new StreamReader(stream);
 
                     while (true) {
-                        string line = await reader.ReadLineAsync();
+                        string? line = await reader.ReadLineAsync();
                         if (line == null)
                             continue;
 
                         var traffic = JsonSerializer.Deserialize<TrafficEntry>(line);
-                        // TODO
+
+                        lock (trafficsInternal) {
+                            trafficsInternal.RemoveFirst();
+                            trafficsInternal.AddLast(traffic);
+                            Traffics = trafficsInternal.ToImmutableArray();
+
+                            CurrentTraffic = traffic;
+                        }
                     }
-                } catch (Exception e) {
-                    Console.WriteLine(e);
+                } catch {
                     await Task.Delay(1000);
-                    // ignored
                 }
             }
         }

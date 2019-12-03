@@ -20,10 +20,10 @@ namespace Labyrinth.ViewModels {
 
         private readonly OrderedDictionary tabContents = new OrderedDictionary {
             ["Overview"] = new OverviewViewModel(),
-            ["Proxy"] = new OverviewViewModel(),
-            ["Profile"] = new OverviewViewModel(),
-            ["Log"] = new OverviewViewModel(),
-            ["Settings"] = new OverviewViewModel(),
+            // ["Proxy"] = new OverviewViewModel(),
+            // ["Profile"] = new OverviewViewModel(),
+            // ["Log"] = new OverviewViewModel(),
+            // ["Settings"] = new OverviewViewModel(),
         };
 
         public IEnumerable<string> TabItems => tabContents.Keys.Cast<string>();
