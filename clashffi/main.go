@@ -89,8 +89,8 @@ func clash_mmdb_ok() bool {
 }
 
 //export c_free
-func c_free(ptr uintptr) {
-	C.free(unsafe.Pointer(ptr))
+func c_free(ptr unsafe.Pointer) {
+	C.free(ptr)
 }
 
 func main() {}

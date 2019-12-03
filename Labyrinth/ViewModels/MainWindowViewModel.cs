@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive.Linq;
@@ -13,9 +14,9 @@ namespace Labyrinth.ViewModels {
             set => this.RaiseAndSetIfChanged(ref currentTabName, value);
         }
 
-        private ObservableAsPropertyHelper<ViewModelBase> currentTabContent;
+        private ObservableAsPropertyHelper<ITabContentViewModel> currentTabContent;
 
-        public ViewModelBase CurrentTabContent => currentTabContent.Value;
+        public ITabContentViewModel CurrentTabContent => currentTabContent.Value;
 
         private readonly OrderedDictionary tabContents = new OrderedDictionary {
             ["Overview"] = new OverviewViewModel(),
@@ -28,9 +29,16 @@ namespace Labyrinth.ViewModels {
         public IEnumerable<string> TabItems => tabContents.Keys.Cast<string>();
 
         public MainWindowViewModel() {
-            currentTabContent = this.WhenAnyValue(x => x.CurrentTabName)
-                .Select(x => (ViewModelBase) tabContents[x])
-                .ToProperty(this, nameof(CurrentTabContent));
+            this.WhenAnyValue(x => x.CurrentTabName)
+                .Select(x => (ITabContentViewModel) tabContents[x])
+                .ToProperty(this, nameof(CurrentTabContent), out currentTabContent);
+
+            this.WhenAnyValue(x => x.CurrentTabContent)
+                .Buffer(2, 1)
+                .Subscribe(x => x[0].OnDeactivate());
+
+            this.WhenAnyValue(x => x.CurrentTabContent)
+                .Subscribe(x => x.OnActivate());
         }
     }
 }

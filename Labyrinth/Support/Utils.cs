@@ -23,7 +23,7 @@ namespace Labyrinth.Support {
                 new AuthenticationHeaderValue("Bearer", controller.Secret);
         }
 
-        public static Task<HttpResponseMessage> RequestController(HttpMethod method, string path, string body) {
+        public static Task<HttpResponseMessage> RequestController(HttpMethod method, string path, string body = "") {
             var uri = new Uri(path, UriKind.Relative);
             var message = new HttpRequestMessage(method, uri);
 
