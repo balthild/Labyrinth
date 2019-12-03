@@ -10,11 +10,12 @@ namespace Labyrinth.Support {
     public static class Utils {
         private static readonly HttpClient ControllerClient = new HttpClient();
 
-        public static Task ExtractResource(string resource, string path) {
+        public static async Task ExtractResource(string resource, string path) {
             Assembly assembly = Assembly.GetEntryAssembly()!;
-            using Stream resStream = assembly.GetManifestResourceStream(resource)!;
-            using FileStream fileStream = File.OpenWrite(path);
-            return resStream.CopyToAsync(fileStream);
+            await using Stream resStream = assembly.GetManifestResourceStream(resource)!;
+            await using FileStream fileStream = File.OpenWrite(path);
+            await resStream.CopyToAsync(fileStream).ConfigureAwait(false);
+            // We have to await the Task, otherwise the streams will be disposed after return
         }
 
         public static void UpdateControllerClient(ClashController controller) {
