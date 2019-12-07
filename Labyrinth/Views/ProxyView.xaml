@@ -1,0 +1,39 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Labyrinth.ViewModels;assembly=Labyrinth"
+             xmlns:c="clr-namespace:Labyrinth.Converters;assembly=Labyrinth"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             mc:Ignorable="d"
+             x:Class="Labyrinth.Views.ProxyView"
+             Name="OverviewView">
+
+    <Design.DataContext>
+        <vm:ProxyViewModel />
+    </Design.DataContext>
+
+    <DockPanel Margin="24">
+        <ListBox DockPanel.Dock="Left" Items="{Binding ProxyGroups}" SelectionMode="AlwaysSelected"
+                 Width="160" BorderThickness="0" Padding="0" Background="#f0f0f0">
+            <ListBox.ItemTemplate>
+                <!-- ReSharper disable once Xaml.RedundantResource -->
+                <DataTemplate>
+                    <Border Padding="12,8">
+                        <StackPanel Orientation="Vertical" Spacing="4">
+                            <TextBlock Text="{Binding Name}" FontSize="12" />
+                            <TextBlock Text="{Binding Now}" FontSize="10" Foreground="#66000000" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Panel Background="#f0f0f0" Margin="24,0,0,0">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Text="TODO" FontSize="24" Foreground="#aaaaaa" />
+        </Panel>
+    </DockPanel>
+
+</UserControl>
