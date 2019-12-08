@@ -1,39 +1,138 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:Labyrinth.ViewModels;assembly=Labyrinth"
-             xmlns:c="clr-namespace:Labyrinth.Converters;assembly=Labyrinth"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              mc:Ignorable="d"
              x:Class="Labyrinth.Views.ProxyView"
-             Name="OverviewView">
+             Name="ProxyView">
 
     <Design.DataContext>
         <vm:ProxyViewModel />
     </Design.DataContext>
 
+    <UserControl.Styles>
+        <Style Selector="ListBox">
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ListBox.BorderThickness" Value="0" />
+            <Setter Property="ListBox.Padding" Value="0" />
+            <Setter Property="ListBox.Background" Value="#f0f0f0" />
+            <Setter Property="ListBox.VirtualizationMode" Value="None" />
+        </Style>
+    </UserControl.Styles>
+
     <DockPanel Margin="24">
-        <ListBox DockPanel.Dock="Left" Items="{Binding ProxyGroups}" SelectionMode="AlwaysSelected"
-                 Width="160" BorderThickness="0" Padding="0" Background="#f0f0f0">
+        <ListBox DockPanel.Dock="Left" SelectionMode="AlwaysSelected" Items="{Binding ProxyGroups}" Width="180">
             <ListBox.ItemTemplate>
                 <!-- ReSharper disable once Xaml.RedundantResource -->
                 <DataTemplate>
                     <Border Padding="12,8">
                         <StackPanel Orientation="Vertical" Spacing="4">
                             <TextBlock Text="{Binding Name}" FontSize="12" />
-                            <TextBlock Text="{Binding Now}" FontSize="10" Foreground="#66000000" />
+                            <TextBlock Text="{Binding Now}" FontSize="10" Foreground="#88000000" />
                         </StackPanel>
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+
+            <i:Interaction.Behaviors>
+                <ia:EventTriggerBehavior EventName="SelectionChanged">
+                    <ia:InvokeCommandAction Command="{Binding ShowProxyGroupDetail}" />
+                </ia:EventTriggerBehavior>
+            </i:Interaction.Behaviors>
         </ListBox>
 
-        <Panel Background="#f0f0f0" Margin="24,0,0,0">
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-                       Text="TODO" FontSize="24" Foreground="#aaaaaa" />
-        </Panel>
+        <ListBox Items="{Binding AdaptersInSelectedGroup}" Margin="1,0,0,0">
+            <i:Interaction.Behaviors>
+                <ia:DataTriggerBehavior Binding="{Binding SelectedGroup.Type}" Value="Selector">
+                    <ia:CallMethodAction TargetObject="{Binding #ProxyView}" MethodName="AddSelectorGroupClass" />
+                </ia:DataTriggerBehavior>
+                <ia:DataTriggerBehavior Binding="{Binding SelectedGroup.Type}"
+                                        ComparisonCondition="NotEqual"
+                                        Value="Selector">
+                    <ia:CallMethodAction TargetObject="{Binding #ProxyView}" MethodName="RemoveSelectorGroupClass" />
+                </ia:DataTriggerBehavior>
+            </i:Interaction.Behaviors>
+
+            <ListBox.Styles>
+                <Style Selector="Border#ActiveIndicator">
+                    <Setter Property="Padding" Value="12,0" />
+                    <Setter Property="Opacity" Value="0" />
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+                <Style Selector="Border#ActiveIndicator Canvas">
+                    <Setter Property="Width" Value="16" />
+                    <Setter Property="Height" Value="16" />
+                    <Setter Property="IsVisible" Value="False" />
+                </Style>
+
+                <Style Selector="Border#Adapter.active Border#ActiveIndicator">
+                    <Setter Property="Opacity" Value="1" />
+                </Style>
+                <Style Selector="Border#Adapter.active Border#ActiveIndicator Canvas#Activated">
+                    <Setter Property="IsVisible" Value="True" />
+                </Style>
+
+                <Style Selector="ListBox.selector Border#Adapter:not(.active):pointerover Border#ActiveIndicator">
+                    <Setter Property="Opacity" Value="0.4" />
+                    <Setter Property="Cursor" Value="Hand" />
+                </Style>
+                <Style Selector="ListBox.selector Border#Adapter:not(.active):pointerover Border#ActiveIndicator Canvas#SwitchButton">
+                    <Setter Property="IsVisible" Value="True" />
+                </Style>
+            </ListBox.Styles>
+
+            <ListBox.ItemTemplate>
+                <!-- ReSharper disable once Xaml.RedundantResource -->
+                <DataTemplate>
+                    <Border Name="Adapter" Padding="12,8,0,8" Background="Transparent">
+                        <i:Interaction.Behaviors>
+                            <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                                    Value="{Binding #ProxyView.DataContext.ActiveAdapterInSelectedGroup.Name}">
+                                <ia:CallMethodAction TargetObject="{Binding #ProxyView}"
+                                                     MethodName="AddActiveAdapterClass" />
+                            </ia:DataTriggerBehavior>
+                            <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                                    ComparisonCondition="NotEqual"
+                                                    Value="{Binding #ProxyView.DataContext.ActiveAdapterInSelectedGroup.Name}">
+                                <ia:CallMethodAction TargetObject="{Binding #ProxyView}"
+                                                     MethodName="RemoveActiveAdapterClass" />
+                            </ia:DataTriggerBehavior>
+                        </i:Interaction.Behaviors>
+
+                        <DockPanel>
+                            <Border DockPanel.Dock="Right" Name="ActiveIndicator">
+                                <Panel Width="16" Height="16">
+                                    <Canvas Name="SwitchButton" Width="16" Height="16">
+                                        <Ellipse Width="16" Height="16" Stroke="#88000000" StrokeThickness="1" />
+                                        <Polyline Stroke="#88000000" StrokeThickness="1" Points="3.5,8.5 6.5,11.5 12.5,5.5" />
+                                    </Canvas>
+                                    <Canvas Name="Activated" Width="16" Height="16">
+                                        <Ellipse Width="16" Height="16" Fill="#88000000" />
+                                        <Polyline Stroke="#ffffff" StrokeThickness="1" Points="3.5,8.5 6.5,11.5 12.5,5.5" />
+                                    </Canvas>
+                                </Panel>
+
+                                <i:Interaction.Behaviors>
+                                    <ia:EventTriggerBehavior SourceObject="{Binding #ActiveIndicator}"
+                                                             EventName="PointerReleased">
+                                        <ia:InvokeCommandAction Command="{Binding #ProxyView.DataContext.SwitchSelectorAdapter}"
+                                                                CommandParameter="{Binding Name}"/>
+                                    </ia:EventTriggerBehavior>
+                                </i:Interaction.Behaviors>
+                            </Border>
+
+                            <StackPanel Orientation="Vertical" Spacing="4">
+                                <TextBlock Text="{Binding Name}" FontSize="12" />
+                                <TextBlock Text="{Binding Type}" FontSize="10" Foreground="#88000000" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </DockPanel>
 
 </UserControl>
