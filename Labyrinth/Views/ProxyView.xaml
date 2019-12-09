@@ -19,7 +19,6 @@
             <Setter Property="ListBox.BorderThickness" Value="0" />
             <Setter Property="ListBox.Padding" Value="0" />
             <Setter Property="ListBox.Background" Value="#f0f0f0" />
-            <Setter Property="ListBox.VirtualizationMode" Value="None" />
         </Style>
     </UserControl.Styles>
 
@@ -89,15 +88,20 @@
                 <DataTemplate>
                     <Border Name="Adapter" Padding="12,8,0,8" Background="Transparent">
                         <i:Interaction.Behaviors>
+                            <!--
+                            Binding outer element in DataTemplate via #ElementName will cause memory leaks when there's
+                            items added or removed. Therefore, we should use $parent[ElementType] notation here because
+                            we're expecting the content of this ListBox will change frequently.
+                            -->
                             <ia:DataTriggerBehavior Binding="{Binding Name}"
-                                                    Value="{Binding #ProxyView.DataContext.ActiveAdapterInSelectedGroup.Name}">
-                                <ia:CallMethodAction TargetObject="{Binding #ProxyView}"
+                                                    Value="{Binding $parent[UserControl].DataContext.ActiveAdapterInSelectedGroup.Name}">
+                                <ia:CallMethodAction TargetObject="{Binding $parent[UserControl]}"
                                                      MethodName="AddActiveAdapterClass" />
                             </ia:DataTriggerBehavior>
                             <ia:DataTriggerBehavior Binding="{Binding Name}"
                                                     ComparisonCondition="NotEqual"
-                                                    Value="{Binding #ProxyView.DataContext.ActiveAdapterInSelectedGroup.Name}">
-                                <ia:CallMethodAction TargetObject="{Binding #ProxyView}"
+                                                    Value="{Binding $parent[UserControl].DataContext.ActiveAdapterInSelectedGroup.Name}">
+                                <ia:CallMethodAction TargetObject="{Binding $parent[UserControl]}"
                                                      MethodName="RemoveActiveAdapterClass" />
                             </ia:DataTriggerBehavior>
                         </i:Interaction.Behaviors>
@@ -118,7 +122,7 @@
                                 <i:Interaction.Behaviors>
                                     <ia:EventTriggerBehavior SourceObject="{Binding #ActiveIndicator}"
                                                              EventName="PointerReleased">
-                                        <ia:InvokeCommandAction Command="{Binding #ProxyView.DataContext.SwitchSelectorAdapter}"
+                                        <ia:InvokeCommandAction Command="{Binding $parent[UserControl].DataContext.SwitchSelectorAdapter}"
                                                                 CommandParameter="{Binding Name}"/>
                                     </ia:EventTriggerBehavior>
                                 </i:Interaction.Behaviors>
