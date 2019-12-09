@@ -34,6 +34,9 @@ namespace Labyrinth.Support {
             return $"{num:0.#} {SizeSuffixes[i]}";
         }
 
+        public static string FormatTime(long ts) =>
+            DateTimeOffset.FromUnixTimeSeconds(ts).LocalDateTime.ToString("yyyy'-'MM'-'dd HH':'mm");
+
         public static async Task ExtractResource(string resource, string path) {
             Assembly assembly = Assembly.GetEntryAssembly()!;
             await using Stream resStream = assembly.GetManifestResourceStream(resource)!;

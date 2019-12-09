@@ -21,7 +21,7 @@ namespace Labyrinth.ViewModels {
         private readonly OrderedDictionary tabContents = new OrderedDictionary {
             ["Overview"] = new OverviewViewModel(),
             ["Proxy"] = new ProxyViewModel(),
-            // ["Profile"] = new OverviewViewModel(),
+            ["Profile"] = new ProfileViewModel(),
             // ["Log"] = new OverviewViewModel(),
             // ["Settings"] = new OverviewViewModel(),
         };

@@ -6,11 +6,11 @@
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
              mc:Ignorable="d"
-             x:Class="Labyrinth.Views.ProxyView"
-             Name="ProxyView">
+             x:Class="Labyrinth.Views.ProfileView"
+             Name="ProfileView">
 
     <Design.DataContext>
-        <vm:ProxyViewModel />
+        <vm:ProfileViewModel />
     </Design.DataContext>
 
     <UserControl.Styles>
@@ -23,38 +23,11 @@
     </UserControl.Styles>
 
     <DockPanel Margin="24">
-        <ListBox DockPanel.Dock="Left" SelectionMode="AlwaysSelected" Items="{Binding ProxyGroups}" Width="180">
-            <ListBox.ItemTemplate>
-                <!-- ReSharper disable once Xaml.RedundantResource -->
-                <DataTemplate>
-                    <Border Padding="12,8">
-                        <StackPanel Orientation="Vertical" Spacing="4">
-                            <TextBlock Text="{Binding Name}" FontSize="12" />
-                            <TextBlock Text="{Binding Now}" FontSize="10" Foreground="#88000000" />
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
+        <Panel DockPanel.Dock="Bottom">
+            <TextBlock Text="{Binding ActiveProfileName}" />
+        </Panel>
 
-            <i:Interaction.Behaviors>
-                <ia:EventTriggerBehavior EventName="SelectionChanged">
-                    <ia:InvokeCommandAction Command="{Binding ShowProxyGroupDetail}" />
-                </ia:EventTriggerBehavior>
-            </i:Interaction.Behaviors>
-        </ListBox>
-
-        <ListBox Items="{Binding AdaptersInSelectedGroup}" Margin="1,0,0,0">
-            <i:Interaction.Behaviors>
-                <ia:DataTriggerBehavior Binding="{Binding SelectedGroup.Type}" Value="Selector">
-                    <ia:CallMethodAction TargetObject="{Binding #ProxyView}" MethodName="AddSelectorGroupClass" />
-                </ia:DataTriggerBehavior>
-                <ia:DataTriggerBehavior Binding="{Binding SelectedGroup.Type}"
-                                        ComparisonCondition="NotEqual"
-                                        Value="Selector">
-                    <ia:CallMethodAction TargetObject="{Binding #ProxyView}" MethodName="RemoveSelectorGroupClass" />
-                </ia:DataTriggerBehavior>
-            </i:Interaction.Behaviors>
-
+        <ListBox Items="{Binding Profiles}">
             <ListBox.Styles>
                 <Style Selector="Border#ActiveIndicator">
                     <Setter Property="Padding" Value="12,0" />
@@ -67,18 +40,18 @@
                     <Setter Property="IsVisible" Value="False" />
                 </Style>
 
-                <Style Selector="Border#Adapter.active Border#ActiveIndicator">
+                <Style Selector="Border#Profile.active Border#ActiveIndicator">
                     <Setter Property="Opacity" Value="1" />
                 </Style>
-                <Style Selector="Border#Adapter.active Border#ActiveIndicator Canvas#Activated">
+                <Style Selector="Border#Profile.active Border#ActiveIndicator Canvas#Activated">
                     <Setter Property="IsVisible" Value="True" />
                 </Style>
 
-                <Style Selector="ListBox.selector Border#Adapter:not(.active):pointerover Border#ActiveIndicator">
+                <Style Selector="Border#Profile:not(.active):pointerover Border#ActiveIndicator">
                     <Setter Property="Opacity" Value="0.4" />
                     <Setter Property="Cursor" Value="Hand" />
                 </Style>
-                <Style Selector="ListBox.selector Border#Adapter:not(.active):pointerover Border#ActiveIndicator Canvas#SwitchButton">
+                <Style Selector="Border#Profile:not(.active):pointerover Border#ActiveIndicator Canvas#SwitchButton">
                     <Setter Property="IsVisible" Value="True" />
                 </Style>
             </ListBox.Styles>
@@ -86,23 +59,18 @@
             <ListBox.ItemTemplate>
                 <!-- ReSharper disable once Xaml.RedundantResource -->
                 <DataTemplate>
-                    <Border Name="Adapter" Padding="12,8,0,8" Background="Transparent" Initialized="SetActiveAdapterClass">
+                    <Border Name="Profile" Padding="12,8,0,8" Background="Transparent" Initialized="SetActiveProfileClass">
                         <i:Interaction.Behaviors>
-                            <!--
-                            Binding outer element in DataTemplate via #ElementName will cause memory leaks when there's
-                            items added or removed. Therefore, we should use $parent[ElementType] notation here because
-                            we're expecting the content of this ListBox will change frequently.
-                            -->
                             <ia:DataTriggerBehavior Binding="{Binding Name}"
-                                                    Value="{Binding $parent[UserControl].DataContext.ActiveAdapterInSelectedGroup.Name}">
+                                                    Value="{Binding $parent[UserControl].DataContext.ActiveProfileName}">
                                 <ia:CallMethodAction TargetObject="{Binding $parent[UserControl]}"
-                                                     MethodName="AddActiveAdapterClass" />
+                                                     MethodName="AddActiveProfileClass" />
                             </ia:DataTriggerBehavior>
                             <ia:DataTriggerBehavior Binding="{Binding Name}"
                                                     ComparisonCondition="NotEqual"
-                                                    Value="{Binding $parent[UserControl].DataContext.ActiveAdapterInSelectedGroup.Name}">
+                                                    Value="{Binding $parent[UserControl].DataContext.ActiveProfileName}">
                                 <ia:CallMethodAction TargetObject="{Binding $parent[UserControl]}"
-                                                     MethodName="RemoveActiveAdapterClass" />
+                                                     MethodName="RemoveActiveProfileClass" />
                             </ia:DataTriggerBehavior>
                         </i:Interaction.Behaviors>
 
@@ -122,7 +90,7 @@
                                 <i:Interaction.Behaviors>
                                     <ia:EventTriggerBehavior SourceObject="{Binding #ActiveIndicator}"
                                                              EventName="PointerReleased">
-                                        <ia:InvokeCommandAction Command="{Binding $parent[UserControl].DataContext.SwitchSelectorAdapter}"
+                                        <ia:InvokeCommandAction Command="{Binding $parent[UserControl].DataContext.SwitchProfile}"
                                                                 CommandParameter="{Binding Name}" />
                                     </ia:EventTriggerBehavior>
                                 </i:Interaction.Behaviors>
@@ -130,7 +98,7 @@
 
                             <StackPanel Orientation="Vertical" Spacing="4">
                                 <TextBlock Text="{Binding Name}" FontSize="12" />
-                                <TextBlock Text="{Binding Type}" FontSize="10" Foreground="#88000000" />
+                                <TextBlock Text="{Binding Description}" FontSize="10" Foreground="#88000000" />
                             </StackPanel>
                         </DockPanel>
                     </Border>

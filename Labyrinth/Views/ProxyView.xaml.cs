@@ -1,8 +1,11 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Xaml.Interactivity;
 using JetBrains.Annotations;
+using Labyrinth.Models;
+using Labyrinth.ViewModels;
 
 namespace Labyrinth.Views {
     public class ProxyView : UserControl {
@@ -26,6 +29,14 @@ namespace Labyrinth.Views {
             var behavior = (Behavior) args.Sender;
             var tab = (Control) behavior.AssociatedObject!;
             tab?.Classes.Remove("active");
+        }
+
+        [UsedImplicitly]
+        public void SetActiveAdapterClass(object sender, EventArgs args) {
+            var control = (Control) sender;
+            var adapter = (Adapter) control.DataContext;
+            var vm = (ProxyViewModel) DataContext;
+            control.Classes.Set("active", adapter.Name == vm.ActiveAdapterInSelectedGroup?.Name);
         }
 
         [UsedImplicitly]

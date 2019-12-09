@@ -24,9 +24,9 @@ namespace Labyrinth.ViewModels {
 
         public IEnumerable<Adapter> ProxyGroups => proxyGroups.Value;
 
-        private Adapter? selectedGroup;
+        private Adapter selectedGroup = new Adapter();
 
-        public Adapter? SelectedGroup {
+        public Adapter SelectedGroup {
             get => selectedGroup;
             set => this.RaiseAndSetIfChanged(ref selectedGroup, value);
         }
@@ -48,25 +48,22 @@ namespace Labyrinth.ViewModels {
                 })
                 .ToProperty(this, nameof(ProxyGroups), out proxyGroups);
 
-            this.WhenAnyValue(x => x.SelectedGroup!.All, x => x.AllAdapters)
-                .Select(tuple => tuple.Item1?.Select(name => tuple.Item2[name]) ?? Enumerable.Empty<Adapter>())
+            this.WhenAnyValue(x => x.SelectedGroup.All, x => x.AllAdapters)
+                .Select(tuple => tuple.Item1.Select(name => tuple.Item2.GetValueOrDefault(name)!))
                 .ToProperty(this, nameof(AdaptersInSelectedGroup), out adaptersInSelectedGroup);
 
-            this.WhenAnyValue(x => x.SelectedGroup!.Now, x => x.AllAdapters)
-                .Select(tuple => tuple.Item1 == null ? new Adapter() : tuple.Item2[tuple.Item1])
+            this.WhenAnyValue(x => x.SelectedGroup.Now, x => x.AllAdapters)
+                .Select(tuple => tuple.Item2.GetValueOrDefault(tuple.Item1)!)
                 .ToProperty(this, nameof(ActiveAdapterInSelectedGroup), out activeAdapterInSelectedGroup);
         }
 
         public void ShowProxyGroupDetail(SelectionChangedEventArgs args) {
-            SelectedGroup = args.AddedItems.Count switch {
-                0 => null,
-                _ => args.AddedItems.Cast<Adapter>().First()
-            };
+            SelectedGroup = args.AddedItems.Cast<Adapter>().FirstOrDefault();
         }
 
         public void SwitchSelectorAdapter(string newAdapterName) {
-            Adapter? group = SelectedGroup;
-            if (group != null && group.Type == "Selector") {
+            Adapter group = SelectedGroup;
+            if (group.Type == "Selector" && group.Now != newAdapterName) {
                 Task.Run(async delegate {
                     string json = JsonSerializer.Serialize(new { name = newAdapterName });
                     await Utils.RequestController(HttpMethod.Put, $"/proxies/{group.Name}", json);
@@ -93,6 +90,8 @@ namespace Labyrinth.ViewModels {
         }
 
         public void OnActivate() {
+            AllAdapters = new Dictionary<string, Adapter>();
+            SelectedGroup = new Adapter();
             Task.Run(GetAdapters);
         }
     }
