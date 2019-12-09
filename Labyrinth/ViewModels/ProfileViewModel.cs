@@ -9,7 +9,7 @@ using Labyrinth.Support;
 using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
-    public class ProfileViewModel : ViewModelBase, ITabContentViewModel {
+    public class ProfileViewModel : ViewModelBase {
         private IEnumerable<Profile> profiles = Enumerable.Empty<Profile>();
 
         public IEnumerable<Profile> Profiles {
@@ -24,18 +24,8 @@ namespace Labyrinth.ViewModels {
             set => this.RaiseAndSetIfChanged(ref activeProfileName, value);
         }
 
-        public void SwitchProfile(string name) {
-            if (ActiveProfileName == name)
-                return;
-
-            Task.Run(async delegate {
-                string json = JsonSerializer.Serialize(new { path = ConfigFile.GetPath(name) });
-                await Utils.RequestController(HttpMethod.Put, $"/configs", json);
-
-                ActiveProfileName = name;
-                State.AppConfig.ConfigFile = name;
-                await ConfigFile.SaveCurrentAppConfig();
-            });
+        public ProfileViewModel() {
+            GetProfiles();
         }
 
         private void GetProfiles() {
@@ -49,8 +39,18 @@ namespace Labyrinth.ViewModels {
             ActiveProfileName = configs.First(x => x == State.AppConfig.ConfigFile) ?? "config.yaml";
         }
 
-        public void OnActivate() {
-            GetProfiles();
+        public void SwitchProfile(string name) {
+            if (ActiveProfileName == name)
+                return;
+
+            Task.Run(async delegate {
+                string json = JsonSerializer.Serialize(new { path = ConfigFile.GetPath(name) });
+                await Utils.RequestController(HttpMethod.Put, $"/configs", json);
+
+                ActiveProfileName = name;
+                State.AppConfig.ConfigFile = name;
+                await ConfigFile.SaveCurrentAppConfig();
+            });
         }
     }
 }

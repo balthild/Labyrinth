@@ -9,7 +9,7 @@ using Labyrinth.Support;
 using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
-    public class OverviewViewModel : ViewModelBase, ITabContentViewModel {
+    public class OverviewViewModel : ViewModelBase {
         private string currentMode = "Rule";
 
         public string CurrentMode {
@@ -34,7 +34,15 @@ namespace Labyrinth.ViewModels {
         }
 
         public OverviewViewModel() {
+            Task.Run(GetCurrentMode);
             Task.Factory.StartNew(UpdateTrafficLoop, TaskCreationOptions.LongRunning);
+        }
+
+        private async Task GetCurrentMode() {
+            using HttpResponseMessage message = await Utils.RequestController(HttpMethod.Get, "/configs");
+            string json = await message.Content.ReadAsStringAsync();
+            var config = JsonSerializer.Deserialize<ClashConfig>(json);
+            CurrentMode = config.Mode;
         }
 
         private async Task UpdateTrafficLoop() {
@@ -64,13 +72,6 @@ namespace Labyrinth.ViewModels {
             }
         }
 
-        private async Task GetCurrentMode() {
-            using HttpResponseMessage message = await Utils.RequestController(HttpMethod.Get, "/configs");
-            string json = await message.Content.ReadAsStringAsync();
-            var config = JsonSerializer.Deserialize<ClashConfig>(json);
-            CurrentMode = config.Mode;
-        }
-
         public void ChangeMode(string mode) {
             Task.Run(async delegate {
                 string body = JsonSerializer.Serialize(new { mode });
@@ -78,10 +79,6 @@ namespace Labyrinth.ViewModels {
             });
 
             CurrentMode = mode;
-        }
-
-        public void OnActivate() {
-            Task.Run(GetCurrentMode);
         }
     }
 }

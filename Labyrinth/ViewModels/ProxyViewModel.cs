@@ -12,7 +12,7 @@ using Labyrinth.Support;
 using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
-    public class ProxyViewModel : ViewModelBase, ITabContentViewModel {
+    public class ProxyViewModel : ViewModelBase {
         private Dictionary<string, Adapter> allAdapters = new Dictionary<string, Adapter>();
 
         public Dictionary<string, Adapter> AllAdapters {
@@ -55,6 +55,22 @@ namespace Labyrinth.ViewModels {
             this.WhenAnyValue(x => x.SelectedGroup.Now, x => x.AllAdapters)
                 .Select(tuple => tuple.Item2.GetValueOrDefault(tuple.Item1)!)
                 .ToProperty(this, nameof(ActiveAdapterInSelectedGroup), out activeAdapterInSelectedGroup);
+
+            Task.Run(GetAdapters);
+        }
+
+        private async Task GetAdapters() {
+            using HttpResponseMessage message = await Utils.RequestController(HttpMethod.Get, "/proxies");
+            string json = await message.Content.ReadAsStringAsync();
+
+            var result = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, Adapter>>>(json);
+            var adapters = result["proxies"];
+
+            foreach ((string key, Adapter value) in adapters) {
+                value.Name = key;
+            }
+
+            AllAdapters = adapters;
         }
 
         public void ShowProxyGroupDetail(SelectionChangedEventArgs args) {
@@ -73,26 +89,6 @@ namespace Labyrinth.ViewModels {
                     this.RaisePropertyChanged(nameof(SelectedGroup));
                 });
             }
-        }
-
-        private async Task GetAdapters() {
-            using HttpResponseMessage message = await Utils.RequestController(HttpMethod.Get, "/proxies");
-            string json = await message.Content.ReadAsStringAsync();
-
-            var result = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, Adapter>>>(json);
-            var adapters = result["proxies"];
-
-            foreach ((string key, Adapter value) in adapters) {
-                value.Name = key;
-            }
-
-            AllAdapters = adapters;
-        }
-
-        public void OnActivate() {
-            AllAdapters = new Dictionary<string, Adapter>();
-            SelectedGroup = new Adapter();
-            Task.Run(GetAdapters);
         }
     }
 }

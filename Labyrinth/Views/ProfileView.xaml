@@ -23,9 +23,11 @@
     </UserControl.Styles>
 
     <DockPanel Margin="24">
+        <!--
         <Panel DockPanel.Dock="Bottom">
             <TextBlock Text="{Binding ActiveProfileName}" />
         </Panel>
+        -->
 
         <ListBox Items="{Binding Profiles}">
             <ListBox.Styles>

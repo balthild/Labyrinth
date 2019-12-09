@@ -23,7 +23,7 @@
                 <TextBlock Classes="drag" Foreground="White" FontSize="18" Text="Labyrinth" FontWeight="Bold" />
             </Panel>
 
-            <ItemsControl Name="Tabs" VerticalAlignment="Bottom" Items="{Binding TabItems}" Margin="24,0">
+            <ItemsControl Name="Tabs" VerticalAlignment="Bottom" Items="{Binding Tabs}" Margin="24,0">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal" Spacing="24" />

@@ -14,31 +14,26 @@ namespace Labyrinth.ViewModels {
             set => this.RaiseAndSetIfChanged(ref currentTabName, value);
         }
 
-        private ObservableAsPropertyHelper<ITabContentViewModel> currentTabContent;
+        private ObservableAsPropertyHelper<ViewModelBase> currentTabContent;
 
-        public ITabContentViewModel CurrentTabContent => currentTabContent.Value;
+        public ViewModelBase CurrentTabContent => currentTabContent.Value;
 
-        private readonly OrderedDictionary tabContents = new OrderedDictionary {
-            ["Overview"] = new OverviewViewModel(),
-            ["Proxy"] = new ProxyViewModel(),
-            ["Profile"] = new ProfileViewModel(),
-            // ["Log"] = new OverviewViewModel(),
-            // ["Settings"] = new OverviewViewModel(),
+        public IEnumerable<string> Tabs => new [] {
+            "Overview", "Proxy", "Profile", "Log", "Settings"
         };
 
-        public IEnumerable<string> TabItems => tabContents.Keys.Cast<string>();
+        private readonly ViewModelBase overview = new OverviewViewModel();
+
+        private ViewModelBase GetTabContent(string tab) => tab switch {
+            "Proxy" => new ProxyViewModel(),
+            "Profile" => new ProfileViewModel(),
+            _ => overview
+        };
 
         public MainWindowViewModel() {
             this.WhenAnyValue(x => x.CurrentTabName)
-                .Select(x => (ITabContentViewModel) tabContents[x])
+                .Select(GetTabContent)
                 .ToProperty(this, nameof(CurrentTabContent), out currentTabContent);
-
-            this.WhenAnyValue(x => x.CurrentTabContent)
-                .Buffer(2, 1)
-                .Subscribe(x => x[0].OnDeactivate());
-
-            this.WhenAnyValue(x => x.CurrentTabContent)
-                .Subscribe(x => x.OnActivate());
         }
     }
 }
