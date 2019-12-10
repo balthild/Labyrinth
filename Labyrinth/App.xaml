@@ -50,6 +50,13 @@
             <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderMidBrush}" />
             <Setter Property="TextBlock.Foreground" Value="{DynamicResource HighlightForegroundBrush}" />
         </Style>
+
+        <Style Selector="ScrollBar:vertical">
+            <Setter Property="Width" Value="8" />
+        </Style>
+        <Style Selector="ScrollBar:vertical RepeatButton.repeat">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
     </Application.Styles>
 
 </Application>
