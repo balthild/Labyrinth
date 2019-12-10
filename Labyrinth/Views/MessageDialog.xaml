@@ -1,0 +1,23 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Labyrinth.Views.MessageDialog"
+        Name="NewSubscriptionDialog"
+        WindowStartupLocation="CenterScreen"
+        SizeToContent="WidthAndHeight">
+
+    <DockPanel>
+        <Panel DockPanel.Dock="Top" Name="Title" Classes="drag" Background="#111314">
+            <TextBlock Name="TitleText" Classes="drag" Margin="16,12" Foreground="White" Text="New subscription" />
+        </Panel>
+
+        <DockPanel Margin="16">
+            <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Width="72" Content="OK" Click="Ok" />
+
+            <TextBlock Margin="0,0,0,16" Name="MessageText" />
+        </DockPanel>
+    </DockPanel>
+
+</Window>

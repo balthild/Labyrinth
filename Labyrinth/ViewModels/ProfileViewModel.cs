@@ -43,7 +43,7 @@ namespace Labyrinth.ViewModels {
 
         public ProfileViewModel() {
             var isSubscription = this.WhenAnyValue(x => x.SelectedProfile).Select(x => x?.Subscription != null);
-            UpdateSelectedSubscription = ReactiveCommand.CreateFromTask<Profile>(UpdateSubscription, isSubscription);
+            UpdateSelectedSubscription = ReactiveCommand.CreateFromTask<Profile>(TryUpdateSubscription, isSubscription);
 
             GetProfiles();
         }
@@ -66,6 +66,17 @@ namespace Labyrinth.ViewModels {
             Console.WriteLine(result);
         }
 
+        private async Task TryUpdateSubscription(Profile profile) {
+            try {
+                await UpdateSubscription(profile);
+            } catch (Exception e) {
+                Console.WriteLine(e);
+                var desktop = Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+                var dialog = new MessageDialog($"{e.GetType()}: {e.Message}", "Failed to update subscription");
+                await dialog.ShowDialog(desktop?.MainWindow);
+            }
+        }
+
         private async Task UpdateSubscription(Profile profile) {
             if (profile.Subscription == null)
                 return;
@@ -75,9 +86,7 @@ namespace Labyrinth.ViewModels {
 
             string? error = Clash.ValidateConfig(data);
             if (error != null) {
-                // Show alert
-                Console.WriteLine(error);
-                return;
+                throw new Exception(error);
             }
 
             await File.WriteAllBytesAsync(ConfigFile.GetPath(profile.Name), data);

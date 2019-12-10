@@ -6,9 +6,9 @@
         x:Class="Labyrinth.Views.NewSubscriptionDialog"
         Name="NewSubscriptionDialog"
         WindowStartupLocation="CenterScreen"
-        CanResize="False"
         Title="New subscription"
-        Width="320" Height="192">
+        Width="320"
+        SizeToContent="Height">
 
     <Window.Styles>
         <Style Selector="TextBox">
@@ -34,7 +34,7 @@
                 <TextBox Name="Name" />
             </DockPanel>
 
-            <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="16">
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="16">
                 <Button Width="72" Content="OK" Click="Ok" />
                 <Button Width="72" Content="Cancel" Click="Cancel" />
             </StackPanel>
