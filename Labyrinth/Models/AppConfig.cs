@@ -4,6 +4,6 @@ namespace Labyrinth.Models {
     public class AppConfig {
         public string ConfigFile { get; set; } = "config.yaml";
 
-        public Dictionary<string, Subscription> Subscriptions = new Dictionary<string, Subscription>();
+        public Dictionary<string, Subscription> Subscriptions { get; set; } = new Dictionary<string, Subscription>();
     }
 }

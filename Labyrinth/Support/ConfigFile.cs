@@ -18,7 +18,10 @@ namespace Labyrinth.Support {
                 .Select(x => Path.GetFileName(x)!)
                 .Where(x => x.EndsWith(".yml") || x.EndsWith(".yaml"));
 
-        public static Task SaveCurrentAppConfig() =>
-            File.WriteAllTextAsync(GetPath("labyrinth.json"), JsonSerializer.Serialize(ViewModelBase.State.AppConfig));
+        public static Task SaveCurrentAppConfig() {
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            string json = JsonSerializer.Serialize(ViewModelBase.State.AppConfig, options);
+            return File.WriteAllTextAsync(GetPath("labyrinth.json"), json);
+        }
     }
 }

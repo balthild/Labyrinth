@@ -2,12 +2,6 @@ package main
 
 /*
 #include <stdlib.h>
-
-typedef struct {
-	char code;
-	char* addr;
-	char* secret;
-} StartResult;
 */
 import "C"
 
@@ -18,6 +12,7 @@ import (
 	"path/filepath"
 	"unsafe"
 
+	"github.com/Dreamacro/clash/config"
 	"github.com/Dreamacro/clash/constant"
 	"github.com/Dreamacro/clash/hub/executor"
 	"github.com/Dreamacro/clash/hub/route"
@@ -26,27 +21,20 @@ import (
 )
 
 //export clash_start
-func clash_start() *C.StartResult {
-	result := (*C.StartResult)(C.malloc(C.size_t(unsafe.Sizeof(C.StartResult{}))))
-	result.code = 0
-	result.addr = nil
-	result.secret = nil
-
+func clash_start() (C.int, *C.char, *C.char) {
 	constant.SetConfig(filepath.Join(constant.Path.HomeDir(), "config.yaml"))
 
 	c, err := executor.Parse()
 	if err != nil {
 		fmt.Println(err.Error())
-		result.code = 1
-		return result
+		return 1, nil, nil
 	}
 
 	addr, err := net.ResolveTCPAddr("tcp", c.General.ExternalController)
 	if err != nil {
 		frp, err := freeport.GetFreePort();
 		if err != nil {
-			result.code = 2
-			return result
+			return 2, nil, nil
 		}
 		c.General.ExternalController = "localhost:" + string(frp)
 	} else {
@@ -54,8 +42,7 @@ func clash_start() *C.StartResult {
 		if err != nil {
 			frp, err := freeport.GetFreePort()
 			if err != nil {
-				result.code = 2
-				return result
+				return 2, nil, nil
 			}
 			c.General.ExternalController = "localhost:" + string(frp)
 		} else {
@@ -67,9 +54,7 @@ func clash_start() *C.StartResult {
 
 	executor.ApplyConfig(c, true)
 
-	result.addr = C.CString(c.General.ExternalController)
-	result.secret = C.CString(c.General.Secret)
-	return result
+	return 0, C.CString(c.General.ExternalController), C.CString(c.General.Secret)
 }
 
 //export clash_config_dir
@@ -86,6 +71,17 @@ func clash_mmdb_ok() bool {
 
 	_, err = geoip2.Open(constant.Path.MMDB())
 	return err == nil
+}
+
+//export clash_validate_config
+func clash_validate_config(ptr unsafe.Pointer, len C.int) *C.char {
+	data := C.GoBytes(ptr, len)
+	_, err := config.Parse(data)
+
+	if err != nil {
+		return C.CString(err.Error())
+	}
+	return nil
 }
 
 //export c_free

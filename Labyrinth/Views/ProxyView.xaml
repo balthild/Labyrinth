@@ -24,6 +24,12 @@
 
     <DockPanel Margin="24">
         <ListBox DockPanel.Dock="Left" SelectionMode="AlwaysSelected" Items="{Binding ProxyGroups}" Width="180">
+            <i:Interaction.Behaviors>
+                <ia:EventTriggerBehavior EventName="SelectionChanged">
+                    <ia:InvokeCommandAction Command="{Binding ShowProxyGroupDetail}" />
+                </ia:EventTriggerBehavior>
+            </i:Interaction.Behaviors>
+
             <ListBox.ItemTemplate>
                 <!-- ReSharper disable once Xaml.RedundantResource -->
                 <DataTemplate>
@@ -35,12 +41,6 @@
                     </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-
-            <i:Interaction.Behaviors>
-                <ia:EventTriggerBehavior EventName="SelectionChanged">
-                    <ia:InvokeCommandAction Command="{Binding ShowProxyGroupDetail}" />
-                </ia:EventTriggerBehavior>
-            </i:Interaction.Behaviors>
         </ListBox>
 
         <ListBox Items="{Binding AdaptersInSelectedGroup}" Margin="1,0,0,0" SelectionChanged="ClearSelection">

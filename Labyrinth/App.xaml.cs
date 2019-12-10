@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -101,7 +102,7 @@ namespace Labyrinth {
                 await Utils.RequestController(HttpMethod.Put, "/configs", json);
             } else {
                 ViewModelBase.State.AppConfig.ConfigFile = "config.yaml";
-                ViewModelBase.State.RaisePropertyChanged(nameof(ViewModelBase.State.AppConfig.ConfigFile));
+                ViewModelBase.State.RaisePropertyChanged(nameof(ViewModelBase.State.AppConfig));
                 await ConfigFile.SaveCurrentAppConfig();
             }
         }

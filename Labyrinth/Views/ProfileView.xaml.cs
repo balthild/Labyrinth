@@ -1,6 +1,7 @@
 ﻿using System;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Xaml.Interactivity;
 using JetBrains.Annotations;
@@ -40,8 +41,8 @@ namespace Labyrinth.Views {
         }
 
         [UsedImplicitly]
-        public void ClearSelection(object sender, SelectionChangedEventArgs args) {
-            ((ListBox) sender).UnselectAll();
+        public void ShowCreateSubscriptionDialog(object sender, RoutedEventArgs args) {
+            // TODO: Dialog
         }
     }
 }
