@@ -7,10 +7,13 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Labyrinth.Models;
 using Labyrinth.Support;
 using Labyrinth.Support.Interop;
+using Labyrinth.Views;
 using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
@@ -54,6 +57,13 @@ namespace Labyrinth.ViewModels {
             });
 
             ActiveProfileName = configs.First(x => x == State.AppConfig.ConfigFile) ?? "config.yaml";
+        }
+
+        public async Task NewSubscription() {
+            var desktop = Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+            var dialog = new NewSubscriptionDialog();
+            var result = await dialog.ShowDialog<object?>(desktop?.MainWindow);
+            Console.WriteLine(result);
         }
 
         private async Task UpdateSubscription(Profile profile) {

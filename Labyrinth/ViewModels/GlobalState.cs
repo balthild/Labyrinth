@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using Labyrinth.Models;
-using ReactiveUI;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Labyrinth.Models;
 using Labyrinth.Support;
+using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
     public class GlobalState : ReactiveObject {

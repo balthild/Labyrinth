@@ -1,7 +1,6 @@
 ﻿using System;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Xaml.Interactivity;
 using JetBrains.Annotations;
@@ -38,11 +37,6 @@ namespace Labyrinth.Views {
             var profile = (Profile) control.DataContext;
             var vm = (ProfileViewModel) DataContext;
             control.Classes.Set("active", profile.Name == vm.ActiveProfileName);
-        }
-
-        [UsedImplicitly]
-        public void ShowCreateSubscriptionDialog(object sender, RoutedEventArgs args) {
-            // TODO: Dialog
         }
     }
 }

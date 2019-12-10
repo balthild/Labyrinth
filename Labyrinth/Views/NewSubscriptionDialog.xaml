@@ -1,0 +1,44 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Labyrinth.Views.NewSubscriptionDialog"
+        Name="NewSubscriptionDialog"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        Title="New subscription"
+        Width="320" Height="192">
+
+    <Window.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="#f0f0f0" />
+            <Setter Property="Padding" Value="12,8" />
+        </Style>
+    </Window.Styles>
+
+    <DockPanel>
+        <Panel DockPanel.Dock="Top" Name="Title" Classes="drag" Background="#111314">
+            <TextBlock Classes="drag" Margin="16,12" Foreground="White" Text="New subscription" />
+        </Panel>
+
+        <StackPanel Margin="16" Spacing="16">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Width="48" Text="URL:" />
+                <TextBox Name="URL" />
+            </DockPanel>
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Width="48" Text="Name:" />
+                <TextBox Name="Name" />
+            </DockPanel>
+
+            <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="16">
+                <Button Width="72" Content="OK" Click="Ok" />
+                <Button Width="72" Content="Cancel" Click="Cancel" />
+            </StackPanel>
+        </StackPanel>
+    </DockPanel>
+
+</Window>
