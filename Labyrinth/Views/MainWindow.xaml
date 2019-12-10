@@ -26,23 +26,35 @@
                     <Setter Property="Margin" Value="12" />
                     <Setter Property="Padding" Value="0" />
                     <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Background" Value="{x:Null}" />
                     <Setter Property="HorizontalAlignment" Value="Right" />
                     <Setter Property="VerticalAlignment" Value="Top" />
                 </Style>
                 <Style Selector="Button#CloseWindow:pointerover /template/ ContentPresenter">
-                    <Setter Property="Background" Value="#40ffffff" />
+                    <Setter Property="Background" Value="{x:Null}" />
                 </Style>
                 <Style Selector="Button#CloseWindow:pressed /template/ ContentPresenter">
-                    <Setter Property="Background" Value="#60ffffff" />
+                    <Setter Property="Background" Value="{x:Null}" />
+                </Style>
+
+                <Style Selector="Button#CloseWindow Border">
+                    <Setter Property="Background" Value="Transparent" />
+                </Style>
+                <Style Selector="Button#CloseWindow:pointerover Border">
+                    <Setter Property="Background" Value="#44ffffff" />
+                </Style>
+                <Style Selector="Button#CloseWindow:pressed Border">
+                    <Setter Property="Background" Value="#66ffffff" />
                 </Style>
             </Panel.Styles>
 
             <Button Name="CloseWindow" Click="CloseWindow">
-                <Canvas Width="12" Height="12">
-                    <Rectangle Width="12" Height="12" StrokeThickness="1" Stroke="#ffffff" />
-                    <Polyline Points="6,12 6,6 12,6" StrokeThickness="1" Stroke="#ffffff" />
-                </Canvas>
+                <Border Width="24" Height="24" CornerRadius="12" Opacity="0.8">
+                    <Canvas Width="10" Height="10">
+                        <Rectangle Width="10" Height="10" StrokeThickness="1" Stroke="#ffffff" />
+                        <Polyline Points="6,9 6,6 9,6" StrokeThickness="1" Stroke="#ffffff" />
+                    </Canvas>
+                </Border>
             </Button>
 
             <Panel Classes="drag" Margin="24">
