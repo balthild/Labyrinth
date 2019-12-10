@@ -19,6 +19,32 @@
 
     <DockPanel>
         <Panel Name="Title" Classes="drag" DockPanel.Dock="Top" Height="100" Background="#111314">
+            <Panel.Styles>
+                <Style Selector="Button#CloseWindow">
+                    <Setter Property="Width" Value="24" />
+                    <Setter Property="Height" Value="24" />
+                    <Setter Property="Margin" Value="12" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="HorizontalAlignment" Value="Right" />
+                    <Setter Property="VerticalAlignment" Value="Top" />
+                </Style>
+                <Style Selector="Button#CloseWindow:pointerover /template/ ContentPresenter">
+                    <Setter Property="Background" Value="#40ffffff" />
+                </Style>
+                <Style Selector="Button#CloseWindow:pressed /template/ ContentPresenter">
+                    <Setter Property="Background" Value="#60ffffff" />
+                </Style>
+            </Panel.Styles>
+
+            <Button Name="CloseWindow" Click="CloseWindow">
+                <Canvas Width="12" Height="12">
+                    <Rectangle Width="12" Height="12" StrokeThickness="1" Stroke="#ffffff" />
+                    <Polyline Points="6,12 6,6 12,6" StrokeThickness="1" Stroke="#ffffff" />
+                </Canvas>
+            </Button>
+
             <Panel Classes="drag" Margin="24">
                 <TextBlock Classes="drag" Foreground="White" FontSize="18" Text="Labyrinth" FontWeight="Bold" />
             </Panel>

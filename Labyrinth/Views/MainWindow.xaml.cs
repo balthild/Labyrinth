@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Xaml.Interactivity;
 using JetBrains.Annotations;
@@ -36,6 +37,11 @@ namespace Labyrinth.Views {
             var behavior = (Behavior) args.Sender;
             var tab = (Control) behavior.AssociatedObject!;
             tab?.Classes.Remove("current");
+        }
+
+        [UsedImplicitly]
+        public void CloseWindow(object sender, RoutedEventArgs args) {
+            Close();
         }
     }
 }
