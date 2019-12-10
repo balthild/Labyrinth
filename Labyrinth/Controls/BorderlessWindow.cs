@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Labyrinth.Support.Interop;
 
-namespace Labyrinth.Views {
+namespace Labyrinth.Controls {
     public class BorderlessWindow : Window {
         // Prevent the delegate being garbage collected
         private static readonly WinApi.WndProc SubclassWndProc = Win32SubclassWndProc;

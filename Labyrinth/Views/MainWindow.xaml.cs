@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Xaml.Interactivity;
 using JetBrains.Annotations;
+using Labyrinth.Controls;
 
 namespace Labyrinth.Views {
     public class MainWindow : BorderlessWindow {

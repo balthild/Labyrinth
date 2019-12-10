@@ -1,3 +1,3 @@
 pushd clashffi
-go build -buildmode=c-shared -o ../Labyrinth/libs/clashffi.dll
+go build -buildmode=c-shared -o ../Labyrinth/Libs/clashffi.dll
 popd

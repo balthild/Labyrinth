@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Labyrinth.Controls;
 
 namespace Labyrinth.Views {
     public class InitializationWindow : BorderlessWindow {
