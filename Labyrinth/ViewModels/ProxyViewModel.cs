@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -40,16 +38,37 @@ namespace Labyrinth.ViewModels {
         public Adapter ActiveAdapterInSelectedGroup => activeAdapterInSelectedGroup.Value;
 
         public ProxyViewModel() {
-            this.WhenAnyValue(x => x.AllAdapters)
-                .Select(adapters => {
-                    return adapters
-                        .Where(x => Adapter.GroupTypes.Contains(x.Value.Type))
-                        .Select(x => x.Value);
+            this.WhenAnyValue(x => x.AllAdapters, x => x.GlobalState.ClashConfig.Mode)
+                .Select(tuple => {
+                    return tuple.Item1
+                        .Select(x => x.Value)
+                        .Where(x => x.Name == "GLOBAL" ? tuple.Item2 == "Global" : Adapter.GroupTypes.Contains(x.Type))
+                        .OrderBy(x => x.Name switch {
+                            "GLOBAL" => 1,
+                            "Proxy" => 2,
+                            _ => 99
+                        });
                 })
                 .ToProperty(this, nameof(ProxyGroups), out proxyGroups);
 
-            this.WhenAnyValue(x => x.SelectedGroup.All, x => x.AllAdapters)
-                .Select(tuple => tuple.Item1.Select(name => tuple.Item2.GetValueOrDefault(name)!))
+            this.WhenAnyValue(x => x.SelectedGroup, x => x.AllAdapters)
+                .Select(tuple => {
+                    return tuple.Item1.All
+                        .Select(name => tuple.Item2.GetValueOrDefault(name)!)
+                        .OrderBy(adapter => tuple.Item1.Name switch {
+                            "GLOBAL" => adapter.Type switch {
+                                "Global" => 1,
+                                "Direct" => 2,
+                                "Reject" => 3,
+                                "URLTest" => 10,
+                                "Fallback" => 10,
+                                "LoadBalance" => 10,
+                                "Selector" => 10,
+                                _ => 99
+                            },
+                            _ => 99
+                        });
+                })
                 .ToProperty(this, nameof(AdaptersInSelectedGroup), out adaptersInSelectedGroup);
 
             this.WhenAnyValue(x => x.SelectedGroup.Now, x => x.AllAdapters)

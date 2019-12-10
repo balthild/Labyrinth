@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
@@ -46,6 +45,7 @@ namespace Labyrinth.ViewModels {
             Task.Run(async delegate {
                 string json = JsonSerializer.Serialize(new { path = ConfigFile.GetPath(name) });
                 await Utils.RequestController(HttpMethod.Put, $"/configs", json);
+                await State.RefreshClashConfig();
 
                 ActiveProfileName = name;
                 State.AppConfig.ConfigFile = name;

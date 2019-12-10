@@ -1,5 +1,4 @@
-﻿using System;
-using Labyrinth.Support;
+﻿using Labyrinth.Support;
 
 namespace Labyrinth.Models {
     public class Profile {

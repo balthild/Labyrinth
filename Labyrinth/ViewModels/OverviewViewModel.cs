@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Net.Http;
@@ -10,13 +11,6 @@ using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
     public class OverviewViewModel : ViewModelBase {
-        private string currentMode = "Rule";
-
-        public string CurrentMode {
-            get => currentMode;
-            set => this.RaiseAndSetIfChanged(ref currentMode, value);
-        }
-
         private TrafficEntry currentTraffic = new TrafficEntry();
 
         public TrafficEntry CurrentTraffic {
@@ -34,15 +28,7 @@ namespace Labyrinth.ViewModels {
         }
 
         public OverviewViewModel() {
-            Task.Run(GetCurrentMode);
             Task.Factory.StartNew(UpdateTrafficLoop, TaskCreationOptions.LongRunning);
-        }
-
-        private async Task GetCurrentMode() {
-            using HttpResponseMessage message = await Utils.RequestController(HttpMethod.Get, "/configs");
-            string json = await message.Content.ReadAsStringAsync();
-            var config = JsonSerializer.Deserialize<ClashConfig>(json);
-            CurrentMode = config.Mode;
         }
 
         private async Task UpdateTrafficLoop() {
@@ -78,7 +64,9 @@ namespace Labyrinth.ViewModels {
                 await Utils.RequestController(HttpMethod.Patch, "/configs", body);
             });
 
-            CurrentMode = mode;
+            GlobalState.RaisePropertyChanging(nameof(GlobalState.ClashConfig));
+            GlobalState.ClashConfig.Mode = mode;
+            GlobalState.RaisePropertyChanged(nameof(GlobalState.ClashConfig));
         }
     }
 }

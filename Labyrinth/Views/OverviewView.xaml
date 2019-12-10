@@ -22,7 +22,7 @@
         <Panel DockPanel.Dock="Bottom" Margin="0,24,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <i:Interaction.Behaviors>
-                    <ia:DataTriggerBehavior Binding="{Binding CurrentMode}" ComparisonCondition="NotEqual" Value="ANY">
+                    <ia:DataTriggerBehavior Binding="{Binding GlobalState.ClashConfig.Mode}" ComparisonCondition="NotEqual" Value="ANY">
                         <ia:CallMethodAction TargetObject="{Binding #OverviewView}" MethodName="ModeChanged" />
                     </ia:DataTriggerBehavior>
                 </i:Interaction.Behaviors>
