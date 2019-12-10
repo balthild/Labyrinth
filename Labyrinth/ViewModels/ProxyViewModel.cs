@@ -52,22 +52,20 @@ namespace Labyrinth.ViewModels {
                 .ToProperty(this, nameof(ProxyGroups), out proxyGroups);
 
             this.WhenAnyValue(x => x.SelectedGroup, x => x.AllAdapters)
-                .Select(tuple => {
-                    return tuple.Item1.All
+                .Select(tuple => tuple.Item1.Name switch {
+                    "GLOBAL" => tuple.Item1.All
                         .Select(name => tuple.Item2.GetValueOrDefault(name)!)
-                        .OrderBy(adapter => tuple.Item1.Name switch {
-                            "GLOBAL" => adapter.Type switch {
-                                "Global" => 1,
-                                "Direct" => 2,
-                                "Reject" => 3,
-                                "URLTest" => 10,
-                                "Fallback" => 10,
-                                "LoadBalance" => 10,
-                                "Selector" => 10,
-                                _ => 99
-                            },
+                        .OrderBy(adapter =>  adapter.Type switch {
+                            "Global" => 1,
+                            "Direct" => 2,
+                            "Reject" => 3,
+                            "URLTest" => 10,
+                            "Fallback" => 10,
+                            "LoadBalance" => 10,
+                            "Selector" => 10,
                             _ => 99
-                        });
+                        }),
+                    _ => tuple.Item1.All.Select(name => tuple.Item2.GetValueOrDefault(name)!)
                 })
                 .ToProperty(this, nameof(AdaptersInSelectedGroup), out adaptersInSelectedGroup);
 

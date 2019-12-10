@@ -58,24 +58,17 @@
             <ListBox.Styles>
                 <Style Selector="Border#ActiveIndicator">
                     <Setter Property="Padding" Value="12,0" />
-                    <Setter Property="Opacity" Value="0" />
                     <Setter Property="Background" Value="Transparent" />
                 </Style>
                 <Style Selector="Border#ActiveIndicator Canvas">
-                    <Setter Property="Width" Value="16" />
-                    <Setter Property="Height" Value="16" />
                     <Setter Property="IsVisible" Value="False" />
                 </Style>
 
-                <Style Selector="Border#Adapter.active Border#ActiveIndicator">
-                    <Setter Property="Opacity" Value="1" />
-                </Style>
                 <Style Selector="Border#Adapter.active Border#ActiveIndicator Canvas#Activated">
                     <Setter Property="IsVisible" Value="True" />
                 </Style>
 
                 <Style Selector="ListBox.selector Border#Adapter:not(.active):pointerover Border#ActiveIndicator">
-                    <Setter Property="Opacity" Value="0.4" />
                     <Setter Property="Cursor" Value="Hand" />
                 </Style>
                 <Style Selector="ListBox.selector Border#Adapter:not(.active):pointerover Border#ActiveIndicator Canvas#SwitchButton">
@@ -110,8 +103,8 @@
                             <Border DockPanel.Dock="Right" Name="ActiveIndicator">
                                 <Panel Width="16" Height="16">
                                     <Canvas Name="SwitchButton" Width="16" Height="16">
-                                        <Ellipse Width="16" Height="16" Stroke="#88000000" StrokeThickness="1" />
-                                        <Polyline Stroke="#88000000" StrokeThickness="1" Points="3.5,8.5 6.5,11.5 12.5,5.5" />
+                                        <Ellipse Width="16" Height="16" Stroke="#44000000" StrokeThickness="1" />
+                                        <Polyline Stroke="#44000000" StrokeThickness="1" Points="3.5,8.5 6.5,11.5 12.5,5.5" />
                                     </Canvas>
                                     <Canvas Name="Activated" Width="16" Height="16">
                                         <Ellipse Width="16" Height="16" Fill="#88000000" />
