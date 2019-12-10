@@ -29,7 +29,7 @@
         </Panel>
         -->
 
-        <ListBox Items="{Binding Profiles}">
+        <ListBox Items="{Binding Profiles}" SelectionChanged="ClearSelection">
             <ListBox.Styles>
                 <Style Selector="Border#ActiveIndicator">
                     <Setter Property="Padding" Value="12,0" />

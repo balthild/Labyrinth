@@ -43,7 +43,7 @@
             </i:Interaction.Behaviors>
         </ListBox>
 
-        <ListBox Items="{Binding AdaptersInSelectedGroup}" Margin="1,0,0,0">
+        <ListBox Items="{Binding AdaptersInSelectedGroup}" Margin="1,0,0,0" SelectionChanged="ClearSelection">
             <i:Interaction.Behaviors>
                 <ia:DataTriggerBehavior Binding="{Binding SelectedGroup.Type}" Value="Selector">
                     <ia:CallMethodAction TargetObject="{Binding #ProxyView}" MethodName="AddSelectorGroupClass" />

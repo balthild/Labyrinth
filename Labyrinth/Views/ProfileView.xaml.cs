@@ -38,5 +38,10 @@ namespace Labyrinth.Views {
             var vm = (ProfileViewModel) DataContext;
             control.Classes.Set("active", profile.Name == vm.ActiveProfileName);
         }
+
+        [UsedImplicitly]
+        public void ClearSelection(object sender, SelectionChangedEventArgs args) {
+            ((ListBox) sender).UnselectAll();
+        }
     }
 }

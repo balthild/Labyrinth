@@ -52,5 +52,10 @@ namespace Labyrinth.Views {
             var tab = (Control) behavior.AssociatedObject!;
             tab?.Classes.Remove("selector");
         }
+
+        [UsedImplicitly]
+        public void ClearSelection(object sender, SelectionChangedEventArgs args) {
+            ((ListBox) sender).UnselectAll();
+        }
     }
 }
