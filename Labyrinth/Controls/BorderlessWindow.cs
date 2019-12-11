@@ -23,7 +23,8 @@ namespace Labyrinth.Controls {
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
-                WindowEffectsX11();
+                // WindowEffectsX11();
+                // TODO: The implementation above is incorrect
             }
         }
 
