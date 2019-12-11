@@ -67,13 +67,18 @@ namespace Labyrinth.Views {
 
         private void EnableControls() {
             url.IsEnabled = true;
-            url.Foreground = null;
+            url.Foreground = Brushes.Black;
 
             name.IsEnabled = true;
-            name.Foreground = null;
+            name.Foreground = Brushes.Black;
 
             ok.IsEnabled = true;
             cancel.IsEnabled = true;
+        }
+
+        private void ShowError(string message) {
+            error.Text = message;
+            error.IsVisible = true;
         }
 
         public void Ok(object sender, RoutedEventArgs args) {
@@ -82,23 +87,24 @@ namespace Labyrinth.Views {
 
             Uri.TryCreate(url.Text, UriKind.Absolute, out Uri? uri);
             if (uri == null || uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps) {
-                error.Text = "The URL is invalid";
-                error.IsVisible = true;
+                ShowError("The URL is invalid");
                 EnableControls();
                 return;
             }
 
             string filename = Utils.RemoveYamlExt(name.Text);
+            if (filename.Length == 0) {
+                ShowError("Please specify a profile name");
+                EnableControls();
+            }
 
             if (filename.IndexOfAny(Path.GetInvalidFileNameChars()) > 0) {
-                error.Text = "The name contains invalid characters";
-                error.IsVisible = true;
+                ShowError("The name contains invalid characters");
                 EnableControls();
             }
 
             if (ConfigFile.GetClashConfigs().Select(Utils.RemoveYamlExt).Contains(filename)) {
-                error.Text = "A config with the same name exists";
-                error.IsVisible = true;
+                ShowError("A config with the same name exists");
                 EnableControls();
             }
 
@@ -116,8 +122,7 @@ namespace Labyrinth.Views {
                     });
                 } catch (Exception e) {
                     Dispatcher.UIThread.Post(delegate {
-                        error.Text = e.Message;
-                        error.IsVisible = true;
+                        ShowError(e.Message);
                         EnableControls();
                     });
                 }
