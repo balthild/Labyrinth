@@ -32,11 +32,11 @@ func clash_start() (C.int, *C.char, *C.char) {
 
 	addr, err := net.ResolveTCPAddr("tcp", c.General.ExternalController)
 	if err != nil {
-		frp, err := freeport.GetFreePort();
+		frp, err := freeport.GetFreePort()
 		if err != nil {
 			return 2, nil, nil
 		}
-		c.General.ExternalController = "localhost:" + string(frp)
+		c.General.ExternalController = fmt.Sprintf("localhost:%d", frp)
 	} else {
 		listener, err := net.ListenTCP("tcp", addr)
 		if err != nil {
@@ -44,7 +44,7 @@ func clash_start() (C.int, *C.char, *C.char) {
 			if err != nil {
 				return 2, nil, nil
 			}
-			c.General.ExternalController = "localhost:" + string(frp)
+			c.General.ExternalController = fmt.Sprintf("localhost:%d", frp)
 		} else {
 			listener.Close()
 		}
