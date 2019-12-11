@@ -36,7 +36,7 @@ namespace Labyrinth.ViewModels {
         }
 
         public async Task RefreshClashConfig() {
-            using HttpResponseMessage message = await Utils.RequestController(HttpMethod.Get, "/configs");
+            using HttpResponseMessage message = await ApiController.Request(HttpMethod.Get, "/configs");
             string json = await message.Content.ReadAsStringAsync();
             ClashConfig = JsonSerializer.Deserialize<ClashConfig>(json);
         }

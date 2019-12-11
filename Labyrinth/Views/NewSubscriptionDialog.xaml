@@ -27,16 +27,18 @@
         <StackPanel Margin="16" Spacing="16">
             <DockPanel>
                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Width="48" Text="URL:" />
-                <TextBox Name="URL" />
+                <TextBox Name="Url" />
             </DockPanel>
             <DockPanel>
                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Width="48" Text="Name:" />
                 <TextBox Name="Name" />
             </DockPanel>
 
+            <TextBlock Name="Error" Foreground="#cc0000" IsVisible="False" TextWrapping="Wrap" />
+
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="16">
-                <Button Width="72" Content="OK" Click="Ok" />
-                <Button Width="72" Content="Cancel" Click="Cancel" />
+                <Button Name="Ok" Width="72" Content="OK" Click="Ok" />
+                <Button Name="Cancel" Width="72" Content="Cancel" Click="Cancel" />
             </StackPanel>
         </StackPanel>
     </DockPanel>

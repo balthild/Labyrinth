@@ -62,8 +62,22 @@ namespace Labyrinth.ViewModels {
         public async Task NewSubscription() {
             var desktop = Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
             var dialog = new NewSubscriptionDialog();
-            var result = await dialog.ShowDialog<object?>(desktop?.MainWindow);
-            Console.WriteLine(result);
+            var result = await dialog.ShowDialog<NewSubscriptionDialog.Result?>(desktop?.MainWindow);
+            if (result == null)
+                return;
+
+            await File.WriteAllBytesAsync(ConfigFile.GetPath(result.Name), result.Data);
+
+            State.RaisePropertyChanging(nameof(State.AppConfig));
+            State.AppConfig.Subscriptions[result.Name] = new Subscription {
+                Url = result.Url,
+                UpdatedAt = DateTimeOffset.Now.ToUnixTimeSeconds()
+            };
+            State.RaisePropertyChanged(nameof(State.AppConfig));
+
+            await ConfigFile.SaveCurrentAppConfig();
+
+            GetProfiles();
         }
 
         private async Task TryUpdateSubscription(Profile profile) {
@@ -81,8 +95,7 @@ namespace Labyrinth.ViewModels {
             if (profile.Subscription == null)
                 return;
 
-            using var client = new HttpClient();
-            var data = await client.GetByteArrayAsync(profile.Subscription.Url);
+            var data = await Utils.HttpClient.GetByteArrayAsync(profile.Subscription.Url);
 
             string? error = Clash.ValidateConfig(data);
             if (error != null) {
@@ -118,7 +131,7 @@ namespace Labyrinth.ViewModels {
 
         private async Task ApplyClashConfig(string name) {
             string json = JsonSerializer.Serialize(new { path = ConfigFile.GetPath(name) });
-            await Utils.RequestController(HttpMethod.Put, "/configs", json);
+            await ApiController.Request(HttpMethod.Put, "/configs", json);
             await State.RefreshClashConfig();
         }
 

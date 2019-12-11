@@ -77,7 +77,7 @@ namespace Labyrinth.ViewModels {
         }
 
         private async Task GetAdapters() {
-            using HttpResponseMessage message = await Utils.RequestController(HttpMethod.Get, "/proxies");
+            using HttpResponseMessage message = await ApiController.Request(HttpMethod.Get, "/proxies");
             string json = await message.Content.ReadAsStringAsync();
 
             var result = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, Adapter>>>(json);
@@ -99,7 +99,7 @@ namespace Labyrinth.ViewModels {
             if (group.Type == "Selector" && group.Now != newAdapterName) {
                 Task.Run(async delegate {
                     string json = JsonSerializer.Serialize(new { name = newAdapterName });
-                    await Utils.RequestController(HttpMethod.Put, $"/proxies/{group.Name}", json);
+                    await ApiController.Request(HttpMethod.Put, $"/proxies/{group.Name}", json);
 
                     this.RaisePropertyChanging(nameof(SelectedGroup));
                     group.Now = newAdapterName;

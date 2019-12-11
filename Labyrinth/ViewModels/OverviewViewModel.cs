@@ -33,7 +33,7 @@ namespace Labyrinth.ViewModels {
         private async Task UpdateTrafficLoop() {
             while (true) {
                 try {
-                    await using Stream stream = await Utils.RequestStreamController("/traffic");
+                    await using Stream stream = await ApiController.PollStream("/traffic");
                     using var reader = new StreamReader(stream);
 
                     while (true) {
@@ -60,7 +60,7 @@ namespace Labyrinth.ViewModels {
         public void ChangeMode(string mode) {
             Task.Run(async delegate {
                 string body = JsonSerializer.Serialize(new { mode });
-                await Utils.RequestController(HttpMethod.Patch, "/configs", body);
+                await ApiController.Request(HttpMethod.Patch, "/configs", body);
             });
 
             GlobalState.RaisePropertyChanging(nameof(GlobalState.ClashConfig));

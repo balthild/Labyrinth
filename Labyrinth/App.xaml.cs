@@ -92,13 +92,13 @@ namespace Labyrinth {
                     Address = result.addr,
                     Secret = result.secret,
                 };
-                Utils.UpdateControllerClient(ViewModelBase.State.ClashController);
+                ApiController.UpdateClient(ViewModelBase.State.ClashController);
             }
 
             if (ConfigFile.GetClashConfigs().Contains(ViewModelBase.State.AppConfig.ConfigFile)) {
                 string path = ConfigFile.GetPath(ViewModelBase.State.AppConfig.ConfigFile);
                 string json = JsonSerializer.Serialize(new { path });
-                await Utils.RequestController(HttpMethod.Put, "/configs", json);
+                await ApiController.Request(HttpMethod.Put, "/configs", json);
             } else {
                 ViewModelBase.State.AppConfig.ConfigFile = "config.yaml";
                 ViewModelBase.State.RaisePropertyChanged(nameof(ViewModelBase.State.AppConfig));

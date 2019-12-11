@@ -8,7 +8,11 @@ using Labyrinth.Models;
 
 namespace Labyrinth.Support {
     public static class Utils {
-        private static readonly HttpClient ControllerClient = new HttpClient();
+        public static readonly HttpClient HttpClient = new HttpClient();
+
+        static Utils() {
+            HttpClient.DefaultRequestHeaders.ConnectionClose = true;
+        }
 
         private static readonly string[] SizeSuffixes = {
             // long.MaxValue B = 8 EiB
@@ -45,26 +49,13 @@ namespace Labyrinth.Support {
             // We have to await the Task, otherwise the streams will be disposed after return
         }
 
-        public static void UpdateControllerClient(ClashController controller) {
-            ControllerClient.BaseAddress = new Uri("http://" + controller.Address);
-            ControllerClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", controller.Secret);
-        }
-
-        public static Task<HttpResponseMessage> RequestController(HttpMethod method, string path, string body = "") {
-            var uri = new Uri(path, UriKind.Relative);
-            var message = new HttpRequestMessage(method, uri);
-
-            if (method != HttpMethod.Get && method != HttpMethod.Head) {
-                message.Content = new StringContent(body);
-            }
-
-            return ControllerClient.SendAsync(message);
-        }
-
-        public static Task<Stream> RequestStreamController(string path) {
-            var uri = new Uri(path, UriKind.Relative);
-            return ControllerClient.GetStreamAsync(uri);
+        public static string RemoveYamlExt(string filename) {
+            if (filename.EndsWith(".yaml"))
+                return filename.Substring(0, filename.Length - 5);
+            else if (filename.EndsWith("yml"))
+                return filename.Substring(0, filename.Length - 4);
+            else
+                return filename;
         }
     }
 }
