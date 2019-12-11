@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -7,7 +8,12 @@ using Labyrinth.Models;
 
 namespace Labyrinth.Support {
     public static class ApiController {
-        private static readonly HttpClient ControllerClient = new HttpClient();
+        private static readonly HttpClient ControllerClient;
+
+        static ApiController() {
+            var handler = new HttpClientHandler { UseProxy = false };
+            ControllerClient = new HttpClient(handler);
+        }
 
         public static void UpdateClient(ClashController controller) {
             ControllerClient.BaseAddress = new Uri("http://" + controller.Address);
