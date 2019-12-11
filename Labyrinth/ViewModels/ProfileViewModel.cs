@@ -104,14 +104,15 @@ namespace Labyrinth.ViewModels {
 
             await File.WriteAllBytesAsync(ConfigFile.GetPath(profile.Name), data);
 
-            profile.Subscription.UpdatedAt = DateTimeOffset.Now.ToUnixTimeSeconds();
-
             State.RaisePropertyChanging(nameof(State.AppConfig));
+            profile.Subscription.UpdatedAt = DateTimeOffset.Now.ToUnixTimeSeconds();
             State.AppConfig.Subscriptions[profile.Name] = profile.Subscription;
             State.RaisePropertyChanged(nameof(State.AppConfig));
 
-            await ApplyClashConfig(profile.Name);
             await ConfigFile.SaveCurrentAppConfig();
+
+            if (ActiveProfileName == profile.Name)
+                await ApplyClashConfig(profile.Name);
 
             GetProfiles();
         }
