@@ -92,20 +92,23 @@ namespace Labyrinth.Views {
                 return;
             }
 
-            string filename = Utils.RemoveYamlExt(name.Text);
+            string filename = Utils.RemoveYamlExt(name.Text ?? "");
             if (filename.Length == 0) {
                 ShowError("Please specify a profile name");
                 EnableControls();
+                return;
             }
 
             if (filename.IndexOfAny(Path.GetInvalidFileNameChars()) > 0) {
                 ShowError("The name contains invalid characters");
                 EnableControls();
+                return;
             }
 
             if (ConfigFile.GetClashConfigs().Select(Utils.RemoveYamlExt).Contains(filename)) {
                 ShowError("A config with the same name exists");
                 EnableControls();
+                return;
             }
 
             Task.Run(async delegate {
