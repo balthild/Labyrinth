@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -29,15 +30,30 @@ namespace Labyrinth {
         }
 
         private async Task RunApp() {
-            await EnsureConfigDir();
-            await StartClash();
+            try {
+                await EnsureConfigDir();
+                await StartClash();
 
-            Dispatcher.UIThread.Post(delegate {
-                if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
-                    desktop.MainWindow = new MainWindow { DataContext = new MainWindowViewModel() };
-                    desktop.MainWindow.Show();
-                }
-            });
+                Dispatcher.UIThread.Post(delegate {
+                    if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
+                        desktop.MainWindow = new MainWindow { DataContext = new MainWindowViewModel() };
+                        desktop.MainWindow.Show();
+                    }
+                });
+            } catch (Exception e) {
+                Console.WriteLine(e)
+
+                Dispatcher.UIThread.Post(delegate {
+                    var dialog = new MessageDialog($"{e.GetType()}: {e.Message}", "Failed to start Labyrinth");
+
+                    dialog.Closed += delegate {
+                        var lifetime = ApplicationLifetime as IControlledApplicationLifetime;
+                        lifetime?.Shutdown();
+                    };
+
+                    dialog.Show();
+                });
+            }
         }
 
         private async Task EnsureConfigDir() {
