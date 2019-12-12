@@ -15,7 +15,7 @@ using Labyrinth.Support.Interop;
 namespace Labyrinth.Views {
     public class MainWindow : BorderlessWindow {
         // Prevent the delegate being garbage collected
-        private WinApi.WndProc subclassWndProc;
+        private WinApi.WndProc? subclassWndProc;
 
         private WinApi.NotifyIconData notifyIconData;
 

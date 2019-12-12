@@ -40,7 +40,7 @@ namespace Labyrinth.Support {
             DateTimeOffset.FromUnixTimeSeconds(ts).LocalDateTime.ToString("yyyy'-'MM'-'dd HH':'mm");
 
         public static async Task ExtractResource(string resource, string path) {
-            Assembly assembly = Assembly.GetEntryAssembly()!;
+            var assembly = Assembly.GetEntryAssembly()!;
             await using Stream resStream = assembly.GetManifestResourceStream(resource)!;
             await using FileStream fileStream = File.OpenWrite(path);
             await resStream.CopyToAsync(fileStream).ConfigureAwait(false);
