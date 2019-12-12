@@ -1,6 +1,5 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using JetBrains.Annotations;
@@ -23,8 +22,7 @@ namespace Labyrinth.Views {
 
         [UsedImplicitly]
         private void ExitApp(object sender, RoutedEventArgs args) {
-            var lifetime = (IControlledApplicationLifetime) Application.Current.ApplicationLifetime;
-            lifetime.Shutdown();
+            App.Exit();
         }
     }
 }

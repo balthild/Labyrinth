@@ -64,8 +64,8 @@ namespace Labyrinth.Controls {
             };
 
             Type type = PlatformImpl.GetType();
-            FieldInfo field = type.GetField("_x11", BindingFlags.NonPublic | BindingFlags.Instance);
-            dynamic info = field?.GetValue(PlatformImpl);
+            FieldInfo? field = type.GetField("_x11", BindingFlags.NonPublic | BindingFlags.Instance);
+            dynamic? info = field?.GetValue(PlatformImpl);
 
             if (info == null)
                 return;

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Threading.Tasks;
-using Labyrinth.Models;
 
 namespace Labyrinth.Support {
     public static class Utils {

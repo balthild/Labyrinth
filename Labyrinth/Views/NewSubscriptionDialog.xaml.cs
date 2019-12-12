@@ -2,15 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Labyrinth.Controls;
-using Labyrinth.Models;
 using Labyrinth.Support;
 using Labyrinth.Support.Interop;
 

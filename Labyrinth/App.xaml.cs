@@ -41,15 +41,12 @@ namespace Labyrinth {
                     }
                 });
             } catch (Exception e) {
-                Console.WriteLine(e)
+                Console.WriteLine(e);
 
                 Dispatcher.UIThread.Post(delegate {
                     var dialog = new MessageDialog($"{e.GetType()}: {e.Message}", "Failed to start Labyrinth");
 
-                    dialog.Closed += delegate {
-                        var lifetime = ApplicationLifetime as IControlledApplicationLifetime;
-                        lifetime?.Shutdown();
-                    };
+                    dialog.Closed += delegate { Exit(); };
 
                     dialog.Show();
                 });
@@ -161,6 +158,19 @@ namespace Labyrinth {
                     desktop.MainWindow = null;
                 }
             });
+        }
+
+        public static void Exit() {
+            IApplicationLifetime lifetime = Current.ApplicationLifetime;
+
+            if (lifetime is IClassicDesktopStyleApplicationLifetime desktop) {
+                if (desktop.MainWindow is MainWindow window)
+                    window.Exit();
+                else
+                    desktop.MainWindow.Close();
+
+                desktop.Shutdown();
+            }
         }
     }
 }
