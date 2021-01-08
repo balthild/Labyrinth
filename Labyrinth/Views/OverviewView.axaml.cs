@@ -16,7 +16,9 @@ namespace Labyrinth.Views {
 
         [UsedImplicitly]
         public void ModeChanged(object target, AvaloniaPropertyChangedEventArgs args) {
-            var radio = this.FindControl<RadioButton>("Mode" + args.NewValue);
+            string str = args.NewValue as string ?? "rule";
+            string mode = char.ToUpper(str[0]) + str.Substring(1);
+            var radio = this.FindControl<RadioButton>($"Mode{mode}");
             radio.IsChecked = true;
         }
 

@@ -1,0 +1,96 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style Selector="Button.Fluent">
+        <Setter Property="MinHeight" Value="32" />
+        <Setter Property="MinWidth" Value="80" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="TextBlock.FontSize" Value="13" />
+        <Setter Property="TextBlock.FontWeight" Value="Medium" />
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource FluentColorNeutralSecondary}" />
+    </Style>
+    <Style Selector="Button.Fluent:pressed">
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource FluentColorNeutralPrimary}" />
+    </Style>
+    <Style Selector="Button.Fluent:disabled">
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource FluentColorNeutralSecondary}" />
+        <Setter Property="Opacity" Value="0.6" />
+    </Style>
+
+    <Style Selector="Button.Fluent /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonBackground}" />
+        <Setter Property="CornerRadius" Value="2" />
+    </Style>
+    <Style Selector="Button.Fluent:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonBackgroundHover}" />
+    </Style>
+    <Style Selector="Button.Fluent:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonBackgroundActive}" />
+    </Style>
+    <Style Selector="Button.Fluent:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonBackground}" />
+    </Style>
+
+    <Style Selector="Button.Fluent.Primary">
+        <Setter Property="TextBlock.Foreground" Value="#FFFFFF" />
+    </Style>
+
+    <Style Selector="Button.Fluent.Primary /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonPrimaryBackground}" />
+    </Style>
+    <Style Selector="Button.Fluent.Primary:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonPrimaryBackgroundHover}" />
+    </Style>
+    <Style Selector="Button.Fluent.Primary:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonPrimaryBackgroundActive}" />
+    </Style>
+    <Style Selector="Button.Fluent.Primary:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonPrimaryBackground}" />
+    </Style>
+
+    <Style Selector="RadioButton.Fluent.Linked">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonBackground}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource FluentColorNeutralSecondary}" />
+        <Setter Property="TextBlock.FontSize" Value="13" />
+        <Setter Property="TextBlock.FontWeight" Value="Medium" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ContentPresenter Name="PART_ContentPresenter"
+                                  Background="{TemplateBinding Background}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  Content="{TemplateBinding Content}"
+                                  Padding="{TemplateBinding Padding}"
+                                  TextBlock.Foreground="{TemplateBinding Foreground}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+            </ControlTemplate>
+        </Setter>
+    </Style>
+    <Style Selector="RadioButton.Fluent.Linked:pointerover">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonBackgroundHover}" />
+    </Style>
+    <Style Selector="RadioButton.Fluent.Linked:pressed">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonBackgroundActive}" />
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource FluentColorNeutralPrimary}" />
+    </Style>
+    <Style Selector="RadioButton.Fluent.Linked:checked">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonPrimaryBackground}" />
+        <Setter Property="TextBlock.Foreground" Value="#FFFFFF" />
+    </Style>
+
+    <Style Selector="RadioButton.Fluent.Linked /template/ ContentPresenter">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+    <Style Selector="RadioButton.Fluent.Linked.First /template/ ContentPresenter">
+        <Setter Property="CornerRadius" Value="2,0,0,2" />
+    </Style>
+    <Style Selector="RadioButton.Fluent.Linked.Last /template/ ContentPresenter">
+        <Setter Property="CornerRadius" Value="0,2,2,0" />
+    </Style>
+
+</Styles>

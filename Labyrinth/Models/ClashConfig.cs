@@ -11,6 +11,9 @@ namespace Labyrinth.Models {
         [JsonPropertyName("redir-port")]
         public ushort RedirPort { get; set; } = 0;
 
+        [JsonPropertyName("mixed-port")]
+        public ushort MixedPort { get; set; } = 0;
+
         [JsonPropertyName("allow-lan")]
         public bool AllowLan { get; set; } = false;
 

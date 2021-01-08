@@ -3,21 +3,17 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
-using Avalonia.Xaml.Interactivity;
-using JetBrains.Annotations;
 using Labyrinth.Controls;
-using Labyrinth.Support.Interop;
+using static Labyrinth.Support.Interop.WinApi;
 
 namespace Labyrinth.Views {
     public class MainWindow : BorderlessWindow {
         // Prevent the delegate being garbage collected
-        private WinApi.WndProc? subclassWndProc;
+        private WndProc? subclassWndProc;
 
-        private WinApi.NotifyIconData notifyIconData;
+        private NotifyIconData notifyIconData;
 
         private bool keepRunning = true;
 
@@ -32,12 +28,6 @@ namespace Labyrinth.Views {
 
         private void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
-
-            this.FindControl<Control>("Title").PointerPressed += (i, e) => {
-                if (((Control) e.Source).Classes.Contains("drag")) {
-                    BeginMoveDrag(e);
-                }
-            };
         }
 
         private void AddStatusIcon() {
@@ -54,13 +44,13 @@ namespace Labyrinth.Views {
             using Stream iconStream = assets.Open(new Uri("avares://Labyrinth/Assets/avalonia-logo.ico"));
             var icon = new Icon(iconStream);
 
-            notifyIconData = new WinApi.NotifyIconData {
+            notifyIconData = new NotifyIconData {
                 HWnd = hWnd,
-                UFlags = WinApi.NIF_MESSAGE | WinApi.NIF_ICON | WinApi.NIF_STATE,
-                DwState = WinApi.NIS_HIDDEN,
-                DwStateMask = WinApi.NIS_HIDDEN,
-                UCallbackMessage = WinApi.WM_NOTIFYICON_CB,
-                HIcon = icon.Handle
+                UFlags = NotifyIconFlag.NIF_MESSAGE | NotifyIconFlag.NIF_ICON | NotifyIconFlag.NIF_STATE,
+                DwState = NotifyIconState.NIS_HIDDEN,
+                DwStateMask = NotifyIconState.NIS_HIDDEN,
+                UCallbackMessage = WindowMessage.WM_NOTIFYICON_CB,
+                HIcon = icon.Handle,
             };
 
             int size = Marshal.SizeOf(notifyIconData);
@@ -70,11 +60,11 @@ namespace Labyrinth.Views {
             Marshal.StructureToPtr(notifyIconData, dataPtr, true);
 
             // Create the notify icon
-            WinApi.ShellNotifyIconW(WinApi.NIM_ADD, dataPtr);
+            ShellNotifyIconW(NotifyIconMessage.NIM_ADD, dataPtr);
 
             // Process mouse events on the icon
             subclassWndProc = Win32SubclassWndProc;
-            WinApi.SetWindowSubclass(hWnd, subclassWndProc, IntPtr.Zero, IntPtr.Zero);
+            SetWindowSubclass(hWnd, subclassWndProc, IntPtr.Zero, IntPtr.Zero);
         }
 
         private void RemoveStatusIcon() {
@@ -88,16 +78,19 @@ namespace Labyrinth.Views {
             IntPtr dataPtr = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(notifyIconData, dataPtr, true);
 
-            WinApi.ShellNotifyIconW(WinApi.NIM_DELETE, dataPtr);
+            ShellNotifyIconW(NotifyIconMessage.NIM_DELETE, dataPtr);
         }
 
-        private IntPtr Win32SubclassWndProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam) {
-            if (uMsg != WinApi.WM_NOTIFYICON_CB)
-                return WinApi.DefSubclassProc(hWnd, uMsg, wParam, lParam);
+        private IntPtr Win32SubclassWndProc(IntPtr hWnd, WindowMessage uMsg, IntPtr wParam, IntPtr lParam) {
+            if (uMsg != WindowMessage.WM_NOTIFYICON_CB)
+                return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 
-            switch ((uint) lParam) {
-                case WinApi.WM_LBUTTONDBLCLK:
+            // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
+            switch ((WindowMessage) lParam) {
+                case WindowMessage.WM_RBUTTONUP:
+                case WindowMessage.WM_LBUTTONUP:
                     Show();
+                    Activate();
                     break;
             }
 
@@ -113,25 +106,6 @@ namespace Labyrinth.Views {
         public void Exit() {
             keepRunning = false;
             RemoveStatusIcon();
-            Close();
-        }
-
-        [UsedImplicitly]
-        public void AddCurrentTabClass(object target, AvaloniaPropertyChangedEventArgs args) {
-            var behavior = (Behavior) args.Sender;
-            var tab = (Control) behavior.AssociatedObject!;
-            tab?.Classes.Add("current");
-        }
-
-        [UsedImplicitly]
-        public void RemoveCurrentTabClass(object target, AvaloniaPropertyChangedEventArgs args) {
-            var behavior = (Behavior) args.Sender;
-            var tab = (Control) behavior.AssociatedObject!;
-            tab?.Classes.Remove("current");
-        }
-
-        [UsedImplicitly]
-        public void CloseWindow(object sender, RoutedEventArgs args) {
             Close();
         }
     }

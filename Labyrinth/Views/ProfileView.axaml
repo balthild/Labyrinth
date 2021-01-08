@@ -1,0 +1,140 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Labyrinth.ViewModels;assembly=Labyrinth"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             xmlns:ib="clr-namespace:Labyrinth.Behaviors;assembly=Labyrinth"
+             mc:Ignorable="d"
+             x:Class="Labyrinth.Views.ProfileView"
+             Name="ProfileView">
+
+    <Design.DataContext>
+        <vm:ProfileViewModel />
+    </Design.DataContext>
+
+    <UserControl.Styles>
+        <Style Selector="ListBox">
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="#f0f0f0" />
+        </Style>
+    </UserControl.Styles>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Classes="ActionBar">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Classes="ActionBarButton Right" Content="Update All" Command="{Binding UpdateAllSubscription}" />
+                    <Button Classes="ActionBarButton Right" Content="Dir" Click="OpenProfileDir" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Classes="ActionBarButton" Content="New" Command="{Binding NewSubscription}" />
+                    <Button Classes="ActionBarButton" Content="Update"
+                            Command="{Binding UpdateSelectedSubscription}" CommandParameter="{Binding SelectedProfile}" />
+                    <Button Classes="ActionBarButton" Content="Delete"  Command="{Binding DeleteProfile}" />
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Border DockPanel.Dock="Bottom" Classes="MessageBar">
+            <TextBlock Text="Tips: Double-click on a profile to activate it." />
+        </Border>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <ItemsRepeater Items="{Binding Profiles}" Margin="24">
+                <ItemsRepeater.Styles>
+                    <Style Selector="Border#ProfileItem">
+                        <Setter Property="Padding" Value="16,12" />
+                        <Setter Property="Background" Value="{DynamicResource FluentColorNeutral20}" />
+                        <Setter Property="CornerRadius" Value="2" />
+                        <Setter Property="Cursor" Value="Hand" />
+                    </Style>
+                    <Style Selector="Border#ProfileItem.selected">
+                        <Setter Property="Background" Value="{DynamicResource FluentColorNeutral40}" />
+                    </Style>
+
+                    <Style Selector="Border#ProfileItem TextBlock.name">
+                        <Setter Property="FontSize" Value="14" />
+                        <Setter Property="FontWeight" Value="Medium" />
+                        <Setter Property="Foreground" Value="{DynamicResource FluentColorNeutralSecondary}" />
+                    </Style>
+                    <Style Selector="Border#ProfileItem TextBlock.desc">
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="Foreground" Value="{DynamicResource FluentColorNeutralTertiary}" />
+                    </Style>
+                    <Style Selector="Border#ProfileItem.current TextBlock">
+                        <Setter Property="Foreground" Value="#FFFFFF" />
+                    </Style>
+
+                    <Style Selector="Border#ProfileItem Canvas#ActiveSign">
+                        <Setter Property="IsVisible" Value="False" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                    </Style>
+                    <Style Selector="Border#ProfileItem.active Canvas#ActiveSign">
+                        <Setter Property="IsVisible" Value="True" />
+                    </Style>
+                </ItemsRepeater.Styles>
+
+                <ItemsRepeater.Layout>
+                    <UniformGridLayout MaximumRowsOrColumns="2"
+                                       MinColumnSpacing="12"
+                                       MinRowSpacing="12"
+                                       ItemsStretch="Fill" />
+                </ItemsRepeater.Layout>
+
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <Border Name="ProfileItem">
+                            <StackPanel Spacing="4" VerticalAlignment="Center" Margin="0,0,0,1">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Classes="name" Text="{Binding Name}" />
+
+                                    <Canvas Name="ActiveSign" Width="16" Height="16">
+                                        <Ellipse Fill="#80000000" Width="16" Height="16" />
+                                        <Polyline Stroke="#FFFFFF" StrokeThickness="1" Points="3.5,8.5 6.5,11.5 12.5,5.5" />
+                                    </Canvas>
+                                </StackPanel>
+                                <TextBlock Classes="desc" Text="{Binding Description}" />
+                            </StackPanel>
+
+                            <i:Interaction.Behaviors>
+                                <ia:EventTriggerBehavior EventName="PointerReleased">
+                                    <ia:ChangePropertyAction TargetObject="{Binding $parent[UserControl].DataContext}"
+                                                             PropertyName="SelectedProfile"
+                                                             Value="{Binding}" />
+                                </ia:EventTriggerBehavior>
+                                <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                                        Value="{Binding $parent[UserControl].DataContext.SelectedProfile.Name}">
+                                    <ib:SetClassAction ClassName="selected" IsEnabled="True" />
+                                </ia:DataTriggerBehavior>
+                                <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                                        ComparisonCondition="NotEqual"
+                                                        Value="{Binding $parent[UserControl].DataContext.SelectedProfile.Name}">
+                                    <ib:SetClassAction ClassName="selected" IsEnabled="False" />
+                                </ia:DataTriggerBehavior>
+
+                                <ia:EventTriggerBehavior EventName="DoubleTapped">
+                                    <ia:InvokeCommandAction Command="{Binding $parent[UserControl].DataContext.SwitchProfile}"
+                                                            CommandParameter="{Binding Name}" />
+                                </ia:EventTriggerBehavior>
+                                <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                                        Value="{Binding $parent[UserControl].DataContext.ActiveProfileName}">
+                                    <ib:SetClassAction ClassName="active" IsEnabled="True" />
+                                </ia:DataTriggerBehavior>
+                                <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                                        ComparisonCondition="NotEqual"
+                                                        Value="{Binding $parent[UserControl].DataContext.ActiveProfileName}">
+                                    <ib:SetClassAction ClassName="active" IsEnabled="False" />
+                                </ia:DataTriggerBehavior>
+                            </i:Interaction.Behaviors>
+                        </Border>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+    </DockPanel>
+
+</UserControl>

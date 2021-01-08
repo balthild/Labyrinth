@@ -4,32 +4,32 @@ using System.Runtime.InteropServices;
 namespace Labyrinth.Support.Interop {
     public static class Clash {
         [StructLayout(LayoutKind.Sequential)]
-        struct StartResultStruct {
-            public int code;
-            public IntPtr addr;
-            public IntPtr secret;
+        private readonly struct StartResultInterop {
+            public readonly int code;
+            public readonly IntPtr addr;
+            public readonly IntPtr secret;
         }
 
         public struct StartResult {
-            public int code;
-            public string addr;
-            public string secret;
+            public int Code;
+            public string? Addr;
+            public string? Secret;
         }
 
         public static string ConfigDir { get; }
 
         public static StartResult Start() {
-            StartResultStruct ret = ClashStart();
+            StartResultInterop ret = ClashStart();
 
             var result = new StartResult {
-                code = ret.code,
+                Code = ret.code,
             };
 
             if (ret.code == 0) {
-                result.addr = Marshal.PtrToStringAnsi(ret.addr)!;
-                result.secret = Marshal.PtrToStringAnsi(ret.secret)!;
-                Free(ret.addr);
-                Free(ret.secret);
+                result.Addr = Marshal.PtrToStringAnsi(ret.addr)!;
+                result.Secret = Marshal.PtrToStringAnsi(ret.secret)!;
+                CFree(ret.addr);
+                CFree(ret.secret);
             }
 
             return result;
@@ -44,7 +44,7 @@ namespace Labyrinth.Support.Interop {
             string? cause = Marshal.PtrToStringAnsi(resultPtr);
 
             if (resultPtr != IntPtr.Zero)
-                Free(resultPtr);
+                CFree(resultPtr);
 
             return cause;
         }
@@ -59,15 +59,15 @@ namespace Labyrinth.Support.Interop {
         private static extern IntPtr ClashValidateConfig(IntPtr ptr, int len);
 
         [DllImport("clashffi", EntryPoint = "clash_start")]
-        private static extern StartResultStruct ClashStart();
+        private static extern StartResultInterop ClashStart();
 
         [DllImport("clashffi", EntryPoint = "c_free")]
-        private static extern void Free(IntPtr str);
+        private static extern void CFree(IntPtr str);
 
         static Clash() {
             IntPtr configDir = GetConfigDir();
             ConfigDir = Marshal.PtrToStringAnsi(configDir)!;
-            Free(configDir);
+            CFree(configDir);
         }
     }
 }

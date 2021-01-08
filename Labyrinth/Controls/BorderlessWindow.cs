@@ -1,16 +1,35 @@
 ﻿using System;
-using System.Reflection;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
-using Labyrinth.Support.Interop;
+using static Labyrinth.Support.Interop.WinApi;
 
 namespace Labyrinth.Controls {
     public class BorderlessWindow : Window {
         // Prevent the delegate being garbage collected
-        private static readonly WinApi.WndProc SubclassWndProc = Win32SubclassWndProc;
+        private static readonly WndProc SubclassWndProc = Win32SubclassWndProc;
 
         internal BorderlessWindow() {
+            SetLocalizedFont();
             WindowEffects();
+        }
+
+        protected void HideTaskbarIcon() {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                IntPtr hWnd = PlatformImpl.Handle.Handle;
+
+                uint style = GetWindowLongPtr(hWnd, WindowLongIndex.GWL_EXSTYLE);
+                style &= (uint) ~WindowStyleEx.WS_EX_APPWINDOW;
+                style |= (uint) WindowStyleEx.WS_EX_TOOLWINDOW;
+                SetWindowLongPtr(hWnd, WindowLongIndex.GWL_EXSTYLE, style);
+            }
+        }
+
+        private void SetLocalizedFont() {
+            CultureInfo culture = CultureInfo.InstalledUICulture;
+            if (culture.ThreeLetterWindowsLanguageName == "CHS")
+                FontFamily = "Segoe UI, Microsoft Yahei UI, PingFang SC, " +
+                             "Noto Sans CJK SC, Source Han Sans, Source Han Sans CN, sans-serif";
         }
 
         private void WindowEffects() {
@@ -19,7 +38,7 @@ namespace Labyrinth.Controls {
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
-                HasSystemDecorations = false;
+                SystemDecorations = SystemDecorations.BorderOnly;
             }
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
@@ -29,33 +48,44 @@ namespace Labyrinth.Controls {
 
         private void WindowEffectsWin32() {
             int dwmEnabled = 0;
-            WinApi.DwmIsCompositionEnabled(ref dwmEnabled);
+            DwmIsCompositionEnabled(ref dwmEnabled);
             if (dwmEnabled == 0)
                 return;
 
             IntPtr hWnd = PlatformImpl.Handle.Handle;
 
             // Disable window maximizing
-            uint style = WinApi.GetWindowLongPtr(hWnd, WinApi.GWL_STYLE);
-            style &= ~WinApi.WS_MAXIMIZEBOX;
-            WinApi.SetWindowLongPtr(hWnd, WinApi.GWL_STYLE, style);
+            uint style = GetWindowLongPtr(hWnd, WindowLongIndex.GWL_STYLE);
+            style &= (uint) ~WindowStyle.WS_MAXIMIZEBOX;
+            SetWindowLongPtr(hWnd, WindowLongIndex.GWL_STYLE, style);
 
             // Make window looks "border-less" but keep effects such as aero peek and minimizing animations
-            WinApi.SetWindowSubclass(hWnd, SubclassWndProc, IntPtr.Zero, IntPtr.Zero);
+            SetWindowSubclass(hWnd, SubclassWndProc, IntPtr.Zero, IntPtr.Zero);
 
             // Allow drawing in non-client area
             int pv = 2;
-            WinApi.DwmSetWindowAttribute(hWnd, 2, ref pv, 4);
+            DwmSetWindowAttribute(hWnd, 2, ref pv, 4);
 
             // Enable window shadows
-            var m = new WinApi.Margins { Left = 1, Right = 1, Top = 1, Bottom = 1 };
-            WinApi.DwmExtendFrameIntoClientArea(hWnd, ref m);
+            var m = new Margins { Left = 1, Right = 1, Top = 1, Bottom = 1 };
+            DwmExtendFrameIntoClientArea(hWnd, ref m);
         }
 
-        private static IntPtr Win32SubclassWndProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam) {
+        protected new void Activate() {
+            base.Activate();
+
+            // Window activation does not work properly on Windows.
+            // See https://github.com/AvaloniaUI/Avalonia/issues/2975
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                IntPtr hWnd = PlatformImpl.Handle.Handle;
+                SetForegroundWindow(hWnd);
+            }
+        }
+
+        private static IntPtr Win32SubclassWndProc(IntPtr hWnd, WindowMessage uMsg, IntPtr wParam, IntPtr lParam) {
             return uMsg switch {
-                WinApi.WM_NCCALCSIZE => IntPtr.Zero,
-                _ => WinApi.DefSubclassProc(hWnd, uMsg, wParam, lParam),
+                WindowMessage.WM_NCCALCSIZE => IntPtr.Zero,
+                _ => DefSubclassProc(hWnd, uMsg, wParam, lParam),
             };
         }
     }

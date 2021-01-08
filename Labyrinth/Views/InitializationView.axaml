@@ -1,0 +1,36 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:Labyrinth.ViewModels;assembly=Labyrinth"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Labyrinth.Views.InitializationView"
+             Name="InitializationView">
+
+    <Design.DataContext>
+        <vm:InitializationViewModel />
+    </Design.DataContext>
+
+    <Panel Name="Title" Classes="drag" Background="{DynamicResource FluentColorNeutral10}">
+        <Panel Margin="24,20">
+            <TextBlock Text="Labyrinth"
+                       Foreground="{DynamicResource FluentColorNeutralPrimary}"
+                       FontSize="18"
+                       FontWeight="Bold" />
+        </Panel>
+
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16">
+            <ProgressBar HorizontalAlignment="Center"
+                         Minimum="0"
+                         Maximum="{Binding ProgressMax}"
+                         Value="{Binding ProgressValue}"
+                         IsIndeterminate="{Binding !ProgressMax}" />
+
+            <TextBlock Text="{Binding Message}"
+                       Foreground="{DynamicResource FluentColorNeutralPrimary}"
+                       FontSize="16"
+                       HorizontalAlignment="Center" />
+        </StackPanel>
+    </Panel>
+
+</UserControl>

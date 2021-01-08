@@ -9,15 +9,15 @@ using Labyrinth.Support;
 using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
-    public class OverviewViewModel : ViewModelBase {
-        private TrafficEntry currentTraffic = new TrafficEntry();
+    public class OverviewViewModel : ViewModel {
+        private TrafficEntry currentTraffic = new();
 
         public TrafficEntry CurrentTraffic {
             get => currentTraffic;
             set => this.RaiseAndSetIfChanged(ref currentTraffic, value);
         }
 
-        private LinkedList<TrafficEntry> trafficsInternal = new LinkedList<TrafficEntry>(new TrafficEntry[60]);
+        private LinkedList<TrafficEntry> trafficsInternal = new(new TrafficEntry[60]);
 
         private ImmutableArray<TrafficEntry> traffics;
 
@@ -55,17 +55,29 @@ namespace Labyrinth.ViewModels {
                     await Task.Delay(1000);
                 }
             }
+            // ReSharper disable once FunctionNeverReturns
         }
 
+        // ReSharper disable once MemberCanBeMadeStatic.Global
         public void ChangeMode(string mode) {
             Task.Run(async delegate {
                 string body = JsonSerializer.Serialize(new { mode });
                 await ApiController.Request(HttpMethod.Patch, "/configs", body);
-            });
 
-            GlobalState.RaisePropertyChanging(nameof(GlobalState.ClashConfig));
-            GlobalState.ClashConfig.Mode = mode;
-            GlobalState.RaisePropertyChanged(nameof(GlobalState.ClashConfig));
+                AppConfig appConfig = await SyncData(() => {
+                    GlobalState.RaisePropertyChanging(nameof(GlobalState.ClashConfig));
+                    GlobalState.ClashConfig.Mode = mode;
+                    GlobalState.RaisePropertyChanged(nameof(GlobalState.ClashConfig));
+
+                    GlobalState.RaisePropertyChanging(nameof(GlobalState.AppConfig));
+                    GlobalState.AppConfig.Mode = mode;
+                    GlobalState.RaisePropertyChanged(nameof(GlobalState.AppConfig));
+
+                    return GlobalState.AppConfig;
+                });
+
+                await ConfigFile.SaveAppConfig(appConfig);
+            });
         }
     }
 }

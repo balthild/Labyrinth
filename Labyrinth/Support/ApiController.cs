@@ -7,17 +7,35 @@ using Labyrinth.Models;
 
 namespace Labyrinth.Support {
     public static class ApiController {
-        private static readonly HttpClient ControllerClient;
+        private static readonly object ClientLock = new();
 
-        static ApiController() {
-            var handler = new HttpClientHandler { UseProxy = false };
-            ControllerClient = new HttpClient(handler);
+        private static HttpClient controllerClient = new();
+
+        private static HttpClient GetClient() {
+            HttpClient client;
+            lock (ClientLock) {
+                client = controllerClient;
+            }
+
+            return client;
         }
 
         public static void UpdateClient(ClashController controller) {
-            ControllerClient.BaseAddress = new Uri("http://" + controller.Address);
-            ControllerClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", controller.Secret);
+            // The first request may become extremely slow if localhost is resolved to IPv6
+            string address = controller.Address.Replace("localhost:", "127.0.0.1:");
+
+            // Modifying the properties on the existing client is not thread-safe, so we need to create new ones
+            var handler = new HttpClientHandler { UseProxy = false };
+            var client = new HttpClient(handler) {
+                BaseAddress = new Uri($"http://{address}"),
+                DefaultRequestHeaders = {
+                    Authorization = new AuthenticationHeaderValue("Bearer", controller.Secret),
+                },
+            };
+
+            lock (ClientLock) {
+                controllerClient = client;
+            }
         }
 
         public static Task<HttpResponseMessage> Request(HttpMethod method, string path, string body = "") {
@@ -28,12 +46,12 @@ namespace Labyrinth.Support {
                 message.Content = new StringContent(body);
             }
 
-            return ControllerClient.SendAsync(message);
+            return GetClient().SendAsync(message);
         }
 
         public static Task<Stream> PollStream(string path) {
             var uri = new Uri(path, UriKind.Relative);
-            return ControllerClient.GetStreamAsync(uri);
+            return GetClient().GetStreamAsync(uri);
         }
     }
 }

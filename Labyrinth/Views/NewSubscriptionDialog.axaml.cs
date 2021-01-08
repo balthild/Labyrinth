@@ -32,6 +32,8 @@ namespace Labyrinth.Views {
         private readonly Button cancel;
 
         public NewSubscriptionDialog() {
+            HideTaskbarIcon();
+
             InitializeComponent();
 
             url = this.FindControl<TextBox>("Url");
@@ -44,8 +46,8 @@ namespace Labyrinth.Views {
         private void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
 
-            this.FindControl<Control>("Title").PointerPressed += (i, e) => {
-                if (((Control) e.Source).Classes.Contains("drag")) {
+            this.FindControl<Control>("Title").PointerPressed += (_, e) => {
+                if ((e.Source as Control)?.Classes.Contains("drag") ?? false) {
                     BeginMoveDrag(e);
                 }
             };
@@ -91,37 +93,37 @@ namespace Labyrinth.Views {
 
             string filename = Utils.RemoveYamlExt(name.Text ?? "");
             if (filename.Length == 0) {
-                ShowError("Please specify a profile name");
+                ShowError("Please specify a profile name.");
                 EnableControls();
                 return;
             }
 
             if (filename.IndexOfAny(Path.GetInvalidFileNameChars()) > 0) {
-                ShowError("The name contains invalid characters");
+                ShowError("The name contains invalid characters.");
                 EnableControls();
                 return;
             }
 
             if (ConfigFile.GetClashConfigs().Select(Utils.RemoveYamlExt).Contains(filename)) {
-                ShowError("A config with the same name exists");
+                ShowError("The profile name has existed. Please specify another name.");
                 EnableControls();
                 return;
             }
 
             Task.Run(async delegate {
                 try {
-                    var data = await Utils.HttpClient.GetByteArrayAsync(uri);
+                    byte[] data = await Utils.HttpClient.GetByteArrayAsync(uri);
 
                     string? err = Clash.ValidateConfig(data);
                     if (err != null) {
                         throw new Exception(err);
                     }
 
-                    Dispatcher.UIThread.Post(delegate {
+                    Dispatcher.UIThread.Post(() => {
                         Close(new Result($"{filename}.yaml", uri.ToString(), data));
                     });
                 } catch (Exception e) {
-                    Dispatcher.UIThread.Post(delegate {
+                    Dispatcher.UIThread.Post(() => {
                         ShowError(e.Message);
                         EnableControls();
                     });

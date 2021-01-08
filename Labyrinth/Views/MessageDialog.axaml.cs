@@ -1,13 +1,22 @@
-﻿using Avalonia.Controls;
+﻿using System;
+using System.Runtime.InteropServices;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using JetBrains.Annotations;
 using Labyrinth.Controls;
+using static Labyrinth.Support.Interop.WinApi;
 
 namespace Labyrinth.Views {
     public class MessageDialog : BorderlessWindow {
-        public MessageDialog() : this("No message") { }
+        [UsedImplicitly]
+        public MessageDialog() : this("No message") {
+            // Required by XAML
+        }
 
         public MessageDialog(string message, string title = "Notice") {
+            HideTaskbarIcon();
+
             InitializeComponent();
 
             this.FindControl<TextBlock>("TitleText").Text = title;
@@ -17,8 +26,8 @@ namespace Labyrinth.Views {
         private void InitializeComponent() {
             AvaloniaXamlLoader.Load(this);
 
-            this.FindControl<Control>("Title").PointerPressed += (i, e) => {
-                if (((Control) e.Source).Classes.Contains("drag")) {
+            this.FindControl<Control>("Title").PointerPressed += (_, e) => {
+                if ((e.Source as Control)?.Classes.Contains("drag") ?? false) {
                     BeginMoveDrag(e);
                 }
             };

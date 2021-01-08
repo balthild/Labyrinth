@@ -1,0 +1,68 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="Labyrinth.Views.NewSubscriptionDialog"
+        Name="NewSubscriptionDialog"
+        WindowStartupLocation="CenterScreen"
+        Title="New subscription"
+        Width="400"
+        SizeToContent="Height">
+
+    <Window.Styles>
+        <Style Selector="StackPanel.form-group">
+            <Setter Property="Spacing" Value="8" />
+        </Style>
+
+        <Style Selector="StackPanel.form-group TextBlock.label">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+
+        <Style Selector="StackPanel.form-group TextBox">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="{DynamicResource FluentColorNeutral20}" />
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style Selector="StackPanel.form-group TextBox /template/ Border#border">
+            <Setter Property="CornerRadius" Value="2" />
+        </Style>
+    </Window.Styles>
+
+    <Border BorderBrush="#686868" BorderThickness="1">
+        <DockPanel Name="Title" Classes="drag" Background="#FFFFFF">
+            <Panel DockPanel.Dock="Top">
+                <TextBlock Classes="drag"
+                           Margin="24,20,0,0"
+                           Foreground="{DynamicResource FluentColorNeutralPrimary}"
+                           FontSize="16"
+                           FontWeight="Medium"
+                           Text="New Subscription" />
+            </Panel>
+
+            <StackPanel Margin="24" Spacing="20">
+                <StackPanel Classes="form-group">
+                    <TextBlock Classes="label" Text="Name" />
+                    <TextBox Name="Name" />
+                </StackPanel>
+
+                <StackPanel Classes="form-group">
+                    <TextBlock Classes="label" Text="URL" />
+                    <TextBox Name="Url" />
+                </StackPanel>
+
+                <TextBlock Name="Error" Foreground="#cc0000" IsVisible="False" TextWrapping="Wrap" />
+
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="16">
+                    <Button Name="Cancel" Classes="Fluent" Content="Cancel" Click="Cancel" />
+                    <Button Name="Ok" Classes="Fluent Primary" Content="OK" Click="Ok" />
+                </StackPanel>
+            </StackPanel>
+        </DockPanel>
+    </Border>
+
+</Window>

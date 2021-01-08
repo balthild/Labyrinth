@@ -16,7 +16,7 @@
         <DockPanel Margin="16">
             <Button DockPanel.Dock="Bottom" HorizontalAlignment="Right" Width="72" Content="OK" Click="Ok" />
 
-            <TextBlock Margin="0,0,0,16" Name="MessageText" />
+            <TextBlock Margin="0,0,0,16" Name="MessageText" Width="480" TextWrapping="WrapWithOverflow" />
         </DockPanel>
     </DockPanel>
 

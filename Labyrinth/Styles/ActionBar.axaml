@@ -1,0 +1,47 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style Selector="Border.ActionBar">
+        <Setter Property="Height" Value="48" />
+        <Setter Property="Background" Value="#F7F7F7" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="BorderBrush" Value="#E5E5E5" />
+        <Setter Property="Padding" Value="24,0" />
+    </Style>
+
+    <Style Selector="Button.ActionBarButton">
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Margin" Value="0,0,8,0" />
+        <Setter Property="Padding" Value="8,0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="TextBlock.FontSize" Value="13" />
+        <Setter Property="TextBlock.FontWeight" Value="Medium" />
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource FluentColorNeutralSecondary}"/>
+    </Style>
+    <Style Selector="Button.ActionBarButton:pressed">
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource FluentColorNeutralPrimary}" />
+    </Style>
+    <Style Selector="Button.ActionBarButton:disabled">
+        <Setter Property="TextBlock.Foreground" Value="{DynamicResource FluentColorNeutralTertiary}" />
+    </Style>
+
+    <Style Selector="Button.ActionBarButton.Right">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="Margin" Value="8,0,0,0" />
+    </Style>
+
+    <Style Selector="Button.ActionBarButton /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="CornerRadius" Value="2"/>
+    </Style>
+    <Style Selector="Button.ActionBarButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonBackgroundHover}" />
+    </Style>
+    <Style Selector="Button.ActionBarButton:pressed /template/ ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource FluentButtonBackgroundActive}" />
+    </Style>
+    <Style Selector="Button.ActionBarButton:disabled /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+</Styles>

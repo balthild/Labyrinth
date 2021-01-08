@@ -1,17 +1,20 @@
-﻿using Avalonia;
+﻿using System;
+using System.IO;
+using System.Text.Json;
+using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Logging.Serilog;
 using Avalonia.ReactiveUI;
+using Labyrinth.Models;
 
 namespace Labyrinth {
-    class Program {
+    internal static class Program {
         public static void Main(string[] args) =>
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args, ShutdownMode.OnExplicitShutdown);
 
-        public static AppBuilder BuildAvaloniaApp() =>
+        private static AppBuilder BuildAvaloniaApp() =>
             AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .LogToDebug()
+                .LogToTrace()
                 .UseReactiveUI();
     }
 }

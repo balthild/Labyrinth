@@ -1,11 +1,11 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="clr-namespace:Labyrinth.ViewModels;assembly=Labyrinth"
-             xmlns:c="clr-namespace:Labyrinth.Converters;assembly=Labyrinth"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             xmlns:vm="clr-namespace:Labyrinth.ViewModels;assembly=Labyrinth"
+             xmlns:c="clr-namespace:Labyrinth.Converters;assembly=Labyrinth"
              mc:Ignorable="d"
              x:Class="Labyrinth.Views.OverviewView"
              Name="OverviewView">
@@ -27,16 +27,16 @@
                     </ia:DataTriggerBehavior>
                 </i:Interaction.Behaviors>
 
-                <RadioButton Name="ModeRule" Classes="linked first" Width="72" GroupName="Mode" Content="Rule"
-                             Command="{Binding ChangeMode}" CommandParameter="Rule" />
-                <RadioButton Name="ModeGlobal" Classes="linked" Width="72" GroupName="Mode" Content="Global"
-                             Command="{Binding ChangeMode}" CommandParameter="Global" />
-                <RadioButton Name="ModeDirect" Classes="linked last" Width="72" GroupName="Mode" Content="Direct"
-                             Command="{Binding ChangeMode}" CommandParameter="Direct" />
+                <RadioButton Name="ModeRule" Classes="Fluent Linked First" Width="80" GroupName="Mode" Content="Rule"
+                             Command="{Binding ChangeMode}" CommandParameter="rule" />
+                <RadioButton Name="ModeGlobal" Classes="Fluent Linked" Width="80" GroupName="Mode" Content="Global"
+                             Command="{Binding ChangeMode}" CommandParameter="global" />
+                <RadioButton Name="ModeDirect" Classes="Fluent Linked Last" Width="80" GroupName="Mode" Content="Direct"
+                             Command="{Binding ChangeMode}" CommandParameter="direct" />
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Width="72" Margin="16,0,0,0" Content="Exit" Click="ExitApp" />
+                <Button Classes="Fluent" Width="80" Margin="16,0,0,0" Content="Exit" Click="ExitApp" />
             </StackPanel>
         </Panel>
 
@@ -44,7 +44,7 @@
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="8">
                 <StackPanel.Styles>
                     <Style Selector="TextBlock">
-                        <Setter Property="TextBlock.Foreground" Value="#888888" />
+                        <Setter Property="Foreground" Value="#888888" />
                     </Style>
                 </StackPanel.Styles>
 

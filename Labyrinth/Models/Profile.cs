@@ -11,8 +11,8 @@ namespace Labyrinth.Models {
             "config.yml" => "Main configuration",
             _ => Subscription switch {
                 null => "Custom profile",
-                _ => $"Subscription - Updated at {Utils.FormatTime(Subscription.UpdatedAt)}"
-            }
+                _ => $"Subscription - Updated at {Utils.FormatTime(Subscription.UpdatedAt)}",
+            },
         };
     }
 }

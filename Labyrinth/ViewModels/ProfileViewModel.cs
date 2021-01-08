@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
+using JetBrains.Annotations;
 using Labyrinth.Models;
 using Labyrinth.Support;
 using Labyrinth.Support.Interop;
@@ -17,7 +19,7 @@ using Labyrinth.Views;
 using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
-    public class ProfileViewModel : ViewModelBase {
+    public class ProfileViewModel : ViewModel {
         private IEnumerable<Profile> profiles = Enumerable.Empty<Profile>();
 
         public IEnumerable<Profile> Profiles {
@@ -45,18 +47,20 @@ namespace Labyrinth.ViewModels {
             var isSubscription = this.WhenAnyValue(x => x.SelectedProfile).Select(x => x?.Subscription != null);
             UpdateSelectedSubscription = ReactiveCommand.CreateFromTask<Profile>(TryUpdateSubscription, isSubscription);
 
-            GetProfiles();
+            GetProfilesFromFilesystem();
         }
 
-        private void GetProfiles() {
-            var configs = ConfigFile.GetClashConfigs().ToArray();
+        private void GetProfilesFromFilesystem() {
+            string[] configs = ConfigFile.GetClashConfigs().ToArray();
 
-            Profiles = configs.Select(name => new Profile {
-                Name = name,
-                Subscription = State.AppConfig.Subscriptions.GetValueOrDefault(name)
+            Dispatcher.UIThread.Post(() => {
+                Profiles = configs.Select(name => {
+                    Subscription? subscription = GlobalState.AppConfig.Subscriptions.GetValueOrDefault(name);
+                    return new Profile { Name = name, Subscription = subscription };
+                });
+
+                ActiveProfileName = configs.First(x => x == GlobalState.AppConfig.ConfigFile) ?? "config.yaml";
             });
-
-            ActiveProfileName = configs.First(x => x == State.AppConfig.ConfigFile) ?? "config.yaml";
         }
 
         public async Task NewSubscription() {
@@ -68,16 +72,20 @@ namespace Labyrinth.ViewModels {
 
             await File.WriteAllBytesAsync(ConfigFile.GetPath(result.Name), result.Data);
 
-            State.RaisePropertyChanging(nameof(State.AppConfig));
-            State.AppConfig.Subscriptions[result.Name] = new Subscription {
-                Url = result.Url,
-                UpdatedAt = DateTimeOffset.Now.ToUnixTimeSeconds()
-            };
-            State.RaisePropertyChanged(nameof(State.AppConfig));
+            AppConfig config = await SyncData(() => {
+                GlobalState.RaisePropertyChanging(nameof(GlobalState.AppConfig));
+                GlobalState.AppConfig.Subscriptions[result.Name] = new Subscription {
+                    Url = result.Url,
+                    UpdatedAt = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                };
+                GlobalState.RaisePropertyChanged(nameof(GlobalState.AppConfig));
 
-            await ConfigFile.SaveCurrentAppConfig();
+                return GlobalState.AppConfig;
+            });
 
-            GetProfiles();
+            await ConfigFile.SaveAppConfig(config);
+
+            GetProfilesFromFilesystem();
         }
 
         private async Task TryUpdateSubscription(Profile profile) {
@@ -85,9 +93,12 @@ namespace Labyrinth.ViewModels {
                 await UpdateSubscription(profile);
             } catch (Exception e) {
                 Console.WriteLine(e);
-                var desktop = Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
-                var dialog = new MessageDialog($"{e.GetType()}: {e.Message}", "Failed to update subscription");
-                await dialog.ShowDialog(desktop?.MainWindow);
+
+                Dispatcher.UIThread.Post(() => {
+                    var desktop = Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+                    var dialog = new MessageDialog($"{e.GetType()}: {e.Message}", "Failed to update subscription");
+                    dialog.ShowDialog(desktop?.MainWindow);
+                });
             }
         }
 
@@ -95,7 +106,7 @@ namespace Labyrinth.ViewModels {
             if (profile.Subscription == null)
                 return;
 
-            var data = await Utils.HttpClient.GetByteArrayAsync(profile.Subscription.Url);
+            byte[] data = await Utils.HttpClient.GetByteArrayAsync(profile.Subscription.Url);
 
             string? error = Clash.ValidateConfig(data);
             if (error != null) {
@@ -104,19 +115,26 @@ namespace Labyrinth.ViewModels {
 
             await File.WriteAllBytesAsync(ConfigFile.GetPath(profile.Name), data);
 
-            State.RaisePropertyChanging(nameof(State.AppConfig));
-            profile.Subscription.UpdatedAt = DateTimeOffset.Now.ToUnixTimeSeconds();
-            State.AppConfig.Subscriptions[profile.Name] = profile.Subscription;
-            State.RaisePropertyChanged(nameof(State.AppConfig));
+            AppConfig appConfig = await SyncData(() => {
+                GlobalState.RaisePropertyChanging(nameof(GlobalState.AppConfig));
+                profile.Subscription.UpdatedAt = DateTimeOffset.Now.ToUnixTimeSeconds();
+                GlobalState.RaisePropertyChanged(nameof(GlobalState.AppConfig));
 
-            await ConfigFile.SaveCurrentAppConfig();
+                return GlobalState.AppConfig;
+            });
 
-            if (ActiveProfileName == profile.Name)
+            await ConfigFile.SaveAppConfig(appConfig);
+
+            if (ActiveProfileName == profile.Name) {
                 await ApplyClashConfig(profile.Name);
+                await DataUtils.SetLastSelectedAdapters(appConfig);
+                await ConfigFile.SaveAppConfig(appConfig);
+            }
 
-            GetProfiles();
+            GetProfilesFromFilesystem();
         }
 
+        [UsedImplicitly]
         public void SwitchProfile(string name) {
             if (ActiveProfileName == name)
                 return;
@@ -124,20 +142,30 @@ namespace Labyrinth.ViewModels {
             Task.Run(async delegate {
                 await ApplyClashConfig(name);
 
-                ActiveProfileName = name;
-                State.AppConfig.ConfigFile = name;
-                await ConfigFile.SaveCurrentAppConfig();
+                AppConfig appConfig = await SyncData(() => {
+                    ActiveProfileName = name;
+
+                    GlobalState.RaisePropertyChanging(nameof(GlobalState.AppConfig));
+                    GlobalState.AppConfig.ConfigFile = name;
+                    GlobalState.RaisePropertyChanged(nameof(GlobalState.AppConfig));
+
+                    return GlobalState.AppConfig;
+                });
+
+                await DataUtils.SetLastSelectedAdapters(appConfig);
+                await ConfigFile.SaveAppConfig(appConfig);
             });
         }
 
-        private async Task ApplyClashConfig(string name) {
-            string json = JsonSerializer.Serialize(new { path = ConfigFile.GetPath(name) });
-            await ApiController.Request(HttpMethod.Put, "/configs", json);
-            await State.RefreshClashConfig();
+        public void SelectProfileFromList(SelectionChangedEventArgs args) {
+            SelectedProfile = args.AddedItems.Cast<Profile>().FirstOrDefault();
         }
 
-        public void SelectProfile(SelectionChangedEventArgs args) {
-            SelectedProfile = args.AddedItems.Cast<Profile>().FirstOrDefault();
+        private static async Task ApplyClashConfig(string name) {
+            string json = JsonSerializer.Serialize(new { path = ConfigFile.GetPath(name) });
+            await ApiController.Request(HttpMethod.Put, "/configs", json);
+
+            await DataUtils.RefreshClashConfig();
         }
     }
 }

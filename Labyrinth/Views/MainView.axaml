@@ -1,0 +1,157 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             xmlns:ib="clr-namespace:Labyrinth.Behaviors;assembly=Labyrinth"
+             xmlns:vm="clr-namespace:Labyrinth.ViewModels;assembly=Labyrinth"
+             mc:Ignorable="d"
+             x:Class="Labyrinth.Views.MainView"
+             Name="MainView">
+
+    <Design.DataContext>
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Left" Name="SideBar">
+            <Border.Styles>
+                <Style Selector="Border#SideBar">
+                    <Setter Property="Background" Value="#E8E8E8" />
+                    <Setter Property="BoxShadow" Value="inset -1 0 1 -1 #10000000, inset -2 0 2 -2 #20000000, inset -6 0 6 -6 #16000000, inset -16 0 16 -16 #16000000" />
+                </Style>
+            </Border.Styles>
+
+            <StackPanel Orientation="Vertical" Width="200">
+                <Panel Margin="24,20,24,22">
+                    <TextBlock Text="Labyrinth"
+                               Foreground="{DynamicResource FluentColorNeutralPrimary}"
+                               FontSize="18"
+                               FontWeight="Bold" />
+                </Panel>
+
+                <ItemsRepeater Name="Tabs" Items="{Binding Tabs}">
+                    <ItemsRepeater.Styles>
+                        <Style Selector="Border#Tab">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="Height" Value="49" />
+                            <Setter Property="Margin" Value="0,0,0,-1" />
+                        </Style>
+                        <Style Selector="Border#Tab:pointerover">
+                            <Setter Property="Background" Value="#12000000" />
+                            <Setter Property="BoxShadow" Value="inset 0 0 1 0 #16000000" />
+                        </Style>
+
+                        <Style Selector="Border#Tab Border#TabIndicator">
+                            <Setter Property="Padding" Value="20,2,0,3" />
+                            <Setter Property="BorderBrush" Value="Transparent" />
+                            <Setter Property="BorderThickness" Value="4,0,0,0" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="HorizontalAlignment" Value="Left" />
+                        </Style>
+                        <Style Selector="Border#Tab.current Border#TabIndicator">
+                            <Setter Property="BorderBrush" Value="{DynamicResource FluentColorThemePrimary}" />
+                        </Style>
+
+                        <Style Selector="Border#Tab TextBlock#TabText">
+                            <Setter Property="FontSize" Value="14" />
+                            <Setter Property="FontWeight" Value="Medium" />
+                            <Setter Property="Foreground" Value="{DynamicResource FluentColorNeutralSecondary}" />
+                        </Style>
+                        <Style Selector="Border#Tab:pointerover TextBlock#TabText">
+                            <Setter Property="Foreground" Value="{DynamicResource FluentColorNeutralPrimary}" />
+                        </Style>
+                        <Style Selector="Border#Tab.current TextBlock#TabText">
+                            <Setter Property="Foreground" Value="{DynamicResource FluentColorThemePrimary}" />
+                        </Style>
+                    </ItemsRepeater.Styles>
+
+                    <ItemsRepeater.Layout>
+                        <NonVirtualizingStackLayout Orientation="Vertical" />
+                    </ItemsRepeater.Layout>
+
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate>
+                            <Border Name="Tab">
+                                <Border Name="TabIndicator">
+                                    <TextBlock Name="TabText" Text="{Binding}" />
+                                </Border>
+
+                                <i:Interaction.Behaviors>
+                                    <ia:EventTriggerBehavior EventName="PointerPressed">
+                                        <ia:ChangePropertyAction TargetObject="{Binding #MainView.DataContext}"
+                                                                 PropertyName="CurrentTabName"
+                                                                 Value="{Binding}" />
+                                    </ia:EventTriggerBehavior>
+
+                                    <ia:DataTriggerBehavior Binding="{Binding}"
+                                                            Value="{Binding #MainView.DataContext.CurrentTabName}">
+                                        <ib:SetClassAction ClassName="current" IsEnabled="True" />
+                                    </ia:DataTriggerBehavior>
+                                    <ia:DataTriggerBehavior Binding="{Binding}"
+                                                            ComparisonCondition="NotEqual"
+                                                            Value="{Binding #MainView.DataContext.CurrentTabName}">
+                                        <ib:SetClassAction ClassName="current" IsEnabled="false" />
+                                    </ia:DataTriggerBehavior>
+                                </i:Interaction.Behaviors>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+            </StackPanel>
+        </Border>
+
+        <Border Name="Title" Classes="drag" DockPanel.Dock="Top">
+            <Border.Styles>
+                <Style Selector="Border#Title">
+                    <Setter Property="Background" Value="#F7F7F7" />
+                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                    <Setter Property="BorderBrush" Value="#E5E5E5" />
+                </Style>
+
+                <Style Selector="Button#CloseWindow">
+                    <Setter Property="Width" Value="42" />
+                    <Setter Property="Height" Value="28" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="HorizontalAlignment" Value="Right" />
+                    <Setter Property="VerticalAlignment" Value="Top" />
+                </Style>
+                <Style Selector="Button#CloseWindow:pointerover /template/ ContentPresenter">
+                    <Setter Property="Background" Value="#E81123" />
+                </Style>
+                <Style Selector="Button#CloseWindow:pressed /template/ ContentPresenter">
+                    <Setter Property="Background" Value="#F1707A" />
+                </Style>
+
+                <Style Selector="Button#CloseWindow Line">
+                    <Setter Property="Stroke" Value="#222222" />
+                </Style>
+                <Style Selector="Button#CloseWindow:pointerover Line">
+                    <Setter Property="Stroke" Value="White" />
+                </Style>
+            </Border.Styles>
+
+            <Panel>
+                <Button Name="CloseWindow" Click="CloseWindow">
+                    <Canvas Width="8" Height="8">
+                        <Line StartPoint="0,0" EndPoint="8,8" StrokeThickness="1" />
+                        <Line StartPoint="0,8" EndPoint="8,0" StrokeThickness="1" />
+                    </Canvas>
+                </Button>
+
+                <TextBlock Text="{Binding CurrentTabName}"
+                           Foreground="{DynamicResource FluentColorNeutralSecondary}"
+                           Classes="drag"
+                           FontSize="18"
+                           Margin="24,20,24,22"
+                           FontWeight="Medium" />
+            </Panel>
+        </Border>
+
+        <ContentControl Name="TabContent" Background="#FBFDFE" Content="{Binding CurrentTabContent}" />
+    </DockPanel>
+
+</UserControl>

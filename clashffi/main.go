@@ -17,44 +17,48 @@ import (
 	"github.com/Dreamacro/clash/hub/executor"
 	"github.com/Dreamacro/clash/hub/route"
 	"github.com/oschwald/geoip2-golang"
-	"github.com/phayes/freeport"
+)
+
+const (
+	FailedToParseConfig       = 1
+	InvalidControllerAddr     = 2
+	ControllerPortUnavailable = 3
 )
 
 //export clash_start
 func clash_start() (C.int, *C.char, *C.char) {
 	constant.SetConfig(filepath.Join(constant.Path.HomeDir(), "config.yaml"))
 
-	c, err := executor.Parse()
+	// Parse the config file
+	cfg, err := executor.Parse()
 	if err != nil {
 		fmt.Println(err.Error())
-		return 1, nil, nil
+		return FailedToParseConfig, nil, nil
 	}
 
-	addr, err := net.ResolveTCPAddr("tcp", c.General.ExternalController)
+	// Check if the address is valid
+	addr, err := net.ResolveTCPAddr("tcp", cfg.General.ExternalController)
 	if err != nil {
-		frp, err := freeport.GetFreePort()
-		if err != nil {
-			return 2, nil, nil
-		}
-		c.General.ExternalController = fmt.Sprintf("localhost:%d", frp)
-	} else {
-		listener, err := net.ListenTCP("tcp", addr)
-		if err != nil {
-			frp, err := freeport.GetFreePort()
-			if err != nil {
-				return 2, nil, nil
-			}
-			c.General.ExternalController = fmt.Sprintf("localhost:%d", frp)
-		} else {
-			listener.Close()
-		}
+		fmt.Println(err.Error())
+		return InvalidControllerAddr, nil, nil
 	}
 
-	go route.Start(c.General.ExternalController, c.General.Secret)
+	// Check if the address is available
+	listener, err := net.ListenTCP("tcp", addr)
+	if err != nil {
+		fmt.Println(err.Error())
+		return ControllerPortUnavailable, nil, nil
+	} else {
+		listener.Close()
+	}
 
-	executor.ApplyConfig(c, true)
+	// Start the controller
+	go route.Start(cfg.General.ExternalController, cfg.General.Secret)
 
-	return 0, C.CString(c.General.ExternalController), C.CString(c.General.Secret)
+	// Start the proxy
+	executor.ApplyConfig(cfg, true)
+
+	return 0, C.CString(cfg.General.ExternalController), C.CString(cfg.General.Secret)
 }
 
 //export clash_config_dir
@@ -82,6 +86,12 @@ func clash_validate_config(ptr unsafe.Pointer, len C.int) *C.char {
 		return C.CString(err.Error())
 	}
 	return nil
+}
+
+//export clash_version
+func clash_version() *C.char {
+	// TODO: automatically generating version string from go.mod?
+	return C.CString("v1.3.5")
 }
 
 //export c_free

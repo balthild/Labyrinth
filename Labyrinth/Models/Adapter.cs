@@ -1,13 +1,28 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Labyrinth.Models {
     public class Adapter {
-        public static readonly string[] GroupTypes = {
-            "URLTest", "Fallback", "LoadBalance", "Selector"
+        // See clash/constant/adapters.go
+        private static readonly IEnumerable<string> GroupTypes = new [] {
+            "Relay",
+            "Selector",
+            "Fallback",
+            "URLTest",
+            "LoadBalance",
         };
 
-        public static readonly string[] ProxyTypes = {
-            "Direct", "Reject", "Shadowsocks", "Snell", "Vmess", "Socks5", "Http"
+        private static readonly IEnumerable<string> ProxyTypes = new [] {
+            "Direct",
+            "Reject",
+            "Shadowsocks",
+            "ShadowsocksR",
+            "Snell",
+            "Trojan",
+            "Vmess",
+            "Socks5",
+            "Http",
         };
 
         public class HistoryEntry {
@@ -32,5 +47,9 @@ namespace Labyrinth.Models {
 
         [JsonPropertyName("history")]
         public HistoryEntry[] History { get; set; } = { };
+
+        public bool IsGroup() => GroupTypes.Contains(Type);
+
+        public bool IsProxy() => ProxyTypes.Contains(Type);
     }
 }

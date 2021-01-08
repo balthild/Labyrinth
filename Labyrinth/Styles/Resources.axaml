@@ -1,0 +1,29 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="FluentColorThemeTertiary">#71AFE5</Color>
+    <Color x:Key="FluentColorThemeSecondary">#2B88D8</Color>
+    <Color x:Key="FluentColorThemePrimary">#0078D4</Color>
+    <Color x:Key="FluentColorThemeMid">#106EBE</Color>
+    <Color x:Key="FluentColorThemeDark">#005A9E</Color>
+    <Color x:Key="FluentColorThemeDarker">#004578</Color>
+
+    <Color x:Key="FluentColorNeutral10">#F9F9F9</Color>
+    <Color x:Key="FluentColorNeutral20">#F2F2F2</Color>
+    <Color x:Key="FluentColorNeutral30">#EBEBEB</Color>
+    <Color x:Key="FluentColorNeutral40">#DFDFDF</Color>
+    <Color x:Key="FluentColorNeutral50">#D0D0D0</Color>
+    <Color x:Key="FluentColorNeutralTertiary">#9F9F9F</Color>
+    <Color x:Key="FluentColorNeutralSecondary">#5E5E5E</Color>
+    <Color x:Key="FluentColorNeutralPrimary">#313131</Color>
+    <Color x:Key="FluentColorNeutralDark">#1F1F1F</Color>
+
+    <SolidColorBrush x:Key="FluentButtonBackground" Color="{DynamicResource FluentColorNeutral30}" />
+    <SolidColorBrush x:Key="FluentButtonBackgroundHover" Color="{DynamicResource FluentColorNeutral40}" />
+    <SolidColorBrush x:Key="FluentButtonBackgroundActive" Color="{DynamicResource FluentColorNeutral50}" />
+
+    <SolidColorBrush x:Key="FluentButtonPrimaryBackground" Color="{DynamicResource FluentColorThemePrimary}" />
+    <SolidColorBrush x:Key="FluentButtonPrimaryBackgroundHover" Color="{DynamicResource FluentColorThemeMid}" />
+    <SolidColorBrush x:Key="FluentButtonPrimaryBackgroundActive" Color="{DynamicResource FluentColorThemeDark}" />
+
+</ResourceDictionary>

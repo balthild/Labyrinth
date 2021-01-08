@@ -3,40 +3,60 @@ using System.Runtime.InteropServices;
 
 namespace Labyrinth.Support.Interop {
     public static class WinApi {
+        // ReSharper disable UnusedMember.Global
         // ReSharper disable InconsistentNaming
-        public const uint WM_NCCALCSIZE = 0x0083;
-        public const uint WM_LBUTTONDBLCLK = 0x0203;
-        public const uint WM_LBUTTONDOWN = 0x0201;
-        public const uint WM_LBUTTONUP = 0x0202;
-        public const uint WM_RBUTTONDBLCLK = 0x0206;
-        public const uint WM_RBUTTONDOWN = 0x0204;
-        public const uint WM_RBUTTONUP = 0x0205;
+        // ReSharper disable IdentifierTypo
+        public enum WindowMessage: uint {
+            WM_NCCALCSIZE = 0x0083,
+            WM_LBUTTONDBLCLK = 0x0203,
+            WM_LBUTTONDOWN = 0x0201,
+            WM_LBUTTONUP = 0x0202,
+            WM_RBUTTONDBLCLK = 0x0206,
+            WM_RBUTTONDOWN = 0x0204,
+            WM_RBUTTONUP = 0x0205,
 
-        public const uint WM_APP = 0x8000;
-        public const uint WM_NOTIFYICON_CB = WM_APP + 1;
+            WM_APP = 0x8000,
+            WM_NOTIFYICON_CB = WM_APP + 1,
+        }
 
-        public const int GWL_STYLE = -16;
+        public enum WindowLongIndex {
+            GWL_EXSTYLE = -20,
+            GWL_STYLE = -16,
+        }
 
-        public const uint WS_MAXIMIZEBOX = 0x00010000;
+        [Flags]
+        public enum WindowStyle : uint {
+            WS_MAXIMIZEBOX = 0x00010000,
+        }
 
-        public const int NIM_ADD = 0x00000000;
-        public const int NIM_MODIFY = 0x00000001;
-        public const int NIM_DELETE = 0x00000002;
-        public const int NIM_SETVERSION = 0x00000004;
+        [Flags]
+        public enum WindowStyleEx : uint {
+            WS_EX_APPWINDOW = 0x00040000,
+            WS_EX_TOOLWINDOW = 0x00000080,
+        }
 
-        public const int NIF_MESSAGE = 0x00000001;
-        public const int NIF_ICON = 0x00000002;
-        public const int NIF_TIP = 0x00000004;
-        public const int NIF_STATE = 0x00000008;
+        public enum NotifyIconMessage {
+            NIM_ADD = 0x00000000,
+            NIM_MODIFY = 0x00000001,
+            NIM_DELETE = 0x00000002,
+            NIM_SETVERSION = 0x00000004,
+        }
 
-        public const int NIS_HIDDEN = 0x00000001;
-        public const int NIS_SHAREDICON = 0x00000002;
+        [Flags]
+        public enum NotifyIconFlag {
+            NIF_MESSAGE = 0x00000001,
+            NIF_ICON = 0x00000002,
+            NIF_TIP = 0x00000004,
+            NIF_STATE = 0x00000008,
+        }
 
-        public const uint LR_DEFAULTCOLOR = 0x00000000;
-        public const uint LR_DEFAULTSIZE= 0x00000040;
-        public const uint LR_MONOCHROME = 0x00000001;
-        public const uint LR_SHARED = 0x00008000;
+        public enum NotifyIconState {
+            NIS_HIDDEN = 0x00000001,
+            NIS_SHAREDICON = 0x00000002,
+        }
         // ReSharper restore InconsistentNaming
+        // ReSharper restore UnusedMember.Global
+        // ReSharper restore IdentifierTypo
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Margins {
@@ -59,12 +79,12 @@ namespace Labyrinth.Support.Interop {
             public uint CbSize;
             public IntPtr HWnd;
             public uint UID;
-            public uint UFlags;
-            public uint UCallbackMessage;
+            public NotifyIconFlag UFlags;
+            public WindowMessage UCallbackMessage;
             public IntPtr HIcon;
             public IntPtr SzTip;
-            public uint DwState;
-            public uint DwStateMask;
+            public NotifyIconState DwState;
+            public NotifyIconState DwStateMask;
             public IntPtr SzInfo;
             public uint UVersion;
             public IntPtr SzInfoTitle;
@@ -72,7 +92,7 @@ namespace Labyrinth.Support.Interop {
             public Guid GuidItem;
         }
 
-        public delegate IntPtr WndProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
+        public delegate IntPtr WndProc(IntPtr hWnd, WindowMessage uMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("dwmapi.dll", EntryPoint = "DwmExtendFrameIntoClientArea")]
         public static extern int DwmExtendFrameIntoClientArea(IntPtr hWnd, ref Margins pMarInset);
@@ -87,15 +107,18 @@ namespace Labyrinth.Support.Interop {
         public static extern bool SetWindowSubclass(IntPtr hWnd, WndProc fn, IntPtr id, IntPtr data);
 
         [DllImport("ComCtl32.dll", EntryPoint = "DefSubclassProc")]
-        public static extern IntPtr DefSubclassProc(IntPtr hWnd, uint uMsg, IntPtr wParam, IntPtr lParam);
+        public static extern IntPtr DefSubclassProc(IntPtr hWnd, WindowMessage uMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
-        public static extern uint GetWindowLongPtr(IntPtr hWnd, int nIndex);
+        public static extern uint GetWindowLongPtr(IntPtr hWnd, WindowLongIndex nIndex);
 
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
-        public static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, uint value);
+        public static extern IntPtr SetWindowLongPtr(IntPtr hWnd, WindowLongIndex nIndex, uint value);
+
+        [DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("shell32.dll", EntryPoint = "Shell_NotifyIconW")]
-        public static extern bool ShellNotifyIconW(int message, IntPtr data);
+        public static extern bool ShellNotifyIconW(NotifyIconMessage message, IntPtr data);
     }
 }

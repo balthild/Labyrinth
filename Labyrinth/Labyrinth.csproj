@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <LangVersion>8</LangVersion>
+    <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -19,13 +19,42 @@
       <SubType>Designer</SubType>
     </AvaloniaResource>
     <AvaloniaResource Include="Assets\*" />
+    <Compile Update="Views\MainWindow.axaml.cs">
+      <DependentUpon>MainWindow.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MessageDialog.axaml.cs">
+      <DependentUpon>MessageDialog.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\NewSubscriptionDialog.axaml.cs">
+      <DependentUpon>NewSubscriptionDialog.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\OverviewView.axaml.cs">
+      <DependentUpon>OverviewView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ProfileView.axaml.cs">
+      <DependentUpon>ProfileView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ProxyView.axaml.cs">
+      <DependentUpon>ProxyView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="App.axaml.cs">
+      <DependentUpon>App.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MainView.axaml.cs">
+      <DependentUpon>MainView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\InitializationView.axaml.cs">
+      <DependentUpon>StartingView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.9.0-rc.1" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.9.0-rc.1" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.9.0-rc.1" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.9.0-rc.1" />
-    <PackageReference Include="SharpZipLib" Version="1.2.0" />
+    <PackageReference Include="Avalonia" Version="0.10.0-rc1" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.0-rc1" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-rc1" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0-rc1" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.0-rc1" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\*" />

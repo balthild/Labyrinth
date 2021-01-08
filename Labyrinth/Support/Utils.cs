@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Labyrinth.Support {
     public static class Utils {
-        public static readonly HttpClient HttpClient = new HttpClient();
+        public static readonly HttpClient HttpClient = new();
 
         static Utils() {
             HttpClient.DefaultRequestHeaders.ConnectionClose = true;
@@ -14,7 +14,7 @@ namespace Labyrinth.Support {
 
         private static readonly string[] SizeSuffixes = {
             // long.MaxValue B = 8 EiB
-            "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB"
+            "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB",
         };
 
         public static string BinarySize(long bytes) {
@@ -50,7 +50,7 @@ namespace Labyrinth.Support {
         public static string RemoveYamlExt(string filename) {
             if (filename.EndsWith(".yaml"))
                 return filename.Substring(0, filename.Length - 5);
-            else if (filename.EndsWith("yml"))
+            else if (filename.EndsWith(".yml"))
                 return filename.Substring(0, filename.Length - 4);
             else
                 return filename;

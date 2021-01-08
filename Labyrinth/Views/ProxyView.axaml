@@ -1,0 +1,141 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
+             xmlns:ib="clr-namespace:Labyrinth.Behaviors;assembly=Labyrinth"
+             xmlns:vm="clr-namespace:Labyrinth.ViewModels;assembly=Labyrinth"
+             xmlns:c="clr-namespace:Labyrinth.Converters;assembly=Labyrinth"
+             mc:Ignorable="d"
+             x:Class="Labyrinth.Views.ProxyView"
+             Name="ProxyView">
+
+    <Design.DataContext>
+        <vm:ProxyViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <c:CommandParametersConverter2 x:Key="CommandParametersConverter2"/>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Classes="ActionBar">
+            <StackPanel Orientation="Horizontal">
+                <Button Classes="ActionBarButton" Content="Ping All" />
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <ItemsRepeater Items="{Binding AdapterGroups}" Margin="0,24,0,0">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Spacing="8" Margin="0,0,0,24">
+                            <i:Interaction.Behaviors>
+                                <ia:DataTriggerBehavior Binding="{Binding Group.Type}"
+                                                        Value="Selector">
+                                    <ib:SetClassAction ClassName="selector" IsEnabled="True" />
+                                </ia:DataTriggerBehavior>
+                                <ia:DataTriggerBehavior Binding="{Binding Group.Type}"
+                                                        ComparisonCondition="NotEqual"
+                                                        Value="Selector">
+                                    <ib:SetClassAction ClassName="selector" IsEnabled="False" />
+                                </ia:DataTriggerBehavior>
+                            </i:Interaction.Behaviors>
+
+                            <StackPanel.Styles>
+                                <Style Selector="#GroupTitle TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource FluentColorThemePrimary}" />
+                                    <Setter Property="FontSize" Value="16" />
+                                    <Setter Property="FontWeight" Value="Medium" />
+                                </Style>
+
+                                <Style Selector="Border#AdapterItem">
+                                    <Setter Property="Padding" Value="16,12" />
+                                    <Setter Property="Background" Value="{DynamicResource FluentColorNeutral20}" />
+                                    <Setter Property="CornerRadius" Value="2" />
+                                </Style>
+                                <Style Selector="Border#AdapterItem.current">
+                                    <Setter Property="Background" Value="{DynamicResource FluentColorThemePrimary}" />
+                                    <!--<Setter Property="BoxShadow" Value="0 0 2 0 #20000000, 0 1 6 0 #36000000" />-->
+                                </Style>
+                                <Style Selector=".selector Border#AdapterItem">
+                                    <Setter Property="Cursor" Value="Hand" />
+                                </Style>
+                                <Style Selector=".selector Border#AdapterItem:pointerover">
+                                    <Setter Property="Background" Value="{DynamicResource FluentColorNeutral30}" />
+                                </Style>
+                                <Style Selector=".selector Border#AdapterItem.current">
+                                    <Setter Property="Background" Value="{DynamicResource FluentColorThemePrimary}" />
+                                </Style>
+
+                                <Style Selector="Border#AdapterItem TextBlock.name">
+                                    <Setter Property="FontSize" Value="13" />
+                                    <Setter Property="FontWeight" Value="Medium" />
+                                    <Setter Property="Foreground" Value="{DynamicResource FluentColorNeutralSecondary}" />
+                                </Style>
+                                <Style Selector="Border#AdapterItem TextBlock.desc">
+                                    <Setter Property="FontSize" Value="10" />
+                                    <Setter Property="Foreground" Value="{DynamicResource FluentColorNeutralTertiary}" />
+                                </Style>
+                                <Style Selector="Border#AdapterItem.current TextBlock">
+                                    <Setter Property="Foreground" Value="#FFFFFF" />
+                                </Style>
+                            </StackPanel.Styles>
+
+                            <StackPanel Name="GroupTitle" Orientation="Horizontal" Margin="25,0">
+                                <TextBlock Text="{Binding Group.Type}" />
+                                <TextBlock Text=" - " />
+                                <TextBlock Text="{Binding Group.Name}" />
+                            </StackPanel>
+
+                            <ItemsRepeater Items="{Binding Adapters}" Margin="24,0">
+                                <ItemsRepeater.Layout>
+                                    <UniformGridLayout MaximumRowsOrColumns="2"
+                                                       MinColumnSpacing="12"
+                                                       MinRowSpacing="12"
+                                                       ItemsStretch="Fill" />
+                                </ItemsRepeater.Layout>
+
+                                <ItemsRepeater.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Name="AdapterItem">
+                                            <StackPanel Spacing="4" VerticalAlignment="Center" Margin="0,0,0,1">
+                                                <TextBlock Classes="name" Text="{Binding Name}" />
+                                                <TextBlock Classes="desc" Text="{Binding Type}" />
+                                            </StackPanel>
+
+                                            <i:Interaction.Behaviors>
+                                                <ia:EventTriggerBehavior EventName="PointerReleased">
+                                                    <ia:InvokeCommandAction Command="{Binding #ProxyView.DataContext.SwitchSelectorAdapter}">
+                                                        <ia:InvokeCommandAction.CommandParameter>
+                                                            <MultiBinding Converter="{StaticResource CommandParametersConverter2}">
+                                                                <Binding Path="DataContext" ElementName="GroupTitle" />
+                                                                <Binding Path="Name" />
+                                                            </MultiBinding>
+                                                        </ia:InvokeCommandAction.CommandParameter>
+                                                    </ia:InvokeCommandAction>
+                                                </ia:EventTriggerBehavior>
+
+                                                <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                                                        Value="{Binding #GroupTitle.DataContext.Current.Name}">
+                                                    <ib:SetClassAction ClassName="current" IsEnabled="True" />
+                                                </ia:DataTriggerBehavior>
+                                                <ia:DataTriggerBehavior Binding="{Binding Name}"
+                                                                        ComparisonCondition="NotEqual"
+                                                                        Value="{Binding #GroupTitle.DataContext.Current.Name}">
+                                                    <ib:SetClassAction ClassName="current" IsEnabled="False" />
+                                                </ia:DataTriggerBehavior>
+                                            </i:Interaction.Behaviors>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsRepeater.ItemTemplate>
+                            </ItemsRepeater>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+    </DockPanel>
+
+</UserControl>

@@ -1,111 +1,118 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reactive.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Avalonia.Controls;
+using Avalonia.Threading;
+using JetBrains.Annotations;
 using Labyrinth.Models;
 using Labyrinth.Support;
 using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
-    public class ProxyViewModel : ViewModelBase {
-        private Dictionary<string, Adapter> allAdapters = new Dictionary<string, Adapter>();
+    public class ProxyViewModel : ViewModel {
+        public class AdapterGroup {
+            public Adapter Group { get; }
+
+            public IEnumerable<Adapter> Adapters { get; }
+
+            public Adapter? Current { get; set; }
+
+            public AdapterGroup(Adapter group, IEnumerable<Adapter> adapters, Adapter? current = null) {
+                Group = group;
+                Adapters = adapters;
+                Current = current;
+            }
+        }
+
+        private Dictionary<string, Adapter> allAdapters = new();
 
         public Dictionary<string, Adapter> AllAdapters {
             get => allAdapters;
             set => this.RaiseAndSetIfChanged(ref allAdapters, value);
         }
 
-        private ObservableAsPropertyHelper<IEnumerable<Adapter>> proxyGroups;
+        private readonly ObservableAsPropertyHelper<IEnumerable<AdapterGroup>> adapterGroups;
 
-        public IEnumerable<Adapter> ProxyGroups => proxyGroups.Value;
-
-        private Adapter selectedGroup = new Adapter();
-
-        public Adapter SelectedGroup {
-            get => selectedGroup;
-            set => this.RaiseAndSetIfChanged(ref selectedGroup, value);
-        }
-
-        private ObservableAsPropertyHelper<IEnumerable<Adapter>> adaptersInSelectedGroup;
-
-        public IEnumerable<Adapter> AdaptersInSelectedGroup => adaptersInSelectedGroup.Value;
-
-        private ObservableAsPropertyHelper<Adapter> activeAdapterInSelectedGroup;
-
-        public Adapter ActiveAdapterInSelectedGroup => activeAdapterInSelectedGroup.Value;
+        public IEnumerable<AdapterGroup> AdapterGroups => adapterGroups.Value;
 
         public ProxyViewModel() {
             this.WhenAnyValue(x => x.AllAdapters, x => x.GlobalState.ClashConfig.Mode)
                 .Select(tuple => {
-                    return tuple.Item1
-                        .Select(x => x.Value)
-                        .Where(x => x.Name == "GLOBAL" ? tuple.Item2 == "Global" : Adapter.GroupTypes.Contains(x.Type))
-                        .OrderBy(x => x.Name switch {
-                            "GLOBAL" => 1,
-                            "Proxy" => 2,
-                            _ => 99
-                        });
+                    var (all, mode) = tuple;
+                    return GetGroups(all, mode).Select(group => new AdapterGroup(
+                        group,
+                        GetAdaptersInGroup(all, group),
+                        all.GetValueOrDefault(group.Now, null)
+                    ));
                 })
-                .ToProperty(this, nameof(ProxyGroups), out proxyGroups);
-
-            this.WhenAnyValue(x => x.SelectedGroup, x => x.AllAdapters)
-                .Select(tuple => tuple.Item1.Name switch {
-                    "GLOBAL" => tuple.Item1.All
-                        .Select(name => tuple.Item2.GetValueOrDefault(name)!)
-                        .OrderBy(adapter =>  adapter.Type switch {
-                            "Global" => 1,
-                            "Direct" => 2,
-                            "Reject" => 3,
-                            "URLTest" => 10,
-                            "Fallback" => 10,
-                            "LoadBalance" => 10,
-                            "Selector" => 10,
-                            _ => 99
-                        }),
-                    _ => tuple.Item1.All.Select(name => tuple.Item2.GetValueOrDefault(name)!)
-                })
-                .ToProperty(this, nameof(AdaptersInSelectedGroup), out adaptersInSelectedGroup);
-
-            this.WhenAnyValue(x => x.SelectedGroup.Now, x => x.AllAdapters)
-                .Select(tuple => tuple.Item2.GetValueOrDefault(tuple.Item1)!)
-                .ToProperty(this, nameof(ActiveAdapterInSelectedGroup), out activeAdapterInSelectedGroup);
+                .ToProperty(this, nameof(AdapterGroups), out adapterGroups);
 
             Task.Run(GetAdapters);
         }
 
         private async Task GetAdapters() {
-            using HttpResponseMessage message = await ApiController.Request(HttpMethod.Get, "/proxies");
-            string json = await message.Content.ReadAsStringAsync();
+            var adapters = await DataUtils.GetAdapters();
 
-            var result = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, Adapter>>>(json);
-            var adapters = result["proxies"];
-
-            foreach ((string key, Adapter value) in adapters) {
-                value.Name = key;
-            }
-
-            AllAdapters = adapters;
+            Dispatcher.UIThread.Post(() => {
+                AllAdapters = adapters;
+            });
         }
 
-        public void ShowProxyGroupDetail(SelectionChangedEventArgs args) {
-            SelectedGroup = args.AddedItems.Cast<Adapter>().FirstOrDefault();
+        [UsedImplicitly]
+        public void SwitchSelectorAdapter(object values) {
+            if (values is not (AdapterGroup group, string newAdapterName))
+                return;
+
+            if (group.Group.Type != "Selector" || group.Group.Now == newAdapterName)
+                return;
+
+            Task.Run(async delegate {
+                string json = JsonSerializer.Serialize(new { name = newAdapterName });
+                await ApiController.Request(HttpMethod.Put, $"/proxies/{group.Group.Name}", json);
+
+                AppConfig appConfig = await SyncData(() => GlobalState.AppConfig);
+                await DataUtils.SaveSelectedAdaptersRecord(appConfig);
+                await ConfigFile.SaveAppConfig(appConfig);
+
+                // TODO: maybe we can update the data and view more efficiently?
+                await GetAdapters();
+            });
         }
 
-        public void SwitchSelectorAdapter(string newAdapterName) {
-            Adapter group = SelectedGroup;
-            if (group.Type == "Selector" && group.Now != newAdapterName) {
-                Task.Run(async delegate {
-                    string json = JsonSerializer.Serialize(new { name = newAdapterName });
-                    await ApiController.Request(HttpMethod.Put, $"/proxies/{group.Name}", json);
-
-                    this.RaisePropertyChanging(nameof(SelectedGroup));
-                    group.Now = newAdapterName;
-                    this.RaisePropertyChanged(nameof(SelectedGroup));
+        private static IEnumerable<Adapter> GetGroups(Dictionary<string, Adapter> all, string mode) {
+            return all
+                .Select(x => x.Value)
+                .Where(x => x.Name switch {
+                    // Only shows GLOBAL group under Global mode
+                    "GLOBAL" => mode == "global",
+                    _ => x.IsGroup(),
+                })
+                .OrderBy(x => x.Name switch {
+                    "GLOBAL" => 1,
+                    "Proxy" => 2,
+                    _ => 99,
                 });
-            }
+        }
+
+        private static IEnumerable<Adapter> GetAdaptersInGroup(Dictionary<string, Adapter> all, Adapter group) {
+            return group.Name switch {
+                "GLOBAL" => group.All
+                    .Select(name => all.GetValueOrDefault(name)!)
+                    .OrderBy(adapter => adapter.Type switch {
+                        "Global" => 1,
+                        "Direct" => 2,
+                        "Reject" => 3,
+                        "URLTest" => 10,
+                        "Fallback" => 10,
+                        "LoadBalance" => 10,
+                        "Selector" => 10,
+                        _ => 99,
+                    }),
+                _ => group.All.Select(name => all.GetValueOrDefault(name)!),
+            };
         }
     }
 }

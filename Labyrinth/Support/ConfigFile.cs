@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Avalonia.Threading;
+using Labyrinth.Models;
 using Labyrinth.Support.Interop;
 using Labyrinth.ViewModels;
 
@@ -16,12 +18,16 @@ namespace Labyrinth.Support {
         public static IEnumerable<string> GetClashConfigs() =>
             Directory.EnumerateFiles(Clash.ConfigDir)
                 .Select(x => Path.GetFileName(x)!)
-                .Where(x => x.EndsWith(".yml") || x.EndsWith(".yaml"));
+                .Where(x => x.EndsWith(".yml") || x.EndsWith(".yaml"))
+                .OrderBy(x => x switch {
+                    "config.yaml" => 1,
+                    _ => 99,
+                });
 
-        public static Task SaveCurrentAppConfig() {
+        public static async Task SaveAppConfig(AppConfig config) {
             var options = new JsonSerializerOptions { WriteIndented = true };
-            string json = JsonSerializer.Serialize(ViewModelBase.State.AppConfig, options);
-            return File.WriteAllTextAsync(GetPath("labyrinth.json"), json);
+            string json = JsonSerializer.Serialize(config, options);
+            await File.WriteAllTextAsync(GetPath("Labyrinth.json"), json);
         }
     }
 }
