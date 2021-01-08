@@ -53,7 +53,7 @@ namespace Labyrinth.Support {
             });
         }
 
-        public static async Task RefreshClashConfig() {
+        public static async Task<ClashConfig> RefreshClashConfig() {
             using HttpResponseMessage message = await ApiController.Request(HttpMethod.Get, "/configs");
             string json = await message.Content.ReadAsStringAsync();
             var config = JsonSerializer.Deserialize<ClashConfig>(json);
@@ -61,6 +61,8 @@ namespace Labyrinth.Support {
             await ViewModel.SyncData(() => {
                 ViewModel.StaticState.ClashConfig = config;
             });
+
+            return config;
         }
     }
 }

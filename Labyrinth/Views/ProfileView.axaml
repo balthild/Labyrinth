@@ -27,14 +27,16 @@
         <Border DockPanel.Dock="Top" Classes="ActionBar">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                    <Button Classes="ActionBarButton Right" Content="Update All" Command="{Binding UpdateAllSubscription}" />
+                    <Button Classes="ActionBarButton Right" Content="Update All"
+                            Command="{Binding UpdateAllSubscriptionCommand}" />
                     <Button Classes="ActionBarButton Right" Content="Dir" Click="OpenProfileDir" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Button Classes="ActionBarButton" Content="New" Command="{Binding NewSubscription}" />
                     <Button Classes="ActionBarButton" Content="Update"
-                            Command="{Binding UpdateSelectedSubscription}" CommandParameter="{Binding SelectedProfile}" />
-                    <Button Classes="ActionBarButton" Content="Delete"  Command="{Binding DeleteProfile}" />
+                            Command="{Binding UpdateSubscriptionCommand}" CommandParameter="{Binding SelectedProfile}" />
+                    <Button Classes="ActionBarButton" Content="Delete"
+                            Command="{Binding DeleteProfileCommand}" CommandParameter="{Binding SelectedProfile}" />
                 </StackPanel>
             </DockPanel>
         </Border>
@@ -52,8 +54,12 @@
                         <Setter Property="CornerRadius" Value="2" />
                         <Setter Property="Cursor" Value="Hand" />
                     </Style>
+                    <Style Selector="Border#ProfileItem:pointerover">
+                        <!-- Use borders will increase the corner radius. -->
+                        <Setter Property="BoxShadow" Value="inset 0 0 0 1 #D0D0D0" />
+                    </Style>
                     <Style Selector="Border#ProfileItem.selected">
-                        <Setter Property="Background" Value="{DynamicResource FluentColorNeutral40}" />
+                        <Setter Property="BoxShadow" Value="inset 0 0 0 1 #0078D4" />
                     </Style>
 
                     <Style Selector="Border#ProfileItem TextBlock.name">
@@ -72,6 +78,7 @@
                     <Style Selector="Border#ProfileItem Canvas#ActiveSign">
                         <Setter Property="IsVisible" Value="False" />
                         <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Margin" Value="0,1,0,0" />
                     </Style>
                     <Style Selector="Border#ProfileItem.active Canvas#ActiveSign">
                         <Setter Property="IsVisible" Value="True" />
@@ -97,11 +104,12 @@
                                         <Polyline Stroke="#FFFFFF" StrokeThickness="1" Points="3.5,8.5 6.5,11.5 12.5,5.5" />
                                     </Canvas>
                                 </StackPanel>
+
                                 <TextBlock Classes="desc" Text="{Binding Description}" />
                             </StackPanel>
 
                             <i:Interaction.Behaviors>
-                                <ia:EventTriggerBehavior EventName="PointerReleased">
+                                <ia:EventTriggerBehavior EventName="Tapped">
                                     <ia:ChangePropertyAction TargetObject="{Binding $parent[UserControl].DataContext}"
                                                              PropertyName="SelectedProfile"
                                                              Value="{Binding}" />

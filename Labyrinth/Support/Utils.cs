@@ -1,15 +1,44 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Labyrinth.Support {
     public static class Utils {
-        public static readonly HttpClient HttpClient = new();
+        private static readonly object ClientLock = new();
 
-        static Utils() {
-            HttpClient.DefaultRequestHeaders.ConnectionClose = true;
+        private static HttpClient httpClient = new() {
+            DefaultRequestHeaders = {
+                ConnectionClose = true,
+            },
+        };
+
+        public static HttpClient GetProxiedHttpClient() {
+            HttpClient client;
+            lock (ClientLock) {
+                client = httpClient;
+            }
+
+            return client;
+        }
+
+        public static void UpdateProxiedHttpClient(int httpProxyPort) {
+            var handler = new HttpClientHandler {
+                UseProxy = true,
+                Proxy = new WebProxy("127.0.0.1", httpProxyPort),
+            };
+
+            var client = new HttpClient(handler) {
+                DefaultRequestHeaders = {
+                    ConnectionClose = true,
+                },
+            };
+
+            lock (ClientLock) {
+                httpClient = client;
+            }
         }
 
         private static readonly string[] SizeSuffixes = {
@@ -38,6 +67,28 @@ namespace Labyrinth.Support {
 
         public static string FormatTime(long ts) =>
             DateTimeOffset.FromUnixTimeSeconds(ts).LocalDateTime.ToString("yyyy'-'MM'-'dd HH':'mm");
+
+        private const int MINUTE = 60;
+        private const int HOUR = 60 * MINUTE;
+        private const int DAY = 24 * HOUR;
+        private const int MONTH = 30 * DAY;
+
+        public static string FormatRelativeTimeAgo(long ts) {
+            long deltaSeconds = DateTimeOffset.Now.ToUnixTimeSeconds() - ts;
+            TimeSpan delta = TimeSpan.FromSeconds(deltaSeconds);
+
+            return deltaSeconds switch {
+                var ds when ds < 0 => $"at {FormatTime(ts)}",
+                var ds when ds < 1 * MINUTE => "just now",
+                var ds when ds < 1.5 * MINUTE => "a minute ago",
+                var ds when ds < 1 * HOUR => $"{delta.Minutes} minutes ago",
+                var ds when ds < 1.5 * HOUR => "an hour ago",
+                var ds when ds < 1 * DAY => $"{delta.Hours} hour ago",
+                var ds when ds < 1.5 * DAY => "a day ago",
+                var ds when ds < 1 * MONTH => $"{delta.Days} days ago",
+                _ => DateTimeOffset.FromUnixTimeSeconds(ts).LocalDateTime.ToString("'at 'yyyy'-'MM'-'dd"),
+            };
+        }
 
         public static async Task ExtractResource(string resource, string path) {
             var assembly = Assembly.GetEntryAssembly()!;

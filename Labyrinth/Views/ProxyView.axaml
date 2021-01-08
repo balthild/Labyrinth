@@ -106,7 +106,7 @@
                                             </StackPanel>
 
                                             <i:Interaction.Behaviors>
-                                                <ia:EventTriggerBehavior EventName="PointerReleased">
+                                                <ia:EventTriggerBehavior EventName="Tapped">
                                                     <ia:InvokeCommandAction Command="{Binding #ProxyView.DataContext.SwitchSelectorAdapter}">
                                                         <ia:InvokeCommandAction.CommandParameter>
                                                             <MultiBinding Converter="{StaticResource CommandParametersConverter2}">

@@ -112,7 +112,7 @@ namespace Labyrinth.Views {
 
             Task.Run(async delegate {
                 try {
-                    byte[] data = await Utils.HttpClient.GetByteArrayAsync(uri);
+                    byte[] data = await Utils.GetProxiedHttpClient().GetByteArrayAsync(uri);
 
                     string? err = Clash.ValidateConfig(data);
                     if (err != null) {

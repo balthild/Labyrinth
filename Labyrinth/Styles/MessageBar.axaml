@@ -5,7 +5,7 @@
         <Setter Property="Background" Value="#F7F7F7" />
         <Setter Property="BorderThickness" Value="0,1,0,0" />
         <Setter Property="BorderBrush" Value="#E5E5E5" />
-        <Setter Property="Padding" Value="24,8" />
+        <Setter Property="Padding" Value="24,12" />
     </Style>
 
     <Style Selector="Border.MessageBar TextBlock">

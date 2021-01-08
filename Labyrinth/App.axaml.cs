@@ -51,10 +51,11 @@ namespace Labyrinth {
                 await SetClashConfigFile();
                 await SetLastSelectedProxies();
 
-                await DataUtils.RefreshClashConfig();
+                ClashConfig config = await DataUtils.RefreshClashConfig();
+                Utils.UpdateProxiedHttpClient(config.MixedPort != 0 ? config.MixedPort : config.Port);
 
-                AppConfig config = await ViewModel.SyncData(() => ViewModel.StaticState.AppConfig);
-                await ConfigFile.SaveAppConfig(config);
+                AppConfig appConfig = await ViewModel.SyncData(() => ViewModel.StaticState.AppConfig);
+                await ConfigFile.SaveAppConfig(appConfig);
 
                 Dispatcher.UIThread.Post(() => model.CurrentWindowContent = new MainViewModel());
             } catch (Exception e) {

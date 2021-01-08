@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform;
 using Labyrinth.Controls;
@@ -89,6 +90,7 @@ namespace Labyrinth.Views {
             switch ((WindowMessage) lParam) {
                 case WindowMessage.WM_RBUTTONUP:
                 case WindowMessage.WM_LBUTTONUP:
+                    WindowState = WindowState.Normal;
                     Show();
                     Activate();
                     break;

@@ -56,7 +56,7 @@ namespace Labyrinth.ViewModels {
         private async Task GetAdapters() {
             var adapters = await DataUtils.GetAdapters();
 
-            Dispatcher.UIThread.Post(() => {
+            await SyncData(() => {
                 AllAdapters = adapters;
             });
         }

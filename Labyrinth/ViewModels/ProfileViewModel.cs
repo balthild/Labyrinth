@@ -16,6 +16,7 @@ using Labyrinth.Models;
 using Labyrinth.Support;
 using Labyrinth.Support.Interop;
 using Labyrinth.Views;
+using Microsoft.VisualBasic;
 using ReactiveUI;
 
 namespace Labyrinth.ViewModels {
@@ -41,25 +42,28 @@ namespace Labyrinth.ViewModels {
             set => this.RaiseAndSetIfChanged(ref activeProfileName, value);
         }
 
-        public ReactiveCommand<Profile, Unit> UpdateSelectedSubscription { get; }
+        public ReactiveCommand<Profile, Unit> UpdateSubscriptionCommand { get; }
+        public ReactiveCommand<Unit, Unit> UpdateAllSubscriptionCommand { get; }
+        public ReactiveCommand<Profile, Unit> DeleteProfileCommand { get; }
 
         public ProfileViewModel() {
             var isSubscription = this.WhenAnyValue(x => x.SelectedProfile).Select(x => x?.Subscription != null);
-            UpdateSelectedSubscription = ReactiveCommand.CreateFromTask<Profile>(TryUpdateSubscription, isSubscription);
+            UpdateSubscriptionCommand = ReactiveCommand.CreateFromTask<Profile>(TryUpdateSubscription, isSubscription);
+
+            UpdateAllSubscriptionCommand = ReactiveCommand.CreateFromTask(TryUpdateAllSubscription);
+            DeleteProfileCommand = ReactiveCommand.CreateFromTask<Profile>(DeleteProfile);
 
             GetProfilesFromFilesystem();
         }
 
-        private void GetProfilesFromFilesystem() {
+        private Task GetProfilesFromFilesystem() {
             string[] configs = ConfigFile.GetClashConfigs().ToArray();
 
-            Dispatcher.UIThread.Post(() => {
+            return SyncData(() => {
                 Profiles = configs.Select(name => {
                     Subscription? subscription = GlobalState.AppConfig.Subscriptions.GetValueOrDefault(name);
                     return new Profile { Name = name, Subscription = subscription };
                 });
-
-                ActiveProfileName = configs.First(x => x == GlobalState.AppConfig.ConfigFile) ?? "config.yaml";
             });
         }
 
@@ -85,7 +89,7 @@ namespace Labyrinth.ViewModels {
 
             await ConfigFile.SaveAppConfig(config);
 
-            GetProfilesFromFilesystem();
+            await GetProfilesFromFilesystem();
         }
 
         private async Task TryUpdateSubscription(Profile profile) {
@@ -106,7 +110,7 @@ namespace Labyrinth.ViewModels {
             if (profile.Subscription == null)
                 return;
 
-            byte[] data = await Utils.HttpClient.GetByteArrayAsync(profile.Subscription.Url);
+            byte[] data = await Utils.GetProxiedHttpClient().GetByteArrayAsync(profile.Subscription.Url);
 
             string? error = Clash.ValidateConfig(data);
             if (error != null) {
@@ -131,15 +135,61 @@ namespace Labyrinth.ViewModels {
                 await ConfigFile.SaveAppConfig(appConfig);
             }
 
-            GetProfilesFromFilesystem();
+            await GetProfilesFromFilesystem();
+        }
+
+        private async Task DeleteProfile(Profile profile) {
+            await SwitchProfile("config.yaml");
+
+            // Delete file asynchronously.
+            // See https://stackoverflow.com/questions/10606328/why-isnt-there-an-asynchronous-file-delete-in-net
+            // TODO: shows a confirmation dialog
+            await using var stream = new FileStream(
+                ConfigFile.GetPath(profile.Name),
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.None,
+                4096,
+                FileOptions.DeleteOnClose
+            );
+            await stream.FlushAsync();
+            await stream.DisposeAsync();
+
+            await GetProfilesFromFilesystem();
+        }
+
+        private async Task TryUpdateAllSubscription() {
+            List<string> errored = new();
+
+            foreach (Profile profile in Profiles) {
+                try {
+                    await UpdateSubscription(profile);
+                } catch (Exception e) {
+                    Console.WriteLine(e);
+                    errored.Add(profile.Name);
+                }
+            }
+
+            if (errored.Count > 0) {
+                string filenames = string.Join("\n\n", errored);
+                string message = $"Some error occurred when updating the following subscriptions:\n\n{filenames}";
+
+                Dispatcher.UIThread.Post(() => {
+                    var desktop = Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime;
+                    var dialog = new MessageDialog(message, "Failed to update subscription");
+                    dialog.ShowDialog(desktop?.MainWindow);
+                });
+            }
+
+            await GetProfilesFromFilesystem();
         }
 
         [UsedImplicitly]
-        public void SwitchProfile(string name) {
+        public Task SwitchProfile(string name) {
             if (ActiveProfileName == name)
-                return;
+                return Task.CompletedTask;
 
-            Task.Run(async delegate {
+            return Task.Run(async delegate {
                 await ApplyClashConfig(name);
 
                 AppConfig appConfig = await SyncData(() => {
@@ -155,10 +205,6 @@ namespace Labyrinth.ViewModels {
                 await DataUtils.SetLastSelectedAdapters(appConfig);
                 await ConfigFile.SaveAppConfig(appConfig);
             });
-        }
-
-        public void SelectProfileFromList(SelectionChangedEventArgs args) {
-            SelectedProfile = args.AddedItems.Cast<Profile>().FirstOrDefault();
         }
 
         private static async Task ApplyClashConfig(string name) {
