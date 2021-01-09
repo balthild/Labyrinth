@@ -2,6 +2,13 @@ package main
 
 /*
 #include <stdlib.h>
+
+struct config_stats {
+	int code;
+	int proxy_count;
+	int proxy_group_count;
+	int rule_count;
+};
 */
 import "C"
 
@@ -78,14 +85,33 @@ func clash_mmdb_ok() bool {
 }
 
 //export clash_validate_config
-func clash_validate_config(ptr unsafe.Pointer, len C.int) *C.char {
-	data := C.GoBytes(ptr, len)
+func clash_validate_config(ptr unsafe.Pointer, length C.int) *C.char {
+	data := C.GoBytes(ptr, length)
 	_, err := config.Parse(data)
 
 	if err != nil {
 		return C.CString(err.Error())
 	}
 	return nil
+}
+
+//export clash_get_config_stats
+func clash_get_config_stats(ptr unsafe.Pointer, length C.int) C.struct_config_stats {
+	data := C.GoBytes(ptr, length)
+
+	rawConfig, err := config.UnmarshalRawConfig(data)
+	if err != nil {
+		return C.struct_config_stats{
+			code: 1,
+		}
+	}
+
+	return C.struct_config_stats{
+		code: 0,
+		proxy_count: C.int(len(rawConfig.Proxy)),
+		proxy_group_count: C.int(len(rawConfig.ProxyGroup)),
+		rule_count: C.int(len(rawConfig.Rule)),
+	}
 }
 
 //export clash_version

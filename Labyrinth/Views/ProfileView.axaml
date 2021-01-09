@@ -72,8 +72,10 @@
                         <Setter Property="FontSize" Value="12" />
                         <Setter Property="Foreground" Value="{DynamicResource FluentColorNeutralTertiary}" />
                     </Style>
-                    <Style Selector="Border#ProfileItem.current TextBlock">
-                        <Setter Property="Foreground" Value="#FFFFFF" />
+                    <Style Selector="Border#ProfileItem TextBlock.stats">
+                        <Setter Property="FontSize" Value="13" />
+                        <Setter Property="Foreground" Value="{DynamicResource FluentColorNeutralSecondary}" />
+                        <Setter Property="Margin" Value="0,4,0,0" />
                     </Style>
 
                     <Style Selector="Border#ProfileItem Canvas#ActiveSign">
@@ -106,6 +108,7 @@
                                 </StackPanel>
 
                                 <TextBlock Classes="desc" Text="{Binding Description}" />
+                                <TextBlock Classes="stats" Text="{Binding StatsDescription}" />
                             </StackPanel>
 
                             <i:Interaction.Behaviors>

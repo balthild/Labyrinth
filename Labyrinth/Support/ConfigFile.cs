@@ -22,6 +22,14 @@ namespace Labyrinth.Support {
                     _ => 99,
                 });
 
+        public static Task<Clash.ConfigStats?> GetClashConfigFileStats(string name) {
+            string path = GetPath(name);
+            return Task.Run(() => {
+                byte[] data = File.ReadAllBytes(path);
+                return Clash.GetConfigStats(data);
+            });
+        }
+
         public static async Task SaveAppConfig(AppConfig config) {
             var options = new JsonSerializerOptions { WriteIndented = true };
             string json = JsonSerializer.Serialize(config, options);

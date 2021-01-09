@@ -51,18 +51,27 @@ namespace Labyrinth.ViewModels {
             UpdateAllSubscriptionCommand = ReactiveCommand.CreateFromTask(TryUpdateAllSubscription);
             DeleteProfileCommand = ReactiveCommand.CreateFromTask<Profile>(DeleteProfile);
 
-            GetProfilesFromFilesystem();
+            Task.Run(GetProfilesFromFilesystem);
         }
 
-        private Task GetProfilesFromFilesystem() {
-            string[] configs = ConfigFile.GetClashConfigs().ToArray();
+        private async Task GetProfilesFromFilesystem() {
+            var subscriptions = await SyncData(() => GlobalState.AppConfig.Subscriptions);
 
-            return SyncData(() => {
-                Profiles = configs.Select(name => {
-                    Subscription? subscription = GlobalState.AppConfig.Subscriptions.GetValueOrDefault(name);
-                    return new Profile { Name = name, Subscription = subscription };
-                });
-            });
+            var profileTasks = ConfigFile.GetClashConfigs()
+                .Select(async name => {
+                    Subscription? subscription = subscriptions.GetValueOrDefault(name);
+                    var stats = await ConfigFile.GetClashConfigFileStats(name);
+                    return new Profile {
+                        Name = name,
+                        Subscription = subscription,
+                        Stats = stats,
+                    };
+                })
+                .ToArray();
+
+            var allProfiles = await Task.WhenAll(profileTasks);
+
+            await SyncData(() => { Profiles = allProfiles; });
         }
 
         public async Task NewSubscription() {

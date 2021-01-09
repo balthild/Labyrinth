@@ -16,6 +16,20 @@ namespace Labyrinth.Support.Interop {
             public string? Secret;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        private readonly struct ConfigStatsInterop {
+            public readonly int Code;
+            public readonly int ProxyCount;
+            public readonly int ProxyGroupCount;
+            public readonly int RuleCount;
+        }
+
+        public struct ConfigStats {
+            public int ProxyCount;
+            public int ProxyGroupCount;
+            public int RuleCount;
+        }
+
         public static string ConfigDir { get; }
 
         public static StartResult Start() {
@@ -49,6 +63,23 @@ namespace Labyrinth.Support.Interop {
             return cause;
         }
 
+        public static ConfigStats? GetConfigStats(byte[] data) {
+            IntPtr dataPtr = Marshal.AllocHGlobal(data.Length);
+            Marshal.Copy(data, 0, dataPtr, data.Length);
+            ConfigStatsInterop result = ClashGetConfigStats(dataPtr, data.Length);
+            Marshal.FreeHGlobal(dataPtr);
+
+            if (result.Code != 0) {
+                return null;
+            }
+
+            return new ConfigStats {
+                ProxyCount = result.ProxyCount,
+                ProxyGroupCount = result.ProxyGroupCount,
+                RuleCount = result.RuleCount,
+            };
+        }
+
         [DllImport("clashffi", EntryPoint = "clash_mmdb_ok")]
         public static extern bool IsMaxmindDatabaseOk();
 
@@ -56,7 +87,10 @@ namespace Labyrinth.Support.Interop {
         private static extern IntPtr GetConfigDir();
 
         [DllImport("clashffi", EntryPoint = "clash_validate_config")]
-        private static extern IntPtr ClashValidateConfig(IntPtr ptr, int len);
+        private static extern IntPtr ClashValidateConfig(IntPtr ptr, int length);
+
+        [DllImport("clashffi", EntryPoint = "clash_get_config_stats")]
+        private static extern ConfigStatsInterop ClashGetConfigStats(IntPtr ptr, int length);
 
         [DllImport("clashffi", EntryPoint = "clash_start")]
         private static extern StartResultInterop ClashStart();
