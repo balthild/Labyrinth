@@ -1,9 +1,4 @@
-﻿using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Avalonia.Threading;
-using Labyrinth.Models;
-using Labyrinth.Support;
+﻿using Labyrinth.Models;
 using ReactiveUI;
 
 namespace Labyrinth.ViewModels {

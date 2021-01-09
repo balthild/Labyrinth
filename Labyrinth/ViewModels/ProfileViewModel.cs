@@ -8,7 +8,6 @@ using System.Reactive.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using JetBrains.Annotations;
@@ -16,7 +15,6 @@ using Labyrinth.Models;
 using Labyrinth.Support;
 using Labyrinth.Support.Interop;
 using Labyrinth.Views;
-using Microsoft.VisualBasic;
 using ReactiveUI;
 
 namespace Labyrinth.ViewModels {

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using JetBrains.Annotations;
 using Labyrinth.Controls;
-using static Labyrinth.Support.Interop.WinApi;
 
 namespace Labyrinth.Views {
     public class MessageDialog : BorderlessWindow {

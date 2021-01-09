@@ -3,10 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Avalonia.Threading;
 using Labyrinth.Models;
 using Labyrinth.Support.Interop;
-using Labyrinth.ViewModels;
 
 namespace Labyrinth.Support {
     public static class ConfigFile {
