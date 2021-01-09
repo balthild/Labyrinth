@@ -21,7 +21,9 @@ namespace Labyrinth.Models {
         public string StatsDescription => Stats switch {
             null => "(Not a valid clash config)",
             { ProxyCount: var p, ProxyGroupCount: var g, RuleCount: var r } =>
-                $"{p} proxies, {g} groups, {r} rules",
+                $"{p} {(p > 1 ? "proxies" : "proxy")}, " +
+                $"{g} {(p > 1 ? "groups" : "group")}, " +
+                $"{r} {(r > 1 ? "rules" : "rule")}",
         };
     }
 }

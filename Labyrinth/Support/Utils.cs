@@ -83,7 +83,7 @@ namespace Labyrinth.Support {
                 var ds when ds < 1.5 * MINUTE => "a minute ago",
                 var ds when ds < 1 * HOUR => $"{delta.Minutes} minutes ago",
                 var ds when ds < 1.5 * HOUR => "an hour ago",
-                var ds when ds < 1 * DAY => $"{delta.Hours} hour ago",
+                var ds when ds < 1 * DAY => $"{delta.Hours} hours ago",
                 var ds when ds < 1.5 * DAY => "a day ago",
                 var ds when ds < 1 * MONTH => $"{delta.Days} days ago",
                 _ => DateTimeOffset.FromUnixTimeSeconds(ts).LocalDateTime.ToString("'at 'yyyy'-'MM'-'dd"),
