@@ -46,9 +46,10 @@
         </Border>
 
         <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-            <ItemsRepeater Items="{Binding Profiles}" Margin="24">
-                <ItemsRepeater.Styles>
+            <ItemsControl Items="{Binding Profiles}" Margin="24">
+                <ItemsControl.Styles>
                     <Style Selector="Border#ProfileItem">
+                        <Setter Property="Margin" Value="6" />
                         <Setter Property="Padding" Value="16,12" />
                         <Setter Property="Background" Value="{DynamicResource FluentColorNeutral20}" />
                         <Setter Property="CornerRadius" Value="2" />
@@ -83,16 +84,15 @@
                     <Style Selector="Border#ProfileItem.active Canvas#ActiveSign">
                         <Setter Property="IsVisible" Value="True" />
                     </Style>
-                </ItemsRepeater.Styles>
+                </ItemsControl.Styles>
 
-                <ItemsRepeater.Layout>
-                    <UniformGridLayout MaximumRowsOrColumns="2"
-                                       MinColumnSpacing="12"
-                                       MinRowSpacing="12"
-                                       ItemsStretch="Fill" />
-                </ItemsRepeater.Layout>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2" Margin="-6" VerticalAlignment="Top" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-                <ItemsRepeater.ItemTemplate>
+                <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border Name="ProfileItem">
                             <StackPanel Spacing="4" VerticalAlignment="Center" Margin="0,0,0,1">
@@ -140,8 +140,8 @@
                             </i:Interaction.Behaviors>
                         </Border>
                     </DataTemplate>
-                </ItemsRepeater.ItemTemplate>
-            </ItemsRepeater>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </ScrollViewer>
     </DockPanel>
 

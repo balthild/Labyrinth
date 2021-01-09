@@ -22,15 +22,21 @@
     <DockPanel>
         <Border DockPanel.Dock="Top" Classes="ActionBar">
             <StackPanel Orientation="Horizontal">
-                <Button Classes="ActionBarButton" Content="Ping All" />
+                <Button Classes="ActionBarButton" Content="Ping All" Command="{Binding PingAllAdapters}" />
             </StackPanel>
         </Border>
 
         <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-            <ItemsRepeater Items="{Binding AdapterGroups}" Margin="0,24,0,0">
-                <ItemsRepeater.ItemTemplate>
+            <ItemsControl Items="{Binding AdapterGroups}" Margin="24">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Spacing="24" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Spacing="8" Margin="0,0,0,24">
+                        <StackPanel Spacing="8">
                             <i:Interaction.Behaviors>
                                 <ia:DataTriggerBehavior Binding="{Binding Group.Type}"
                                                         Value="Selector">
@@ -51,6 +57,7 @@
                                 </Style>
 
                                 <Style Selector="Border#AdapterItem">
+                                    <Setter Property="Margin" Value="6" />
                                     <Setter Property="Padding" Value="16,12" />
                                     <Setter Property="Background" Value="{DynamicResource FluentColorNeutral20}" />
                                     <Setter Property="CornerRadius" Value="2" />
@@ -83,21 +90,20 @@
                                 </Style>
                             </StackPanel.Styles>
 
-                            <StackPanel Name="GroupTitle" Orientation="Horizontal" Margin="25,0">
+                            <StackPanel Name="GroupTitle" Orientation="Horizontal" Margin="1,0,0,0">
                                 <TextBlock Text="{Binding Group.Type}" />
                                 <TextBlock Text=" - " />
                                 <TextBlock Text="{Binding Group.Name}" />
                             </StackPanel>
 
-                            <ItemsRepeater Items="{Binding Adapters}" Margin="24,0">
-                                <ItemsRepeater.Layout>
-                                    <UniformGridLayout MaximumRowsOrColumns="2"
-                                                       MinColumnSpacing="12"
-                                                       MinRowSpacing="12"
-                                                       ItemsStretch="Fill" />
-                                </ItemsRepeater.Layout>
+                            <ItemsControl Items="{Binding Adapters}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="2" Margin="-6" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
 
-                                <ItemsRepeater.ItemTemplate>
+                                <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border Name="AdapterItem">
                                             <StackPanel Spacing="4" VerticalAlignment="Center" Margin="0,0,0,1">
@@ -129,12 +135,12 @@
                                             </i:Interaction.Behaviors>
                                         </Border>
                                     </DataTemplate>
-                                </ItemsRepeater.ItemTemplate>
-                            </ItemsRepeater>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </DataTemplate>
-                </ItemsRepeater.ItemTemplate>
-            </ItemsRepeater>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </ScrollViewer>
     </DockPanel>
 

@@ -35,18 +35,18 @@ namespace Labyrinth.ViewModels {
             set => this.RaiseAndSetIfChanged(ref selectedProfile, value);
         }
 
-        private string activeProfileName = "config.yaml";
+        private readonly ObservableAsPropertyHelper<string> activeProfileName;
 
-        public string ActiveProfileName {
-            get => activeProfileName;
-            set => this.RaiseAndSetIfChanged(ref activeProfileName, value);
-        }
+        public string ActiveProfileName => activeProfileName.Value;
 
         public ReactiveCommand<Profile, Unit> UpdateSubscriptionCommand { get; }
         public ReactiveCommand<Unit, Unit> UpdateAllSubscriptionCommand { get; }
         public ReactiveCommand<Profile, Unit> DeleteProfileCommand { get; }
 
         public ProfileViewModel() {
+            this.WhenAnyValue(x => x.GlobalState.AppConfig.ConfigFile)
+                .ToProperty(this, nameof(ActiveProfileName), out activeProfileName);
+
             var isSubscription = this.WhenAnyValue(x => x.SelectedProfile).Select(x => x?.Subscription != null);
             UpdateSubscriptionCommand = ReactiveCommand.CreateFromTask<Profile>(TryUpdateSubscription, isSubscription);
 
@@ -193,8 +193,6 @@ namespace Labyrinth.ViewModels {
                 await ApplyClashConfig(name);
 
                 AppConfig appConfig = await SyncData(() => {
-                    ActiveProfileName = name;
-
                     GlobalState.RaisePropertyChanging(nameof(GlobalState.AppConfig));
                     GlobalState.AppConfig.ConfigFile = name;
                     GlobalState.RaisePropertyChanged(nameof(GlobalState.AppConfig));
