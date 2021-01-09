@@ -38,8 +38,8 @@ namespace Labyrinth.ViewModels {
         public string ActiveProfileName => activeProfileName.Value;
 
         public ReactiveCommand<Profile, Unit> UpdateSubscriptionCommand { get; }
-        public ReactiveCommand<Unit, Unit> UpdateAllSubscriptionCommand { get; }
         public ReactiveCommand<Profile, Unit> DeleteProfileCommand { get; }
+        public ReactiveCommand<Unit, Unit> UpdateAllSubscriptionCommand { get; }
 
         public ProfileViewModel() {
             this.WhenAnyValue(x => x.GlobalState.AppConfig.ConfigFile)
@@ -48,8 +48,10 @@ namespace Labyrinth.ViewModels {
             var isSubscription = this.WhenAnyValue(x => x.SelectedProfile).Select(x => x?.Subscription != null);
             UpdateSubscriptionCommand = ReactiveCommand.CreateFromTask<Profile>(TryUpdateSubscription, isSubscription);
 
+            var isSelectedProfile = this.WhenAnyValue(x => x.SelectedProfile).Select(x => x != null);
+            DeleteProfileCommand = ReactiveCommand.CreateFromTask<Profile>(DeleteProfile, isSelectedProfile);
+
             UpdateAllSubscriptionCommand = ReactiveCommand.CreateFromTask(TryUpdateAllSubscription);
-            DeleteProfileCommand = ReactiveCommand.CreateFromTask<Profile>(DeleteProfile);
 
             Task.Run(GetProfilesFromFilesystem);
         }
