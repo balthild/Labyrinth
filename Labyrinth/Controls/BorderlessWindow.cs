@@ -14,17 +14,6 @@ namespace Labyrinth.Controls {
             WindowEffects();
         }
 
-        protected void HideTaskbarIcon() {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
-                IntPtr hWnd = PlatformImpl.Handle.Handle;
-
-                uint style = GetWindowLongPtr(hWnd, WindowLongIndex.GWL_EXSTYLE);
-                style &= (uint) ~WindowStyleEx.WS_EX_APPWINDOW;
-                style |= (uint) WindowStyleEx.WS_EX_TOOLWINDOW;
-                SetWindowLongPtr(hWnd, WindowLongIndex.GWL_EXSTYLE, style);
-            }
-        }
-
         private void SetLocalizedFont() {
             CultureInfo culture = CultureInfo.InstalledUICulture;
             if (culture.ThreeLetterWindowsLanguageName == "CHS")

@@ -5,6 +5,7 @@
         mc:Ignorable="d"
         x:Class="Labyrinth.Views.NewSubscriptionDialog"
         Name="NewSubscriptionDialog"
+        ShowInTaskbar="False"
         WindowStartupLocation="CenterScreen"
         Title="New subscription"
         Width="400"

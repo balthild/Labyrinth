@@ -32,8 +32,6 @@ namespace Labyrinth.Views {
         private readonly Button cancel;
 
         public NewSubscriptionDialog() {
-            HideTaskbarIcon();
-
             InitializeComponent();
 
             url = this.FindControl<TextBox>("Url");

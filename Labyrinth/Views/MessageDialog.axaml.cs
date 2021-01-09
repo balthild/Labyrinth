@@ -12,8 +12,6 @@ namespace Labyrinth.Views {
         }
 
         public MessageDialog(string message, string title = "Notice") {
-            HideTaskbarIcon();
-
             InitializeComponent();
 
             this.FindControl<TextBlock>("TitleText").Text = title;
