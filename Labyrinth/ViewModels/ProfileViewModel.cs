@@ -45,11 +45,19 @@ namespace Labyrinth.ViewModels {
             this.WhenAnyValue(x => x.GlobalState.AppConfig.ConfigFile)
                 .ToProperty(this, nameof(ActiveProfileName), out activeProfileName);
 
-            var isSubscription = this.WhenAnyValue(x => x.SelectedProfile).Select(x => x?.Subscription != null);
-            UpdateSubscriptionCommand = ReactiveCommand.CreateFromTask<Profile>(TryUpdateSubscription, isSubscription);
+            UpdateSubscriptionCommand = ReactiveCommand.CreateFromTask<Profile>(
+                TryUpdateSubscription,
+                this.WhenAnyValue(x => x.SelectedProfile).Select(x => x?.Subscription != null)
+            );
 
-            var isSelectedProfile = this.WhenAnyValue(x => x.SelectedProfile).Select(x => x != null);
-            DeleteProfileCommand = ReactiveCommand.CreateFromTask<Profile>(DeleteProfile, isSelectedProfile);
+            DeleteProfileCommand = ReactiveCommand.CreateFromTask<Profile>(
+                DeleteProfile,
+                this.WhenAnyValue(x => x.SelectedProfile, x => x.ActiveProfileName)
+                    .Select(tuple => {
+                        (Profile? selected, string active) = tuple;
+                        return selected != null && selected.Name != "config.yaml" && selected.Name != active;
+                    })
+            );
 
             UpdateAllSubscriptionCommand = ReactiveCommand.CreateFromTask(TryUpdateAllSubscription);
 
@@ -148,8 +156,6 @@ namespace Labyrinth.ViewModels {
         }
 
         private async Task DeleteProfile(Profile profile) {
-            await SwitchProfile("config.yaml");
-
             // Delete file asynchronously.
             // See https://stackoverflow.com/questions/10606328/why-isnt-there-an-asynchronous-file-delete-in-net
             // TODO: shows a confirmation dialog

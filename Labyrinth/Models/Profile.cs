@@ -1,4 +1,5 @@
-﻿using Labyrinth.Support;
+﻿using System;
+using Labyrinth.Support;
 using Labyrinth.Support.Interop;
 
 namespace Labyrinth.Models {
@@ -20,10 +21,13 @@ namespace Labyrinth.Models {
 
         public string StatsDescription => Stats switch {
             null => "(Not a valid clash config)",
-            { ProxyCount: var p, ProxyGroupCount: var g, RuleCount: var r } =>
-                $"{p} {(p > 1 ? "proxies" : "proxy")}, " +
-                $"{g} {(p > 1 ? "groups" : "group")}, " +
-                $"{r} {(r > 1 ? "rules" : "rule")}",
+            // ReSharper disable once UseStringInterpolation
+            { ProxyCount: var p, ProxyGroupCount: var g, RuleCount: var r } => string.Format(
+                "{0} {1}, {2} {3}, {4} {5}",
+                p, p > 1 ? "proxies" : "proxy",
+                g, g > 1 ? "groups" : "group",
+                r, r > 1 ? "rules" : "rule"
+            ),
         };
     }
 }
